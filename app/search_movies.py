@@ -428,7 +428,7 @@ def search_movies_in_qdrant(user_query):
             "rank": i,
             "title": vector.payload["title"],
             "summary": vector.payload["summary"],
-            "date": convert_utc_to_mm_dd_yyyy(vector.payload["date"]), # convert this to MM-DD-YYYY format
+            "date": convert_utc_to_mm_dd_yyyy(vector.payload["date"]),  # convert this to MM-DD-YYYY format
             "genres": vector.payload["genres"],
             "runtime": format_time_to_minutes(vector.payload["runtime"]),
             "rating": vector.payload["rating"],
@@ -441,15 +441,15 @@ def search_movies_in_qdrant(user_query):
         }
         results.append(tmp)
 
-    return results
+    return (json.loads(json.dumps(results)))
 
-def main():
-    user_query = input("Please enter your query: ")
+# def main():
+#     user_query = input("Please enter your query: ")
 
-    response = (search_movies_in_qdrant(user_query))
-    json_string = json.dumps(response, indent=2)
+#     response = (search_movies_in_qdrant(user_query))
+#     json_string = json.dumps(response, indent=2)
 
-    print(json_string)
+#     print(json_string)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

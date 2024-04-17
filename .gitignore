@@ -1,5 +1,6 @@
 .env
 /venv
+venv
 .ipynb_checkpoints
 __pycache__/
 .DS_STORE
