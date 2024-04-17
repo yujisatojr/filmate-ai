@@ -158,25 +158,25 @@ def create_filter(user_query):
     filter_conditions = []
 
     # Add default search condition
-    # if not user_query.strip():  # Check if the query contains only whitespace characters
-    #     filter_conditions.append(models.FieldCondition(
-    #         key="rating",
-    #         range=models.Range(
-    #             gt=8, # greater than
-    #             gte=None, # greater than or equal
-    #             lt=None, # less than
-    #             lte=None, # less than or equal
-    #         )
-    #     ))
-    #     filter_conditions.append(models.FieldCondition(
-    #         key="votes",
-    #         range=models.Range(
-    #             gt=5000, # greater than
-    #             gte=None, # greater than or equal
-    #             lt=None, # less than
-    #             lte=None, # less than or equal
-    #         )
-    #     ))
+    if not user_query.strip():  # Check if the query contains only whitespace characters
+        filter_conditions.append(models.FieldCondition(
+            key="rating",
+            range=models.Range(
+                gt=8, # greater than
+                gte=None, # greater than or equal
+                lt=None, # less than
+                lte=None, # less than or equal
+            )
+        ))
+        filter_conditions.append(models.FieldCondition(
+            key="votes",
+            range=models.Range(
+                gt=5000, # greater than
+                gte=None, # greater than or equal
+                lt=None, # less than
+                lte=None, # less than or equal
+            )
+        ))
     
     # Check if the query consists only of special characters
     # for char in user_query:
