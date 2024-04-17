@@ -8,6 +8,7 @@ import os
 from qdrant_client import models, QdrantClient
 from qdrant_client.http import models as rest
 from qdrant_client.http.models import Record
+import string
 
 load_dotenv(find_dotenv())
 client = OpenAI(
@@ -155,6 +156,49 @@ def create_filter(user_query):
     
     # Build filter conditions
     filter_conditions = []
+
+    # Add default search condition
+    if not user_query.strip():  # Check if the query contains only whitespace characters
+        filter_conditions.append(models.FieldCondition(
+            key="rating",
+            range=models.Range(
+                gt=8, # greater than
+                gte=None, # greater than or equal
+                lt=None, # less than
+                lte=None, # less than or equal
+            )
+        ))
+        filter_conditions.append(models.FieldCondition(
+            key="votes",
+            range=models.Range(
+                gt=5000, # greater than
+                gte=None, # greater than or equal
+                lt=None, # less than
+                lte=None, # less than or equal
+            )
+        ))
+    
+    # Check if the query consists only of special characters
+    for char in user_query:
+        if char not in string.ascii_letters and char not in string.digits and char not in string.punctuation:
+            filter_conditions.append(models.FieldCondition(
+                key="rating",
+                range=models.Range(
+                    gt=8, # greater than
+                    gte=None, # greater than or equal
+                    lt=None, # less than
+                    lte=None, # less than or equal
+                )
+            ))
+            filter_conditions.append(models.FieldCondition(
+                key="votes",
+                range=models.Range(
+                    gt=3000, # greater than
+                    gte=None, # greater than or equal
+                    lt=None, # less than
+                    lte=None, # less than or equal
+                )
+            ))
     
     if date_condition is not None and date_condition != '':
         if date_condition == 'after':

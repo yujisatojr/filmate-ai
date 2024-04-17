@@ -16,10 +16,10 @@ def hello_world():
 
 @app.route('/search_movies')
 def get_movie_list():
-    user_query = request.args.get('user_query', default=None)
+    user_query = request.args.get('user_query', default='')
 
-    if not user_query:
-        return jsonify({'error': 'Please provide the search query.'}), 404
+    # if not user_query:
+    #     return jsonify({'error': 'Please provide the search query.'}), 404
     
     response = search_movies_in_qdrant(user_query)
 
