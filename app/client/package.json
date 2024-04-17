@@ -16,6 +16,7 @@
     "@types/node": "^16.18.96",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
+    "axios": "^1.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fade-in": "^2.0.1",

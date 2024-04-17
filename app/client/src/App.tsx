@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './App.scss';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -27,19 +28,20 @@ import SearchIcon from '@mui/icons-material/Search';
 function App() {
 
   // Define state variables
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [filterData, setFilterData] = useState<any>(null);
   const [movieData, setMovieData] = useState<any>(null);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
 
   const handleSearchSubmit = async () => {
     setIsLoading(true);
-    // console.log(searchInput);
     try {
-      const response = await fetch(`/search_movies?user_query=${searchInput}`);
+      const response = await fetch(`/generate_filters?user_query=${searchInput}`);
       if (response.ok) {
         const data = await response.json();
-        console.log(await data);
-        setMovieData(await data);
+        setFilterData(await data);
         setIsLoading(false);
       } else {
         console.error('Error fetching movie data');
@@ -51,7 +53,24 @@ function App() {
     }
   };
 
-  const [open, setOpen] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post('/search_movies', filterData);
+        setMovieData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (filterData !== null) {
+      fetchData();
+    }
+
+    return () => {
+      // Cancel any ongoing requests here if needed
+    };
+  }, [filterData]);
 
   return (
     <FadeIn transitionDuration={700} className='movie-app-root'>
@@ -76,11 +95,7 @@ function App() {
         sx={{ mb: 2 }}
         >
           <AlertTitle>How to use?</AlertTitle>
-          <span>
-            This movie search engine utilizes GenAI to input natural language queries like "movies about computer scientists made after 2000", "interracial romance", etc. Based on the sentence, it uses context-based sorting to prioritize relevant results.<br/><br/>
-
-            Enter your query in natural language format below. (e.g., "sad movies with animals", "scary pandemic", "aliens on mars")
-          </span>
+          <span>This movie search engine utilizes GenAI to input natural language queries like "movies about computer scientists made after 2000", "interracial romance", etc. Based on the sentence, it uses context-based sorting to prioritize relevant results.</span>
         </Alert>
       </Collapse>
 
@@ -96,7 +111,7 @@ function App() {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Search movies using prompt"
+            placeholder='Enter your prompt to search movies (Examples: "sad movies with animals", "scary pandemic", "aliens on mars")'
             inputProps={{ 'aria-label': 'search movies' }}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -154,8 +169,8 @@ function App() {
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <Grid container spacing={2}>
             {movieData && movieData.map((movie: any, index: number) => (
-              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                <FadeIn transitionDuration={700}>
+              <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={index}>
+                <FadeIn transitionDuration={700} key={index}>
                   <div key={index} className='movie-poster zoom'>
                     <img
                       src={movie.poster_link}

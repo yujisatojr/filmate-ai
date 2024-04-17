@@ -56,6 +56,7 @@ def parse_user_query(user_query):
     prompt_template = f"""
         Your task is to parse the following query "{user_query}" provided by a user and generate JSON output according to the template provided later.\n
         The explanation of each value in the JSON template is as follows:\n
+        "query" : "For this field, put query from user as is.",
         "date": "This field represents the release year, month, and/or date of the movie. You also need to provide the condition to indicate if user wants to query a movie before, after, or between specific range of date(s). If any of these values are provided in the query, format it as follows: 2005-02-08T10:49:00Z. If not specified, leave empty.",
         "genres": "This field represents the genre of the movie. If user mention one the following genres in the list '{genres}', add it as a value. If not specified, please leave empty.",
         "runtime": "The runtime should be an integer value representing the duration of the movie in minutes. You also need to provide the condition to indicate if user wants to query a movie greater than, less than, or between specific range of time or timeframe. If not specified, leave empty.",
@@ -66,29 +67,30 @@ def parse_user_query(user_query):
         "language": "The language should be from the following list: {country_names}. If not specified, leave empty."\n
         Below is the JSON tempalte:
         {{
+            "query": "{user_query}",
             "date": {{
-                "value_1": "2005-02-08T10:49:00Z",
-                "value_2": "2005-02-08T10:49:00Z (only fill in this value when the condition is between)",
+                "value_1": "format this feild as the following format: 2005-02-08T10:49:00Z",
+                "value_2": "format this feild as the following format: 2005-02-08T10:49:00Z (only fill in this value when the condition is between)",
                 "condition": "one of the following: before, after, between"
             }},
             "genres":  "one of the values from the following list '{genres}'. If not specified, leave empty.",
             "runtime": {{
-                "value_1": 180,
+                "value_1": 180 (only fill in this value if applicable),
                 "value_2": null (only fill in this value when the condition is between),
                 "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
             }},
             "rating": {{
-                "value_1": null,
+                "value_1": 7 (only fill in this value if applicable),
                 "value_2": null (only fill in this value when the condition is between),
                 "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
             }},
             "budget": {{
-                "value_1": 3500000,
+                "value_1": 3500000 (only fill in this value if applicable),
                 "value_2": 6500000 (only fill in this value when the condition is between),
                 "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
             }},
             "revenue": {{
-                "value_1": 3500000,
+                "value_1": 3500000 (only fill in this value if applicable),
                 "value_2": 6500000 (only fill in this value when the condition is between),
                 "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
             }},
@@ -121,13 +123,16 @@ def parse_user_query(user_query):
     )
     return json.loads(stream.choices[0].message.content)
 
-def create_filter(user_query):
-    parsed = json.dumps(parse_user_query(user_query))
+def create_filter(parsed_query):
 
-    print('Filters:')
-    print(parsed)
+    print('DATA TYPE:')
+    print(type(parsed_query))
+    print(parsed_query)
 
-    data = json.loads(parsed)
+    data = json.loads(parsed_query)
+
+    # Extract original user query
+    user_query = data['query']
 
     # Mapping values to variables
     date_value_1 = data['date']['value_1']
@@ -406,9 +411,12 @@ def create_filter(user_query):
 
     return filter_conditions
 
-def search_filtered_vector(user_query, collection_name, vector_name, top_k=15):
+def search_filtered_vector(parsed_query, collection_name, vector_name, top_k=15):
 
-    filter_conditions = create_filter(user_query)
+    filter_conditions = create_filter(parsed_query)
+
+    json_parsed = json.loads(parsed_query)
+    user_query = json_parsed['query']
     
     completion = openai.embeddings.create(
         input=user_query,
@@ -462,8 +470,12 @@ def convert_utc_to_mm_dd_yyyy(utc_datetime_str):
     return mm_dd_yyyy_format
 
 # Search for similar vectors
-def search_movies_in_qdrant(user_query):
-    query_results = search_filtered_vector(user_query, collection_name, vector_name)
+def search_movies_in_qdrant(parsed_query):
+
+    # json_query = json.loads(parsed_query)
+    json_query = json.dumps(parsed_query)
+
+    query_results = search_filtered_vector(json_query, collection_name, vector_name)
 
     results = []
     
