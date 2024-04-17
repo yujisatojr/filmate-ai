@@ -16,7 +16,7 @@ def hello_world():
 
 @app.route('/search_movies')
 def get_movie_list():
-    user_query = request.args.get('user_query', default='')
+    user_query = request.args.get('user_query')
 
     # if not user_query:
     #     return jsonify({'error': 'Please provide the search query.'}), 404

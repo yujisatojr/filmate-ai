@@ -1,45 +1,43 @@
 import React, { useState } from 'react';
 import './App.scss';
-import { styled } from '@mui/material/styles';
-
-// Import MUI framework for styling
+import Alt from './assets/images/no_image.png'
+// import { styled } from '@mui/material/styles';
+import FadeIn from 'react-fade-in';
+import Grid from '@mui/material/Grid';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
-// import List from '@mui/material/List';
-// import ListItem from '@mui/material/ListItem';
-// import ListItemButton from '@mui/material/ListItemButton';
-// import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import SearchIcon from '@mui/icons-material/Search';
 
-const Item = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(1),
-  textAlign: 'left',
-}));
+// const Item = styled(Paper)(({ theme }) => ({
+//   padding: theme.spacing(1),
+//   textAlign: 'left',
+// }));
 
 function App() {
 
   // Define state variables
   const [searchInput, setSearchInput] = useState('');
+  const [movieData, setMovieData] = useState<any>(null);
 
-  // Fetch geo-coordinates (lat/lon) with a city name
   const handleSearchSubmit = async () => {
-    console.log(searchInput);
-    // try {
-    //   const response = await fetch(`/flask_server/coordinates?city_name=${searchInput}`);
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setLocations(data);
-    //   } else {
-    //     console.error('Error fetching location data');
-    //   }
-    // } catch (error) {
-    //   console.error('Error fetching location data:', error);
-    // }
+    // console.log(searchInput);
+    try {
+      const response = await fetch(`/search_movies?user_query=${searchInput}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(await data);
+        setMovieData(await data);
+      } else {
+        console.error('Error fetching movie data');
+      }
+    } catch (error) {
+      console.error('Error fetching movie data:', error);
+    }
   };
 
   return (
-    <div className='movie-app-root'>
+    <FadeIn transitionDuration={700} className='movie-app-root'>
       <h1>Movie Search 🍿</h1>
       <div className='search-form-wrapper'>
         <Paper
@@ -63,11 +61,30 @@ function App() {
           </IconButton>
         </Paper>
       </div>
-      
-      <Item>
-        <p>Content comes here</p>
-      </Item>
-    </div>
+
+      <Grid container spacing={2} className='result-container'>
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+          <Grid container spacing={2}>
+            {movieData && movieData.map((movie: any, index: number) => (
+              <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                <FadeIn transitionDuration={700}>
+                  <div key={index} className='movie-poster zoom'>
+                    <img
+                      src={movie.poster_link}
+                      alt={movie.title}
+                      onError={({ currentTarget }) => {
+                        currentTarget.onerror = null; // prevents looping
+                        currentTarget.src=Alt;
+                      }}
+                    />
+                  </div>
+                </FadeIn>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
+      </Grid>
+    </FadeIn>
   );
 }
 
