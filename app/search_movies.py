@@ -53,54 +53,54 @@ def parse_user_query(user_query):
     genres = ['Animation', 'Action', 'Comedy', 'Biography', 'Crime', 'Drama', 'Adventure', 'Fantasy', 'Mystery', 'Sci-Fi', 'Documentary', 'Horror', 'Family', 'Romance', 'Film-Noir', 'Western', 'Musical', 'Thriller', 'War', 'Short', 'Music']
     
     prompt_template = f"""
-        Your task is to parse the following query "{user_query}" provided by a user and generate JSON output according to the template provided later.\n
-        The explanation of each value in the JSON template is as follows:\n
-        "query" : "For this field, put query from user as is.",
-        "date": "This field represents the release year, month, and/or date of the movie. You also need to provide the condition to indicate if user wants to query a movie before, after, or between specific range of date(s). If any of these values are provided in the query, format it as follows: 2005-02-08T10:49:00Z. If not specified, leave empty.",
-        "genres": "This field represents the genre of the movie. If user mention one the following genres in the list '{genres}', add it as a value. If not specified, please leave empty.",
-        "runtime": "The runtime should be an integer value representing the duration of the movie in minutes. You also need to provide the condition to indicate if user wants to query a movie greater than, less than, or between specific range of time or timeframe. If not specified, leave empty.",
-        "rating": "The rating should be an integer value representing the movie's rating. The rating should be between 1 to 9, but when user says high rating or higher rating, it means rating is greater than 8. You also need to provide the condition to indicate if user wants to query a movie greater than, less than, or between specific range of rating(s). If not specified, leave empty.",
-        "budget": "The budget should be an integer value representing the movie's budget. You also need to provide the condition to indicate if user wants to query a movie greater than, less than, or between specific range of budget. If not specified, leave empty.",
-        "revenue": "The revenue should be an integer value representing the movie's revenue. You also need to provide the condition to indicate if user wants to query a movie greater than, less than, or between specific range of revenue. If not specified, leave empty.",
-        "sentiment": "Please analyze the sentiment of the movie. If the user mentions terms like 'sad' or 'bad', consider it as 'negative'. If terms like 'happy' or 'good' are mentioned, consider it as 'positive'. If sentiment is not specified in the user query, leave it empty.",
-        "language": "The language should be from the following list: {country_names}. If not specified, leave empty."\n
-        Below is the JSON tempalte:
+        Your task is to parse the following query '{user_query}' provided by a user and generate JSON output according to the template provided later.
+        The explanation of each value in the JSON template is as follows:
+        "query": For this field, put the user query as is.
+        "date": This field represents the release year, month, and/or date of the movie. You also need to provide the condition to indicate if the user wants to query a movie before, after, or between specific range of date(s). If any of these values are provided in the query, format it as follows: 2005-02-08T10:49:00Z. If not specified in the user query, leave the field empty.
+        "genres": This field represents the genre of the movie. If the user mentions one of the following genres in the list '{genres}', add it as a value. If not specified in the user query, please leave the field empty.
+        "runtime": The runtime should be an integer value representing the duration of the movie in minutes. You also need to provide the condition to indicate if the user wants to query a movie greater than, less than, or between specific range of time. If not specified in the user query, leave the field empty.
+        "rating": The rating should be an integer value representing the movie's rating. The rating should be between 1 to 9, but when the user says high rating or higher rating, it means the rating is greater than 8. You also need to provide the condition to indicate if the user wants to query a movie greater than, less than, or between specific range of rating(s). If not specified in the user query, leave the field empty.
+        "budget": The budget should be an integer value representing the movie's budget in dollars. You also need to provide the condition to indicate if the user wants to query a movie greater than, less than, or between specific range of budget. If not specified in the user query, leave the field empty.
+        "revenue": The revenue should be an integer value representing the movie's revenue in dollars. You also need to provide the condition to indicate if the user wants to query a movie greater than, less than, or between specific range of revenue. If not specified in the user query, leave the field empty.
+        "sentiment": This represents the sentiment of the movie. If the user mentions terms such as 'sad' or 'bad', consider it as 'negative'. If terms like 'happy' or 'good' are mentioned, consider it as 'positive'. If sentiment is not specified in the user query, leave it empty.
+        "language": This represents the language of the movie. The language should be from the following list: {country_names}. If not specified in the user query, leave the field empty.
+        Below is the JSON template:
         {{
             "query": "{user_query}",
             "date": {{
-                "value_1": "If not specified, leave empty. You have to fill out this field if 'condition' value is not empty. format this feild as the following format: 2005-02-08T10:49:00Z",
-                "value_2": "format this feild as the following format: 2005-02-08T10:49:00Z (only fill in this value when the 'condition' value is between)",
-                "condition": "one of the following: before, after, between. If not specified, leave empty. If you fill out this field, you must also fill out the 'value_1 date' field."
+                "date_1": "You have to fill out this field if 'condition' value is not empty. Format this field as the following format: 2005-02-08T10:49:00Z. If not specified in the user query, leave the field empty.",
+                "date_2": "Format this field as the following format: 2005-02-08T10:49:00Z. Only fill in this value when the 'condition' value is between. If not specified in the user query, leave the field empty.",
+                "condition": "Fill in one of the following: before, after, between (if applicable). If this field is applicable, you must also fill out the 'date_1' field. If not specified in the user query, leave the field empty."
             }},
-            "genres":  "one of the values from the following list '{genres}'. If not specified, leave empty.",
+            "genres": "One of the values from the following list '{genres}', only if applicable. If not specified in the user query, leave the field empty.",
             "runtime": {{
-                "value_1": 180 (only fill in this value if applicable),
-                "value_2": null (only fill in this value when the condition is between),
-                "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
+                "runtime_1": 180 (You have to fill out this field if 'condition' value is not empty. If not specified in the user query, leave null.),
+                "runtime_2": null (Only fill in this field when the 'condition' field is 'between'.),
+                "condition": "Fill in one of the following: greater_than, less_than, between (if applicable). If this field is applicable, you must also fill out the 'runtime_1' field. If not specified in the user query, leave the field empty."
             }},
             "rating": {{
-                "value_1": 7 (only fill in this value if applicable),
-                "value_2": null (only fill in this value when the condition is between),
-                "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
+                "rating_1": 7 (You have to fill out this field if 'condition' value is not empty. If not specified in the user query, leave null.),
+                "rating_2": null (Only fill in this value when the condition is between),
+                "condition": "Fill in one of the following: greater_than, less_than, between (if applicable). If this field is applicable, you must also fill out the 'rating_1' field. If not specified in the user query, leave the field empty."
             }},
             "budget": {{
-                "value_1": 3500000 (only fill in this value if applicable),
-                "value_2": 6500000 (only fill in this value when the condition is between),
-                "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
+                "budget_1": 3500000 (You have to fill out this field if 'condition' value is not empty. If not specified in the user query, leave null.),
+                "budget_2": 6500000 (Only fill in this value when the 'condition' field is 'between'),
+                "condition": "Fill in one of the following: greater_than, less_than, between (if applicable). If this field is applicable, you must also fill out the 'budget_1' field. If not specified in the user query, leave the field empty."
             }},
             "revenue": {{
-                "value_1": 3500000 (only fill in this value if applicable),
-                "value_2": 6500000 (only fill in this value when the condition is between),
-                "condition": "one of the following: greater_than, less_than, between. If not specified, leave empty."
+                "revenue_1": 3500000 (You have to fill out this field if 'condition' value is not empty. If not specified in the user query, leave null.),
+                "revenue_2": 6500000 (Only fill in this value when the 'condition' field is 'between'),
+                "condition": "One of the following: greater_than, less_than, between (if applicable). If this field is applicable, you must also fill out the 'revenue_1' field. If not specified in the user query, leave the field empty."
             }},
-            "sentiment":  "If the user mentions terms like 'sad' or 'bad', consider it as 'negative'. If terms like 'happy' or 'good' are mentioned, consider it as 'positive'. If sentiment is not specified in the user query, leave it empty.",
-            "language":  "one of the values from the following list '{country_names}'. If not specified, leave empty."
+            "sentiment": "If the user mentions terms such as 'sad' or 'bad', consider it as 'negative'. If terms such as 'happy' or 'good' are mentioned, consider it as 'positive'. If sentiment is not specified in the user query, leave it empty.",
+            "language": "One of the values from the following list '{country_names}', if applicable. If not specified in the user query, leave the field empty."
         }}
     """
 
     messages = [{
             "role": "system",
-            "content": "You are a helpful assistant designed to output only in JSON format. No other text or explanation.",
+            "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
         },
         {
             "role": "user",
@@ -111,21 +111,17 @@ def parse_user_query(user_query):
     stream = client.chat.completions.create(
         model="gpt-3.5-turbo-0125",
         messages=messages,
-        # stream=True,
-        # temperature=0.7,
-        # max_tokens=800,
-        top_p=0.95,
+        max_tokens=500,
+        temperature=0.5,
         frequency_penalty=0,
         presence_penalty=0,
-        # stop=None,
-        response_format={"type": "json_object"}
+        response_format={ "type": "json_object" }
     )
     return json.loads(stream.choices[0].message.content)
 
 def create_filter(parsed_query):
 
-    print('DATA TYPE:')
-    print(type(parsed_query))
+    print('FILTER GENERATED')
     print(parsed_query)
 
     data = json.loads(parsed_query)
@@ -134,24 +130,24 @@ def create_filter(parsed_query):
     user_query = data['query']
 
     # Mapping values to variables
-    date_value_1 = data['date']['value_1']
-    date_value_2 = data['date']['value_2']
+    date_value_1 = data['date']['date_1']
+    date_value_2 = data['date']['date_2']
     date_condition = data['date']['condition']
     
-    runtime_value_1 = data['runtime']['value_1']
-    runtime_value_2 = data['runtime']['value_2']
+    runtime_value_1 = data['runtime']['runtime_1']
+    runtime_value_2 = data['runtime']['runtime_2']
     runtime_condition = data['runtime']['condition']
     
-    rating_value_1 = data['rating']['value_1']
-    rating_value_2 = data['rating']['value_2']
+    rating_value_1 = data['rating']['rating_1']
+    rating_value_2 = data['rating']['rating_2']
     rating_condition = data['rating']['condition']
     
-    budget_value_1 = data['budget']['value_1']
-    budget_value_2 = data['budget']['value_2']
+    budget_value_1 = data['budget']['budget_1']
+    budget_value_2 = data['budget']['budget_2']
     budget_condition = data['budget']['condition']
     
-    revenue_value_1 = data['revenue']['value_1']
-    revenue_value_2 = data['revenue']['value_2']
+    revenue_value_1 = data['revenue']['revenue_1']
+    revenue_value_2 = data['revenue']['revenue_2']
     revenue_condition = data['revenue']['condition']
 
     genres = data['genres']
@@ -175,54 +171,26 @@ def create_filter(parsed_query):
         filter_conditions.append(models.FieldCondition(
             key="votes",
             range=models.Range(
-                gt=5000, # greater than
-                gte=None, # greater than or equal
-                lt=None, # less than
-                lte=None, # less than or equal
+                gt=5000,
+                gte=None,
+                lt=None,
+                lte=None,
             )
         ))
-    
-    # Check if the query consists only of special characters
-    # for char in user_query:
-    #     if char not in string.ascii_letters and char not in string.digits and char not in string.punctuation:
-    #         filter_conditions.append(models.FieldCondition(
-    #             key="rating",
-    #             range=models.Range(
-    #                 gt=8, # greater than
-    #                 gte=None, # greater than or equal
-    #                 lt=None, # less than
-    #                 lte=None, # less than or equal
-    #             )
-    #         ))
-    #         filter_conditions.append(models.FieldCondition(
-    #             key="votes",
-    #             range=models.Range(
-    #                 gt=3000, # greater than
-    #                 gte=None, # greater than or equal
-    #                 lt=None, # less than
-    #                 lte=None, # less than or equal
-    #             )
-    #         ))
     
     if date_condition is not None and date_condition != '':
         if date_condition == 'after':
             filter_conditions.append(models.FieldCondition(
                 key="date",
                 range=models.DatetimeRange(
-                    gt=date_value_1, # greater than
-                    gte=None, # greater than or equal
-                    lt=None, # less than
-                    lte=None, # less than or equal
+                    gt=date_value_1,
                 )
             ))
         elif date_condition == 'before':
             filter_conditions.append(models.FieldCondition(
                 key="date",
                 range=models.DatetimeRange(
-                    gt=None,
-                    gte=None,
                     lt=date_value_1,
-                    lte=None,
                 )
             ))
         elif date_condition == 'between':
@@ -230,9 +198,7 @@ def create_filter(parsed_query):
                 key="date",
                 range=models.DatetimeRange(
                     gt=date_value_1,
-                    gte=None,
                     lt=date_value_2,
-                    lte=None,
                 )
             ))
 
@@ -241,20 +207,14 @@ def create_filter(parsed_query):
             filter_conditions.append(models.FieldCondition(
                 key="runtime",
                 range=models.Range(
-                    gt=runtime_value_1, # greater than
-                    gte=None, # greater than or equal
-                    lt=None, # less than
-                    lte=None, # less than or equal
+                    gt=runtime_value_1,
                 )
             ))
         elif runtime_condition == 'less_than':
             filter_conditions.append(models.FieldCondition(
                 key="runtime",
                 range=models.Range(
-                    gt=None,
-                    gte=None,
                     lt=runtime_value_1,
-                    lte=None,
                 )
             ))
         elif runtime_condition == 'between':
@@ -262,9 +222,7 @@ def create_filter(parsed_query):
                 key="runtime",
                 range=models.Range(
                     gt=runtime_value_1,
-                    gte=None,
                     lt=runtime_value_2,
-                    lte=None,
                 )
             ))
 
@@ -272,10 +230,7 @@ def create_filter(parsed_query):
         filter_conditions.append(models.FieldCondition(
             key="votes",
             range=models.Range(
-                gt=2000, # greater than
-                gte=None, # greater than or equal
-                lt=None, # less than
-                lte=None, # less than or equal
+                gt=2000,
             )
         ))
         
@@ -283,20 +238,14 @@ def create_filter(parsed_query):
             filter_conditions.append(models.FieldCondition(
                 key="rating",
                 range=models.Range(
-                    gt=rating_value_1, # greater than
-                    gte=None, # greater than or equal
-                    lt=None, # less than
-                    lte=None, # less than or equal
+                    gt=rating_value_1,
                 )
             ))
         elif rating_condition == 'less_than':
             filter_conditions.append(models.FieldCondition(
                 key="rating",
                 range=models.Range(
-                    gt=None,
-                    gte=None,
                     lt=rating_value_1,
-                    lte=None,
                 )
             ))
         elif rating_condition == 'between':
@@ -304,9 +253,7 @@ def create_filter(parsed_query):
                 key="rating",
                 range=models.Range(
                     gt=rating_value_1,
-                    gte=None,
                     lt=rating_value_2,
-                    lte=None,
                 )
             ))
 
@@ -315,20 +262,14 @@ def create_filter(parsed_query):
             filter_conditions.append(models.FieldCondition(
                 key="budget",
                 range=models.Range(
-                    gt=budget_value_1, # greater than
-                    gte=None, # greater than or equal
-                    lt=None, # less than
-                    lte=None, # less than or equal
+                    gt=budget_value_1,
                 )
             ))
         elif budget_condition == 'less_than':
             filter_conditions.append(models.FieldCondition(
                 key="budget",
                 range=models.Range(
-                    gt=None,
-                    gte=None,
                     lt=budget_value_1,
-                    lte=None,
                 )
             ))
         elif budget_condition == 'between':
@@ -336,9 +277,7 @@ def create_filter(parsed_query):
                 key="budget",
                 range=models.Range(
                     gt=budget_value_1,
-                    gte=None,
                     lt=budget_value_2,
-                    lte=None,
                 )
             ))
 
@@ -347,20 +286,14 @@ def create_filter(parsed_query):
             filter_conditions.append(models.FieldCondition(
                 key="revenue",
                 range=models.Range(
-                    gt=revenue_value_1, # greater than
-                    gte=None, # greater than or equal
-                    lt=None, # less than
-                    lte=None, # less than or equal
+                    gt=revenue_value_1,
                 )
             ))
         elif revenue_condition == 'less_than':
             filter_conditions.append(models.FieldCondition(
                 key="revenue",
                 range=models.Range(
-                    gt=None,
-                    gte=None,
                     lt=revenue_value_1,
-                    lte=None,
                 )
             ))
         elif revenue_condition == 'between':
@@ -368,9 +301,7 @@ def create_filter(parsed_query):
                 key="revenue",
                 range=models.Range(
                     gt=revenue_value_1,
-                    gte=None,
                     lt=revenue_value_2,
-                    lte=None,
                 )
             ))
 
@@ -385,20 +316,14 @@ def create_filter(parsed_query):
             filter_conditions.append(models.FieldCondition(
                 key="sentiment_score",
                 range=models.Range(
-                    gt=0, # greater than
-                    gte=None, # greater than or equal
-                    lt=None, # less than
-                    lte=None, # less than or equal
+                    gt=0,
                 )
             ))
         elif sentiment == 'negative':
             filter_conditions.append(models.FieldCondition(
                 key="sentiment_score",
                 range=models.Range(
-                    gt=None,
-                    gte=None,
                     lt=0,
-                    lte=None,
                 )
             ))
 
@@ -497,14 +422,3 @@ def search_movies_in_qdrant(parsed_query):
         results.append(tmp)
 
     return (json.loads(json.dumps(results)))
-
-# def main():
-#     user_query = input("Please enter your query: ")
-
-#     response = (search_movies_in_qdrant(user_query))
-#     json_string = json.dumps(response, indent=2)
-
-#     print(json_string)
-
-# if __name__ == "__main__":
-#     main()

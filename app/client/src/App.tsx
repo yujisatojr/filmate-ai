@@ -209,58 +209,58 @@ function App() {
               {checkValues(filterData) && (<p>Original sentence: {filterData['query']}</p>)}
               {filterData['date']['condition'] !== '' && (
                   filterData['date']['condition'] === 'after' ? (
-                      <p>Date: after {formatDate(filterData['date']['value_1'])}</p>
+                      <p>Date: after {formatDate(filterData['date']['date_1'])}</p>
                   ) : (
                       filterData['date']['condition'] === 'before' ? (
-                          <p>Date: before {formatDate(filterData['date']['value_1'])}</p>
+                          <p>Date: before {formatDate(filterData['date']['date_1'])}</p>
                       ) : (
                         filterData['date']['condition'] === 'between' && (
-                          <p>Date: between {formatDate(filterData['date']['value_1'])} and {formatDate(filterData['date']['value_2'])}</p>
+                          <p>Date: between {formatDate(filterData['date']['date_1'])} and {formatDate(filterData['date']['date_2'])}</p>
                         )
                       )
                   )
               )}
               {filterData['budget']['condition'] !== '' && (
                   filterData['budget']['condition'] === 'greater_than' ? (
-                      <p>Budget: over ${filterData['budget']['value_1']}</p>
+                      <p>Budget: over ${filterData['budget']['budget_1']}</p>
                   ) : (
                       filterData['budget']['condition'] === 'less_than' ? (
-                          <p>Budget: less than ${filterData['budget']['value_1']}</p>
+                          <p>Budget: less than ${filterData['budget']['budget_1']}</p>
                       ) : (
-                          <p>Budget: Between ${filterData['budget']['value_1']} and ${filterData['budget']['value_2']}</p>
+                          <p>Budget: Between ${filterData['budget']['budget_1']} and ${filterData['budget']['budget_2']}</p>
                       )
                   )
               )}
               {filterData['revenue']['condition'] !== '' && (
                   filterData['revenue']['condition'] === 'greater_than' ? (
-                      <p>Revenue: over ${filterData['revenue']['value_1']}</p>
+                      <p>Revenue: over ${filterData['revenue']['revenue_1']}</p>
                   ) : (
                       filterData['revenue']['condition'] === 'less_than' ? (
-                          <p>Revenue: less than ${filterData['revenue']['value_1']}</p>
+                          <p>Revenue: less than ${filterData['revenue']['revenue_1']}</p>
                       ) : (
-                          <p>Revenue: Between ${filterData['revenue']['value_1']} and ${filterData['revenue']['value_2']}</p>
+                          <p>Revenue: Between ${filterData['revenue']['revenue_1']} and ${filterData['revenue']['revenue_2']}</p>
                       )
                   )
               )}
               {filterData['rating']['condition'] !== '' && (
                   filterData['rating']['condition'] === 'greater_than' ? (
-                      <p>IMDb Rating: over ${filterData['rating']['value_1']}</p>
+                      <p>IMDb Rating: over {filterData['rating']['rating_1']}</p>
                   ) : (
                       filterData['rating']['condition'] === 'less_than' ? (
-                          <p>IMDb Rating: less than ${filterData['rating']['value_1']}</p>
+                          <p>IMDb Rating: less than ${filterData['rating']['rating_1']}</p>
                       ) : (
-                          <p>IMDb Rating: Between ${filterData['rating']['value_1']} and ${filterData['rating']['value_2']}</p>
+                          <p>IMDb Rating: Between ${filterData['rating']['rating_1']} and ${filterData['rating']['rating_2']}</p>
                       )
                   )
               )}
               {filterData['runtime']['condition'] !== '' && (
                   filterData['runtime']['condition'] === 'greater_than' ? (
-                      <p>Runtime: over ${filterData['runtime']['value_1']}</p>
+                      <p>Runtime: over ${filterData['runtime']['runtime_1']}</p>
                   ) : (
                       filterData['runtime']['condition'] === 'less_than' ? (
-                          <p>Runtime: less than ${filterData['runtime']['value_1']}</p>
+                          <p>Runtime: less than ${filterData['runtime']['runtime_1']}</p>
                       ) : (
-                          <p>Runtime: between ${filterData['runtime']['value_1']} and ${filterData['runtime']['value_2']}</p>
+                          <p>Runtime: between ${filterData['runtime']['runtime_1']} and ${filterData['runtime']['runtime_2']}</p>
                       )
                   )
               )}
