@@ -9,6 +9,10 @@
     margin-block-end: 0px;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
+    font-family: "Montserrat", sans-serif !important;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
   }
 
   svg {
@@ -17,7 +21,14 @@
   }
 
   button {
+    // background: #59C173;  /* fallback for old browsers */
+    // background: -webkit-linear-gradient(to right, #5D26C1, #a17fe0, #59C173);  /* Chrome 10-25, Safari 5.1-6 */
+    // background: linear-gradient(to right, #5D26C1, #a17fe0, #59C173); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */   
     background-color: black;
+    font-family: "Montserrat", sans-serif !important;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
   }
 
   button:hover {
@@ -28,7 +39,6 @@
 .movie-app-root {
   margin-left: 20%;
   margin-right: 20%;
-  font-family: "Lato", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -46,6 +56,13 @@
 .search-form {
   padding: 0px !important;
   box-shadow: 0px 1px 10px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.1) !important;
+}
+
+input {
+  font-family: "Montserrat", sans-serif !important;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .result-container {
@@ -83,7 +100,10 @@
 
   div, span {
     color: gray;
-    font-family: "Lato", sans-serif;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
   }
 
   span, p {
@@ -116,5 +136,25 @@
   .movie-app-root {
     margin-left: 10%;
     margin-right: 10%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .button-desktop {
+    display: none !important;
+  }
+
+  .button-mobile {
+    display: block !important;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  .button-desktop {
+    display: inline-flex !important;
+  }
+
+  .button-mobile {
+    display: none !important;
   }
 }

@@ -23,6 +23,7 @@ import Paper from '@mui/material/Paper';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import HelpIcon from '@mui/icons-material/Help';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import SearchIcon from '@mui/icons-material/Search';
 
 function formatDate(dateString: string): string {
@@ -114,11 +115,12 @@ function App() {
     <FadeIn transitionDuration={700} className='movie-app-root'>
       <div className='header'>
         <h1>Smart Movie Search 🍿</h1>
-        <Button variant="contained" endIcon={<HelpIcon />} onClick={() => {
+        <Button className='button-desktop' variant="contained" endIcon={<HelpIcon />} onClick={() => {
               setOpen(true);
             }}>
           Help
         </Button>
+        <HelpCenterIcon className='button-mobile' onClick={() => {setOpen(true);}}/>
       </div>
       <Collapse in={open}>
         <Alert
