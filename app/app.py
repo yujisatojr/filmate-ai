@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
 from search_movies import parse_user_query, search_movies_in_qdrant
-import json
 import logging
 
 # app = Flask(__name__, static_folder='client/build', static_url_path='')

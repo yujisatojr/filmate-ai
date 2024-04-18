@@ -1,55 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import FadeIn from 'react-fade-in';
+import { Oval, ThreeDots } from 'react-loader-spinner'
+import Alt from './assets/images/no_image.png'
 import './App.scss';
+
+// Import MUI components
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Alt from './assets/images/no_image.png'
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import InfoIcon from '@mui/icons-material/Info';
+import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
-import CloseIcon from '@mui/icons-material/Close';
-import { Oval, ThreeDots } from 'react-loader-spinner'
-// import { styled } from '@mui/material/styles';
-import FadeIn from 'react-fade-in';
 import Grid from '@mui/material/Grid';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
+
+// Import icons
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CloseIcon from '@mui/icons-material/Close';
+import HelpIcon from '@mui/icons-material/Help';
 import SearchIcon from '@mui/icons-material/Search';
 
-// const Item = styled(Paper)(({ theme }) => ({
-//   padding: theme.spacing(1),
-//   textAlign: 'left',
-// }));
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 function App() {
 
-  // Define state variables
   const [searchInput, setSearchInput] = useState<string>('');
   const [filterData, setFilterData] = useState<any>(null);
   const [movieData, setMovieData] = useState<any>(null);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(true);
+  const [isFilterLoading, setIsFilterLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleSearchSubmit = async () => {
-    setIsLoading(true);
+    setIsFilterLoading(true);
     try {
       const response = await fetch(`/generate_filters?user_query=${searchInput}`);
       if (response.ok) {
         const data = await response.json();
         setFilterData(await data);
-        setIsLoading(false);
+        setIsFilterLoading(false);
       } else {
         console.error('Error fetching movie data');
-        setIsLoading(false);
+        setIsFilterLoading(false);
       }
     } catch (error) {
       console.error('Error fetching movie data:', error);
-      setIsLoading(false);
+      setIsFilterLoading(false);
     }
   };
 
@@ -72,14 +79,52 @@ function App() {
     };
   }, [filterData]);
 
+  const checkValues = (data: any) => {
+    for (const key in data) {
+      if (key !== 'query') {
+        if (typeof data[key] === 'object') {
+          const { condition, value_1, value_2 } = data[key];
+          if (condition !== null && condition !== undefined && condition !== '') {
+            return true;
+          }
+          if (value_1 !== null && value_1 !== undefined && value_1 !== '') {
+            return true;
+          }
+          if (value_2 !== null && value_2 !== undefined && value_2 !== '') {
+            return true;
+          }
+        } else {
+          if (data[key] !== null && data[key] !== undefined && data[key] !== '') {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    handleSearchSubmit();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log(filterData)
+
   return (
     <FadeIn transitionDuration={700} className='movie-app-root'>
-      <h1>Movie Semantic Search 🍿</h1>
+      <div className='header'>
+        <h1>Smart Movie Search 🍿</h1>
+        <Button variant="contained" endIcon={<HelpIcon />} onClick={() => {
+              setOpen(true);
+            }}>
+          Help
+        </Button>
+      </div>
       <Collapse in={open}>
         <Alert
         className='alert-container'
         severity="info"
-        icon={<InfoIcon fontSize="inherit" />}
+        icon={<HelpIcon fontSize="inherit" />}
         action={
           <IconButton
             aria-label="close"
@@ -95,7 +140,7 @@ function App() {
         sx={{ mb: 2 }}
         >
           <AlertTitle>How to use?</AlertTitle>
-          <span>This movie search engine utilizes GenAI to input natural language queries like "movies about computer scientists made after 2000", "interracial romance", etc. Based on the sentence, it uses context-based sorting to prioritize relevant results.</span>
+          <span>This movie search app is powered by GenAI to handle natural language queries such as 'movies about computer scientists made after 2000' or 'interracial romance.' Once you provide an input sentence, the app uses a context-based sorting algorithm to prioritize relevant results.</span>
         </Alert>
       </Collapse>
 
@@ -111,7 +156,7 @@ function App() {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder='Enter your prompt to search movies (Examples: "sad movies with animals", "scary pandemic", "aliens on mars")'
+            placeholder='Enter a prompt to search for movies'
             inputProps={{ 'aria-label': 'search movies' }}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -122,33 +167,111 @@ function App() {
         </Paper>
       </div>
 
+      {((isFilterLoading || (movieData != null && movieData.length > 0)) && searchInput !== '') && (
       <Accordion className='accordion-container'>
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
           aria-controls="panel2-content"
           id="panel2-header"
         >
-        <span className='accordion-label'>
-          <Oval
-          visible={true}
-          height="20"
-          width="20"
-          color="black"
-          secondaryColor="gray"
-          ariaLabel="oval-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-          strokeWidth={5}
-          />
-          Filter is being generated beased on the provided text...
-        </span>
+        {isFilterLoading ? (
+          <span className='accordion-label'>
+            <Oval
+              visible={true}
+              height="20"
+              width="20"
+              color="black"
+              secondaryColor="gray"
+              ariaLabel="oval-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              strokeWidth={5}
+            />
+            Filter is being generated based on the provided text...
+          </span>
+        ) : (
+          <span className='accordion-label'>
+            <CheckCircleIcon/> 
+            Filter has been generated based on your text!
+          </span>
+        )}
         </AccordionSummary>
         <AccordionDetails>
-          <span>Loading...</span>
+          {(!isFilterLoading && filterData) ? (
+            <Alert
+            className='alert-container filter-list'
+            severity="info"
+            sx={{ mb: 2 }}
+            >
+              {checkValues(filterData) ? (<p>The following filters have been generated based on your text:</p>) : (<p>The sentence you provided contained only keywords so it performed a semantic search.</p>)}
+              {checkValues(filterData) && (<p>Original sentence: {filterData['query']}</p>)}
+              {filterData['date']['condition'] !== '' && (
+                  filterData['date']['condition'] === 'after' ? (
+                      <p>Date: after {formatDate(filterData['date']['value_1'])}</p>
+                  ) : (
+                      filterData['date']['condition'] === 'before' ? (
+                          <p>Date: before {formatDate(filterData['date']['value_1'])}</p>
+                      ) : (
+                        filterData['date']['condition'] === 'between' && (
+                          <p>Date: between {formatDate(filterData['date']['value_1'])} and {formatDate(filterData['date']['value_2'])}</p>
+                        )
+                      )
+                  )
+              )}
+              {filterData['budget']['condition'] !== '' && (
+                  filterData['budget']['condition'] === 'greater_than' ? (
+                      <p>Budget: over ${filterData['budget']['value_1']}</p>
+                  ) : (
+                      filterData['budget']['condition'] === 'less_than' ? (
+                          <p>Budget: less than ${filterData['budget']['value_1']}</p>
+                      ) : (
+                          <p>Budget: Between ${filterData['budget']['value_1']} and ${filterData['budget']['value_2']}</p>
+                      )
+                  )
+              )}
+              {filterData['revenue']['condition'] !== '' && (
+                  filterData['revenue']['condition'] === 'greater_than' ? (
+                      <p>Revenue: over ${filterData['revenue']['value_1']}</p>
+                  ) : (
+                      filterData['revenue']['condition'] === 'less_than' ? (
+                          <p>Revenue: less than ${filterData['revenue']['value_1']}</p>
+                      ) : (
+                          <p>Revenue: Between ${filterData['revenue']['value_1']} and ${filterData['revenue']['value_2']}</p>
+                      )
+                  )
+              )}
+              {filterData['rating']['condition'] !== '' && (
+                  filterData['rating']['condition'] === 'greater_than' ? (
+                      <p>IMDb Rating: over ${filterData['rating']['value_1']}</p>
+                  ) : (
+                      filterData['rating']['condition'] === 'less_than' ? (
+                          <p>IMDb Rating: less than ${filterData['rating']['value_1']}</p>
+                      ) : (
+                          <p>IMDb Rating: Between ${filterData['rating']['value_1']} and ${filterData['rating']['value_2']}</p>
+                      )
+                  )
+              )}
+              {filterData['runtime']['condition'] !== '' && (
+                  filterData['runtime']['condition'] === 'greater_than' ? (
+                      <p>Runtime: over ${filterData['runtime']['value_1']}</p>
+                  ) : (
+                      filterData['runtime']['condition'] === 'less_than' ? (
+                          <p>Runtime: less than ${filterData['runtime']['value_1']}</p>
+                      ) : (
+                          <p>Runtime: between ${filterData['runtime']['value_1']} and ${filterData['runtime']['value_2']}</p>
+                      )
+                  )
+              )}
+              {filterData['genres'] !== '' && (<p>Genre: {filterData['genres']}</p>)}
+              {filterData['language'] !== '' && (<p>Language: {filterData['language']}</p>)}
+              {filterData['sentiment'] !== '' && (<p>Sentiment: {filterData['sentiment']}</p>)}
+            </Alert>
+          ) : (<span>Loading...</span>)}
         </AccordionDetails>
       </Accordion>
+      )}
 
-      {isLoading && (
+      {isFilterLoading && (
         <FadeIn transitionDuration={500}>
           <div className='loading'>
             <ThreeDots
@@ -187,6 +310,7 @@ function App() {
           </Grid>
         </Grid>
       </Grid>
+
     </FadeIn>
   );
 }

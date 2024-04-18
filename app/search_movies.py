@@ -8,7 +8,6 @@ import os
 from qdrant_client import models, QdrantClient
 from qdrant_client.http import models as rest
 from qdrant_client.http.models import Record
-import string
 
 load_dotenv(find_dotenv())
 client = OpenAI(
@@ -69,9 +68,9 @@ def parse_user_query(user_query):
         {{
             "query": "{user_query}",
             "date": {{
-                "value_1": "format this feild as the following format: 2005-02-08T10:49:00Z",
-                "value_2": "format this feild as the following format: 2005-02-08T10:49:00Z (only fill in this value when the condition is between)",
-                "condition": "one of the following: before, after, between"
+                "value_1": "If not specified, leave empty. You have to fill out this field if 'condition' value is not empty. format this feild as the following format: 2005-02-08T10:49:00Z",
+                "value_2": "format this feild as the following format: 2005-02-08T10:49:00Z (only fill in this value when the 'condition' value is between)",
+                "condition": "one of the following: before, after, between. If not specified, leave empty. If you fill out this field, you must also fill out the 'value_1 date' field."
             }},
             "genres":  "one of the values from the following list '{genres}'. If not specified, leave empty.",
             "runtime": {{
