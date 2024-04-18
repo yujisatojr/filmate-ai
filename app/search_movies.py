@@ -68,9 +68,9 @@ def parse_user_query(user_query):
         {{
             "query": "{user_query}",
             "date": {{
-                "date_1": "You have to fill out this field if 'condition' value is not empty. Format this field as the following format: 2005-02-08T10:49:00Z. If not specified in the user query, leave the field empty.",
+                "date_1": "Please fill out this field if 'condition' value is not empty. Format this field as the following format: 2005-02-08T10:49:00Z. If not specified in the user query, leave the field empty.",
                 "date_2": "Format this field as the following format: 2005-02-08T10:49:00Z. Only fill in this value when the 'condition' value is between. If not specified in the user query, leave the field empty.",
-                "condition": "Fill in one of the following: before, after, between (if applicable). If this field is applicable, you must also fill out the 'date_1' field. If not specified in the user query, leave the field empty."
+                "condition": "Fill in one of the following: before, after, between (only if applicable). If this field is applicable, you must also fill out the 'date_1' field. If not specified in the user query, leave the field empty."
             }},
             "genres": "One of the values from the following list '{genres}', only if applicable. If not specified in the user query, leave the field empty.",
             "runtime": {{
@@ -178,7 +178,7 @@ def create_filter(parsed_query):
             )
         ))
     
-    if date_condition is not None and date_condition != '':
+    if date_condition is not None and date_condition != '' and date_value_1 != '':
         if date_condition == 'after':
             filter_conditions.append(models.FieldCondition(
                 key="date",
@@ -202,7 +202,7 @@ def create_filter(parsed_query):
                 )
             ))
 
-    if runtime_condition is not None and runtime_condition != '':
+    if runtime_condition is not None and runtime_condition != '' and runtime_value_1 != '':
         if runtime_condition == 'greater_than':
             filter_conditions.append(models.FieldCondition(
                 key="runtime",
@@ -226,7 +226,7 @@ def create_filter(parsed_query):
                 )
             ))
 
-    if rating_condition is not None and rating_condition != '':
+    if rating_condition is not None and rating_condition != '' and rating_value_1 != '':
         filter_conditions.append(models.FieldCondition(
             key="votes",
             range=models.Range(
@@ -257,7 +257,7 @@ def create_filter(parsed_query):
                 )
             ))
 
-    if budget_condition is not None and budget_condition != '':
+    if budget_condition is not None and budget_condition != '' and budget_value_1 != '':
         if budget_condition == 'greater_than':
             filter_conditions.append(models.FieldCondition(
                 key="budget",
@@ -281,7 +281,7 @@ def create_filter(parsed_query):
                 )
             ))
 
-    if revenue_condition is not None and revenue_condition != '':
+    if revenue_condition is not None and revenue_condition != '' and revenue_value_1 != '':
         if revenue_condition == 'greater_than':
             filter_conditions.append(models.FieldCondition(
                 key="revenue",

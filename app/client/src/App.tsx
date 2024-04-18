@@ -42,6 +42,7 @@ function App() {
 
   const [isFilterLoading, setIsFilterLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [initRequest, setInitRequest] = useState<boolean>(false);
 
   const handleSearchSubmit = async () => {
     setIsFilterLoading(true);
@@ -142,7 +143,7 @@ function App() {
         sx={{ mb: 2 }}
         >
           <AlertTitle>How to use?</AlertTitle>
-          <span>This movie search app is powered by GenAI to handle natural language queries such as 'movies about computer scientists made after 2000' or 'interracial romance.' Once you provide an input sentence, the app uses a context-based sorting algorithm to prioritize relevant results.</span>
+          <span>This movie search app is powered by GenAI to handle natural language queries such as 'movies about computer scientists created after 2000' or 'happy romance after 2000 made more than 60000 dollars'. Once you provide an input sentence, the app uses a context-based sorting algorithm to prioritize relevant results.</span>
         </Alert>
       </Collapse>
 
@@ -153,6 +154,7 @@ function App() {
           sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
           onSubmit={(e) => {
             e.preventDefault();
+            setInitRequest(true);
             handleSearchSubmit();
           }}
         >
@@ -169,7 +171,7 @@ function App() {
         </Paper>
       </div>
 
-      {((isFilterLoading || (movieData != null && movieData.length > 0)) && searchInput !== '') && (
+      {((isFilterLoading || (movieData != null && movieData.length > 0)) && initRequest !== false) && (
       <Accordion className='accordion-container'>
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
@@ -207,7 +209,7 @@ function App() {
             >
               {checkValues(filterData) ? (<p>The following filters have been generated based on your text:</p>) : (<p>The sentence you provided contained only keywords so it performed a semantic search.</p>)}
               {checkValues(filterData) && (<p>Original sentence: {filterData['query']}</p>)}
-              {filterData['date']['condition'] !== '' && (
+              {(filterData['date']['condition'] !== '' && filterData['date']['date_1'] !== '') && (
                   filterData['date']['condition'] === 'after' ? (
                       <p>Date: after {formatDate(filterData['date']['date_1'])}</p>
                   ) : (
