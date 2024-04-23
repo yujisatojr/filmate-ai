@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
-from search_movies import parse_user_query, search_movies_in_qdrant
+from search_movies import parse_user_query, search_movies_in_qdrant, search_similar_in_qdrant
 import logging
 
 # app = Flask(__name__, static_folder='client/build', static_url_path='')
@@ -39,6 +39,21 @@ def get_movie_list():
             return jsonify({'error': 'No JSON data received.'}), 400
         
         response = search_movies_in_qdrant(json_body)
+
+        if response is not None:
+            return jsonify(response), 200
+        else:
+            return jsonify({'error': 'Unable to fetch movie data.'}), 500
+    except Exception as e:
+        logging.error(f'Error processing search request: {e}')
+        return jsonify({'error': str(e)}), 400
+    
+@app.route('/similarity_search')
+def get_similar_movies():
+    try:
+        metadata = request.args.get('metadata')
+        
+        response = search_similar_in_qdrant(metadata)
 
         if response is not None:
             return jsonify(response), 200

@@ -1,6 +1,20 @@
+.navi-bar {
+  position: fixed !important;
+  top: 0 !important;
+  width: 100% !important;
+  z-index: 2 !important;
+  background-color: #1C1C1C !important;
+
+  button {
+    text-transform: none;
+    font-family: "Lato", sans-serif;
+  }
+}
+
 .movie_app_root {
-  margin-left: 15%;
-  margin-right: 15%;
+  margin-top: 80px;
+  margin-left: 25px;
+  margin-right: 25px;
   font-weight: 400;
   font-style: normal;
   min-height: 750px;
@@ -39,6 +53,10 @@
   }
 }
 
+.right_container {
+  margin-top: 15px !important;
+}
+
 .search_form_wrapper {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -49,11 +67,12 @@
   position: 'relative';
 
   form div {
-    color: white !important;
+    color: #B9BDCB !important;
+    height: 56px !important;
   }
 
   svg {
-    color: white;
+    color: #B9BDCB;
   }
 }
 
@@ -78,6 +97,23 @@ input {
       margin-block-end: 0px;
     }
   }
+}
+
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+  font-family: "Lato", sans-serif !important;
+}
+
+.dropdown_form, .css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  background-color: #303134 !important;
+  color: #B9BDCB !important;
+  
+  label, div {
+    color: #B9BDCB;
+  }
+}
+
+.margin_top {
+  margin-top: 15px !important;
 }
 
 .movie_img img {
@@ -108,9 +144,13 @@ input {
   margin-bottom: 15px;
 }
 
+input {
+  font-family: "Lato", sans-serif !important;
+}
+
 .alert_container {
-  background-color: #F4F6F9 !important;
-  font-family: "Montserrat", sans-serif !important;
+  background-color: #3a3b3f !important;
+  font-family: "Lato", sans-serif !important;
 
   svg {
     color: gray;
@@ -125,6 +165,7 @@ input {
 
   span, p {
     font-size: 1rem !important;
+    font-family: "Lato", sans-serif !important;
   }
 
   .instruction {
@@ -139,13 +180,25 @@ input {
 }
 
 .accordion_container {
+  background-color: #303134 !important;
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.1) !important;
   margin-bottom: 15px !important;
+
+  label, div {
+    color: #B9BDCB !important;
+  }
+
+  span {
+    color: #B9BDCB !important;
+  }
 
   .accordion_label {
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #B9BDCB;
 
     svg {
       fill: green;
@@ -167,26 +220,85 @@ input {
 
       h1 {
         margin-block-end: 0px !important;
+
+        span {
+          font-weight: normal;
+        }
       }
 
       svg {
         font-size: 2rem;
         vertical-align: middle;
         padding: 10px;
-        color: white;
+        color: #B9BDCB;
         cursor: pointer;
       }
     }
 
     h1, h2, p {
-      color: white;
+      color: #B9BDCB;
       margin-block-start: 0px !important;
+    }
+
+    h3 {
+      color: #B9BDCB;
+      margin-block-start: 0px !important;
+      margin-block-end: 10px !important;
     }
 
     p {
       margin-block-end: 0.5em !important;
     }
+
+    hr {
+      margin-bottom: 15px;
+      border-color: #B9BDCB;
+    }
+
+    .detail_section {
+      display: flex;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .flex_section {
+      display: flex;
+      // justify-content: space-between;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .sub_section {
+      margin-right: 50px;
+    }
   }
+}
+
+.very_low .MuiRating-iconFilled {
+  color: #ff6d75 !important;
+}
+.low .MuiRating-iconFilled {
+  color: #ff9b9b !important;
+}
+
+.neutral .MuiRating-iconFilled {
+  color: #ffcc80 !important;
+}
+
+.high .MuiRating-iconFilled {
+  color: #a8e6cf !important;
+}
+
+.very_high .MuiRating-iconFilled {
+  color: #7fdbda !important;
+}
+
+.MuiRating-iconEmpty svg {
+  color: #B9BDCB;
+}
+
+h1, h2, h3 {
+  color: white !important;
 }
 
 .footer {

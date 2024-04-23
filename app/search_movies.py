@@ -222,6 +222,26 @@ def create_filter(parsed_query):
 
     return filter_conditions
 
+def search_qdrant(metadata, collection_name, vector_name, top_k=5):
+    
+    completion = openai.embeddings.create(
+        input=metadata,
+        model='text-embedding-3-small'  # Be sure to use the same embedding model as the vectors in the collection
+    )
+    
+    embedded_query = completion.data[0].embedding
+
+    query_results = qdrant_client.search(
+        collection_name=collection_name,
+        search_params=models.SearchParams(hnsw_ef=128, exact=False),
+        query_vector=(
+            vector_name, embedded_query
+        ),
+        limit=top_k,
+    )
+    
+    return query_results
+
 def search_filtered_vector(parsed_query, collection_name, vector_name, top_k=12):
 
     filter_conditions = create_filter(parsed_query)
@@ -302,6 +322,33 @@ def search_movies_in_qdrant(parsed_query):
             "rating": vector.payload["rating"],
             "votes": int(vector.payload["votes"]),
             "sentiment": vector.payload["sentiment"],
+            "metadata": vector.payload["metadata"],
+            "img": vector.payload["img"]
+        }
+        results.append(tmp)
+
+    return (json.loads(json.dumps(results)))
+
+# Search for similar movies
+def search_similar_in_qdrant(metadata):
+
+    query_results = search_qdrant(metadata, collection_name, vector_name)
+
+    results = []
+    
+    for i, vector in enumerate(query_results):
+        tmp = {
+            "rank": i,
+            "title": vector.payload["title"],
+            "summary": vector.payload["summary"],
+            "year": vector.payload["year"],
+            "certificate": vector.payload["certificate"],
+            "genre": vector.payload["genre"],
+            "runtime": vector.payload["runtime"],
+            "rating": vector.payload["rating"],
+            "votes": int(vector.payload["votes"]),
+            "sentiment": vector.payload["sentiment"],
+            "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
         results.append(tmp)
