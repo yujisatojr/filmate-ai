@@ -4,8 +4,9 @@ import FadeIn from 'react-fade-in';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Oval, ThreeDots } from 'react-loader-spinner'
-import { TypeAnimation } from 'react-type-animation';
+import ReactPlayer from 'react-player'
 import { styled } from '@mui/material/styles';
+import { TypeAnimation } from 'react-type-animation';
 import './App.scss';
 
 // Import MUI components
@@ -44,6 +45,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 // Import icons
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import HelpIcon from '@mui/icons-material/Help';
@@ -80,14 +82,19 @@ function App() {
   const [movieData, setMovieData] = useState<any>(null);
   const [movieDetail, setMovieDetail] = useState<any>(null);
   const [similarMoviesData, setSimilarMoviesData] = useState<any>(null);
+  const [castsData, setCastsData] = useState<any>(null);
+  const [newsData, setNewsData] = useState<any>(null);
+  const [trailerData, setTrailerData] = useState<any>(null);
   // const [segment, setSegments] = useState<any>([]);
 
-  console.log(similarMoviesData)
+  // console.log(similarMoviesData)
 
   const [isFilterLoading, setIsFilterLoading] = useState<boolean>(false);
   const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [clicked, setClicked] = useState<boolean>(false);
+  const [trailerError, setTrailerError] = useState<boolean>(false);
+  console.log(trailerError)
   // const [initRequest, setInitRequest] = useState<boolean>(false);
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -154,6 +161,72 @@ function App() {
   const handleClick = (movie: any) => {
     setMovieDetail(movie);
     setClicked(true);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/generate_casts?title=${movieDetail.title}`);
+        if (response.ok) {
+          const data = await response.json();
+          setCastsData(await data);
+        } else {
+          console.error('Error fetching movie casts data');
+        }
+      } catch (error) {
+        console.error('Error fetching movie casts data:', error);
+      }
+    };
+
+    if (movieDetail !== null) {
+      fetchData();
+    }
+  }, [movieDetail]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/generate_news?title=${movieDetail.title}`);
+        if (response.ok) {
+          const data = await response.json();
+          setNewsData(await data);
+        } else {
+          console.error('Error fetching movie news data');
+        }
+      } catch (error) {
+        console.error('Error fetching movie news data:', error);
+      }
+    };
+
+    if (movieDetail !== null) {
+      fetchData();
+    }
+  }, [movieDetail]);
+
+  // console.log(newsData)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/generate_trailer?title=${movieDetail.title}`);
+        if (response.ok) {
+          const data = await response.json();
+          setTrailerData(await data);
+        } else {
+          console.error('Error fetching movie trailer data');
+        }
+      } catch (error) {
+        console.error('Error fetching movie trailer data:', error);
+      }
+    };
+
+    if (movieDetail !== null) {
+      fetchData();
+    }
+  }, [movieDetail]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
   }
 
   useEffect(() => {
@@ -224,6 +297,8 @@ function App() {
 
   // console.log(filterData);
   // console.log(movieData);
+
+  // console.log(trailerData)
 
   return (
   <>
@@ -367,7 +442,10 @@ function App() {
                   placeholder='Search with natural language query'
                   inputProps={{ 'aria-label': 'search movies' }}
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  // onChange={(e) => {
+                  //   setSearchInput(e.target.value)
+                  // }}
+                  onChange={handleInputChange}
                 />
                 <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
                   <SearchIcon />
@@ -677,9 +755,35 @@ function App() {
                               style={{ color: 'blue' }}
                               readOnly
                             />
-                            <p>{convertToRating(movieDetail.sentiment)}/5 (Low: Sad - High: Happy)</p>
+                            <p>{convertToRating(movieDetail.sentiment)}/5</p>
                           </div>
                         </div>
+
+                        {(trailerData && !trailerError) ? (
+                          <ReactPlayer url={trailerData.trailer_url} onError={() => setTrailerError(true)}/>
+                        ) : (
+                          <ReactPlayer url='https://youtu.be/dQw4w9WgXcQ?si=hJge3e8INVEqXkvK'/>
+                        )}
+
+                        {castsData && castsData.director !== 'Unknown' && castsData.director !== '' ? (
+                          <div className='padding-bottom'>
+                            <h3>Top Crew</h3>
+                            <p>Director: {castsData.director}</p>
+                            <p>Writer: {castsData.writer}</p>
+                            <p>Main Casts: {castsData.main_cast_1 !== '' && castsData.main_cast_1} | {castsData.main_cast_2 !== '' && castsData.main_cast_2} | {castsData.main_cast_3 !== '' && castsData.main_cast_3}</p>
+                          </div>
+                        ) : (
+                          <Skeleton variant="rounded" width="100%" height={150} style={{marginBottom: '15px'}} />
+                        )}
+
+                        {newsData && newsData.headline_1 !== '' && (
+                          <div className='movie_news padding-bottom'>
+                            <h3>Related News</h3>
+                            <p><ArrowRightIcon/> {newsData.headline_1}</p>
+                            <p><ArrowRightIcon/> {newsData.headline_2}</p>
+                            <p><ArrowRightIcon/> {newsData.headline_3}</p>
+                          </div>
+                        )}
 
                         {!isSimilarLoading ? (
                           <>
@@ -692,7 +796,7 @@ function App() {
                                   <LazyLoadImage
                                   className='image_fill'
                                   alt={movie.title}
-                                  src={movie.img} // use normal <img> attributes as props
+                                  src={movie.img}
                                   />
                                 </div>
                               </FadeIn>

@@ -97,6 +97,132 @@ def parse_user_query(user_query):
     )
     return json.loads(stream.choices[0].message.content)
 
+# def get_movie_news(movie_title):
+
+#     prompt_template = f"""
+#         Your task is to provide up to 3 related news article information about this movie: {movie_title} in the JSON format. 
+#         Within the JSON template, headline represents the brief, one sentence summarization of the news articles, and source is the valid URL link to the article online.
+#         Below is the JSON template:
+#         {{
+#             "headline": "Jordan Peele Reveals Poster and Killer Cast for New Horror Flick",
+#             "source": "https://screenrant.com/godzilla-x-kong-monsterverse-sequel-updates/",
+#         }}
+#     """
+
+#     print(prompt_template)
+
+#     messages = [{
+#             "role": "system",
+#             "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
+#         },
+#         {
+#             "role": "user",
+#             "content": prompt_template
+#         }
+#     ]
+
+#     print(messages)
+
+#     stream = client.chat.completions.create(
+#         model="gpt-3.5-turbo-0125",
+#         messages=messages,
+#         max_tokens=100,
+#         temperature=0.5,
+#         frequency_penalty=0,
+#         presence_penalty=0,
+#         response_format={ "type": "json_object" }
+#     )
+#     return json.loads(stream.choices[0].message.content)
+
+def get_movie_news(movie_title):
+
+    prompt_template = f"""
+        Your task is to provide 3 related news article information about this movie: {movie_title} in the JSON format. Within the JSON template, headline represents the brief, one sentence summarization of the news articles. Make each sentence around 25 words long.
+        {{
+            "headline_1": "Christopher Nolan's Mind-Bending Thriller 'Inception' Turns 10: Celebrating a Decade of Dreams Within Dreams",
+            "headline_2": "Exploring the Legacy: How 'Inception' Revolutionized the Science Fiction Genre and Inspired Filmmakers Worldwide",
+            "headline_3": "Unraveling the Mysteries: Fans and Theorists Still Debate the Ambiguous Ending of 'Inception' 10 Years Later",
+        }}
+    """
+
+    messages = [{
+            "role": "system",
+            "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
+        },
+        {
+            "role": "user",
+            "content": prompt_template
+        }
+    ]
+
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo-0125",
+        messages=messages,
+        max_tokens=250,
+        temperature=0.5,
+        frequency_penalty=0,
+        presence_penalty=0,
+        response_format={ "type": "json_object" }
+    )
+    return json.loads(stream.choices[0].message.content)
+
+def get_movie_trailer(movie_title):
+
+    messages = [{
+            "role": "system",
+            "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
+        },
+        {
+            "role": "user",
+            "content": f"Provide me an URL link to the official trailer of the following movie from YouTube: '{movie_title}'. If the video does not exist on YouTube, return an empty string."
+        }
+    ]
+
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo-0125",
+        messages=messages,
+        max_tokens=100,
+        temperature=0.5,
+        frequency_penalty=0,
+        presence_penalty=0,
+        response_format={ "type": "json_object" }
+    )
+    return json.loads(stream.choices[0].message.content)
+
+def get_movie_casts(movie_title):
+
+    prompt_template = f"""
+        Your task is to provide up to 5 main cast names of this movie: '{movie_title}' in the following JSON format. If the name is unknown, leave the field empty. The response has to include director, writer, and three top casts/crews.
+        {{
+            "director": "Quentin Tarantino",
+            "writer": "Quentin Tarantino",
+            "main_cast_1": "Jamie Foxx",
+            "main_cast_2": "Christoph Waltz",
+            "main_cast_2": "Leonardo DiCaprio",
+        }}
+    """
+
+    messages = [{
+            "role": "system",
+            "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
+        },
+        {
+            "role": "user",
+            "content": prompt_template
+        }
+    ]
+
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo-0125",
+        messages=messages,
+        max_tokens=100,
+        temperature=0.5,
+        frequency_penalty=0,
+        presence_penalty=0,
+        response_format={ "type": "json_object" }
+    )
+    return json.loads(stream.choices[0].message.content)
+
 def create_filter(parsed_query):
 
     print('FILTER GENERATED')
