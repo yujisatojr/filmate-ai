@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import FadeIn from 'react-fade-in';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Oval, ThreeDots } from 'react-loader-spinner'
 import { TypeAnimation } from 'react-type-animation';
 import { styled } from '@mui/material/styles';
@@ -160,6 +162,7 @@ function App() {
             }}
           >
             <InputBase
+              className='input_form'
               sx={{ ml: 1, flex: 1 }}
               placeholder='Enter your sentence'
               inputProps={{ 'aria-label': 'search movies' }}
@@ -247,17 +250,22 @@ function App() {
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <Grid container spacing={2}>
                 {movieData && movieData.map((movie: any, index: number) => (
-                  <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={index}>
+                  <Grid item xs={12} sm={12} md={3} lg={3} xl={3} key={index}>
                     <FadeIn transitionDuration={700} key={index}>
                       <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
-                        <img
+                        <LazyLoadImage
+                        className='image_fill'
+                        alt={movie.title}
+                        src={movie.img} // use normal <img> attributes as props
+                        />
+                        {/* <img
                         className='image-fill'
                         src={movie.img}
                         alt={movie.title}
                         onError={({ currentTarget }) => {
                           currentTarget.onerror = null; // prevents looping
                         }}
-                        />
+                        /> */}
                       </div>
                     </FadeIn>
                   </Grid>
@@ -275,14 +283,19 @@ function App() {
               <Item className='movie_detail_card'>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                    <img
+                    <LazyLoadImage
+                    className='image_fill'
+                    alt={movieDetail.title}
+                    src={movieDetail.img} // use normal <img> attributes as props
+                    />
+                    {/* <img
                     className='image_fill'
                     src={movieDetail.img}
                     alt={movieDetail.title}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null; // prevents looping
                     }}
-                    />
+                    /> */}
                   </Grid>
                   <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
                     <div className='right_header'><h1>{movieDetail.title}</h1><CloseIcon fontSize="inherit" onClick={() => setClicked(false)}/></div>

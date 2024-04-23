@@ -27,7 +27,7 @@ print(qdrant_client.get_collections())
 qdrant_client.count(collection_name=collection_name)
 
 # Generate a query embedding and search in Qdrant
-def query_qdrant(query, collection_name, vector_name, top_k=15):
+def query_qdrant(query, collection_name, vector_name, top_k=12):
     # Creates embedding vector from user query
     completion = openai.embeddings.create(
         input=query,
@@ -130,6 +130,18 @@ def create_filter(parsed_query):
                 gte=2024,
             )
         ))
+        # filter_conditions.append(models.FieldCondition(
+        #         key="rating",
+        #         range=models.Range(
+        #             gte=7,
+        #         )
+        #     ))
+        # filter_conditions.append(models.FieldCondition(
+        #         key="votes",
+        #         range=models.Range(
+        #             gte=150000,
+        #         )
+        #     ))
     
     if year_condition is not None and year_condition != '' and year_value_1 != '':
         if year_condition == 'after':
@@ -210,7 +222,7 @@ def create_filter(parsed_query):
 
     return filter_conditions
 
-def search_filtered_vector(parsed_query, collection_name, vector_name, top_k=15):
+def search_filtered_vector(parsed_query, collection_name, vector_name, top_k=12):
 
     filter_conditions = create_filter(parsed_query)
 
