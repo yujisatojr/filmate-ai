@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Home from './components/Home';
+import Logo from './assets/images/logo.png';
 import './App.scss';
 
 // Import MUI components
@@ -58,7 +59,7 @@ function App() {
               textDecoration: 'none',
             }}
           >
-            FILMATE
+            <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -113,7 +114,7 @@ function App() {
               textDecoration: 'none',
             }}
           >
-            FILMATE
+            <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
