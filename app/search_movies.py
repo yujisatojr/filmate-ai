@@ -58,7 +58,7 @@ def parse_user_query(user_query):
         "year": This field represents the release year of the movie. You also need to provide the condition to indicate if the user wants to query a movie before, after, or between specific range of year(s). If any of these values are provided in the query, format it as follows: YYYY. If not specified in the user query, leave the field empty.
         "rating": The rating should be an integer value representing the movie's rating. The rating should be between 1 to 9, but when the user says high rating or higher rating, it means the rating is greater than 8. You also need to provide the condition to indicate if the user wants to query a movie greater than, less than, or between specific range of rating(s). If not specified in the user query, leave the field empty.
         "sentiment": This represents the sentiment of the movie. If the user mentions a term such as 'sad', consider it as 'negative'. If terms like 'happy' is mentioned, consider it as 'positive'. If sentiment is not specified in the user query, leave it empty.
-        "insights": For this field, provide one sentence of brief insights regarding the user's keywords and one sentence of recommendations to the user (use 'you' to refer to the user) on which movies and/or directors the user might like based on the user's keywords. The entire sentence needs to have a friendly tone. If the user query is empty, please also leave this field empty.
+        "insights": For this field, provide a brief, ~70 word sentence(s) on which movies, directors, and/or actors/actresses the user might like based on the user's query.  Use 'you' to refer to the user. The entire sentence needs to have a friendly tone and avoid fluff. Do not use words like 'delve' or 'dive into'. If the user query is empty, please leave this field empty.
         Below is the JSON template:
         {{
             "query": "{user_query}",
@@ -73,7 +73,7 @@ def parse_user_query(user_query):
                 "condition": "Fill in one of the following: greater_than, less_than, between (if applicable). If this field is applicable, you must also fill out the 'rating_1' field. If not specified in the user query, leave the field empty."
             }},
             "sentiment": "If the user mentions terms such as 'sad' or 'bad', consider it as 'negative'. If terms such as 'happy' or 'good' are mentioned, consider it as 'positive'. If sentiment is not specified in the user query, leave it empty.",
-            "insights": "Movies about space adventure offer thrilling escapades into the unknown, showcasing the wonders and dangers of exploring the cosmos. You might enjoy classics like "Star Wars" directed by George Lucas or the visually stunning "Interstellar" directed by Christopher Nolan for epic space journeys that will leave you awe-inspired."
+            "insights": "If you're into sea-themed adventures, you might enjoy movies like "Pirates of the Caribbean" or "The Life Aquatic with Steve Zissou" for a quirky deep-sea exploration. Directors like James Cameron, known for "Titanic" and "The Abyss," or Steven Spielberg's "Jaws" could also float your boat."
         }}
     """
 

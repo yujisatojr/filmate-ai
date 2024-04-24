@@ -164,6 +164,9 @@ input {
 }
   
 .filter_list {
+	padding-left: 0px !important;
+    padding-right: 7px !important;
+
     svg {
 		display: none;
     }
@@ -194,6 +197,12 @@ input {
 			fill: green;
 		}
     }
+}
+
+.accordion_details_container {
+	padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-bottom: 0px !important;
 }
   
 .movie_detail_card {

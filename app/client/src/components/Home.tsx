@@ -134,6 +134,9 @@ function Home() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	console.log(filterData)
+	// console.log(searchInput)
+
   	return (
 	<div className='movie_app_root'>
 		<FadeIn transitionDuration={700}>
@@ -162,6 +165,7 @@ function Home() {
 							</IconButton>
 						</Paper>
 					</div>
+
 					<Accordion className='accordion_container'>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
@@ -169,46 +173,60 @@ function Home() {
 						id="panel2-header"
 						>
 						{isFilterLoading ? (
-						<span className='accordion_label'>
-							<Oval
-							visible={true}
-							height="20"
-							width="20"
-							color="black"
-							secondaryColor="gray"
-							ariaLabel="oval-loading"
-							wrapperStyle={{}}
-							wrapperClass=""
-							strokeWidth={5}
-							/>
-							Generating recommends based on input...
-						</span>
+							<span className='accordion_label'>
+								<Oval
+								visible={true}
+								height="20"
+								width="20"
+								color="black"
+								secondaryColor="gray"
+								ariaLabel="oval-loading"
+								wrapperStyle={{}}
+								wrapperClass=""
+								strokeWidth={5}
+								/>
+								Generating recommends based on input...
+							</span>
 						) : (
-						<span className='accordion_label'>
-							<CheckCircleIcon/> 
-							Finished generating recommends!
-						</span>
+							<span className='accordion_label'>
+								{filterData && filterData['insights'] !== '' ? (
+								<><CheckCircleIcon/> Finished generating recommends!</>
+								) : (
+								<><CheckCircleIcon/> No user query found!</>
+								)}
+							</span>
 						)}
 						</AccordionSummary>
-						<AccordionDetails>
-						{(!isFilterLoading && filterData) ? (
-						<Alert
-						className='alert_container filter_list'
-						severity="info"
-						sx={{ mb: 2 }}
-						>
-							<TypeAnimation
-							sequence={[
-								`${filterData['sentiment'] === 'positive' ? 'The search results have been tailored to include only movies that align with the positive emotions based on your input.\n' : ''}
-								${filterData['sentiment'] === 'negative' ? 'The search results have been tailored to include only movies that align with the negative emotions based on your input.\n': ''}
-								${filterData['insights'] !== '' ? filterData['insights'] : ''}`,
-							]}
-							speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
-							style={{ fontSize: '1em', display: 'block'}}
-							cursor={false}
-							/>
-						</Alert>
-						) : (<span>Loading...</span>)}
+
+						<AccordionDetails className='accordion_details_container'>
+						{(!isFilterLoading && filterData && filterData['insights'] !== '') ? (
+							<Alert
+							className='alert_container filter_list'
+							severity="info"
+							sx={{ mb: 2 }}
+							>
+								<TypeAnimation
+								sequence={[
+									`
+									${filterData['sentiment'] === 'positive' ? 'The search results have been tailored to include only movies that align with the positive emotions based on your input.\n' : ''}
+									${filterData['sentiment'] === 'negative' ? 'The search results have been tailored to include only movies that align with the negative emotions based on your input.\n': ''}
+									${filterData['insights'] !== '' ? filterData['insights'] : ''}
+									`,
+								]}
+								speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
+								style={{ fontSize: '1em', display: 'block'}}
+								cursor={false}
+								/>
+							</Alert>
+						) : (
+							<Alert
+							className='alert_container filter_list'
+							severity="info"
+							sx={{ mb: 2 }}
+							>
+								<span>Please enter your query to generate personalized movie recommendations 😎</span>
+							</Alert>
+						)}
 						</AccordionDetails>
 					</Accordion>
 
@@ -221,19 +239,19 @@ function Home() {
 						Content Rating
 						</AccordionSummary>
 						<AccordionDetails>
-						<FormControl>
-							<RadioGroup
-							row
-							aria-labelledby="radio-buttons-group-label"
-							name="row-radio-buttons-group"
-							onChange={handleCertChange}
-							defaultValue='All'
-							>
-							{certificates.map(cert => (
-								<FormControlLabel key={cert} value={cert} control={<Radio />} label={cert} />
-							))}
-							</RadioGroup>
-						</FormControl>
+							<FormControl>
+								<RadioGroup
+								row
+								aria-labelledby="radio-buttons-group-label"
+								name="row-radio-buttons-group"
+								onChange={handleCertChange}
+								defaultValue='All'
+								>
+								{certificates.map(cert => (
+									<FormControlLabel key={cert} value={cert} control={<Radio />} label={cert} />
+								))}
+								</RadioGroup>
+							</FormControl>
 						</AccordionDetails>
 					</Accordion>
 
@@ -246,19 +264,19 @@ function Home() {
 						Genre
 						</AccordionSummary>
 						<AccordionDetails>
-						<FormControl>
-							<RadioGroup
-							row
-							aria-labelledby="radio-buttons-group-label"
-							name="row-radio-buttons-group"
-							onChange={handleGenreChange}
-							defaultValue='All'
-							>
-							{genres.map(genre => (
-								<FormControlLabel key={genre} value={genre} control={<Radio />} label={genre} />
-							))}
-							</RadioGroup>
-						</FormControl>
+							<FormControl>
+								<RadioGroup
+								row
+								aria-labelledby="radio-buttons-group-label"
+								name="row-radio-buttons-group"
+								onChange={handleGenreChange}
+								defaultValue='All'
+								>
+								{genres.map(genre => (
+									<FormControlLabel key={genre} value={genre} control={<Radio />} label={genre} />
+								))}
+								</RadioGroup>
+							</FormControl>
 						</AccordionDetails>
 					</Accordion>
 
