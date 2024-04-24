@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import FadeIn from 'react-fade-in';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Oval, ThreeDots } from 'react-loader-spinner'
-import ReactPlayer from 'react-player'
+// import ReactPlayer from 'react-player'
 import { styled } from '@mui/material/styles';
 import { TypeAnimation } from 'react-type-animation';
 import './App.scss';
@@ -19,18 +17,14 @@ import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-// import Checkbox from '@mui/material/Checkbox';
 import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
+// import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// import FormGroup from '@mui/material/FormGroup';
-import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Grid';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -38,7 +32,7 @@ import Paper from '@mui/material/Paper';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Rating from '@mui/material/Rating';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 import Skeleton from '@mui/material/Skeleton';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
@@ -50,20 +44,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import HelpIcon from '@mui/icons-material/Help';
 import SearchIcon from '@mui/icons-material/Search';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-
-const pages = ['About', 'Help', 'My List'];
-const settings = ['Profile', 'Account', 'Logout'];
-
-const StyledRating = styled(Rating)({  
-  '& .MuiRating-iconFilled': {
-    color: '#ff6d75',
-  },
-});
 
 function convertToRating(sentimentScore: number) {
   // Normalize the range from -1 to 1 to 0 to 2
@@ -84,24 +65,44 @@ function App() {
   const [similarMoviesData, setSimilarMoviesData] = useState<any>(null);
   const [castsData, setCastsData] = useState<any>(null);
   const [newsData, setNewsData] = useState<any>(null);
-  const [trailerData, setTrailerData] = useState<any>(null);
-  // const [segment, setSegments] = useState<any>([]);
-
-  // console.log(similarMoviesData)
+  // const [trailerData, setTrailerData] = useState<any>(null);
+  // const [trailerError, setTrailerError] = useState<boolean>(false);
 
   const [isFilterLoading, setIsFilterLoading] = useState<boolean>(false);
   const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [clicked, setClicked] = useState<boolean>(false);
-  const [trailerError, setTrailerError] = useState<boolean>(false);
-  console.log(trailerError)
-  // const [initRequest, setInitRequest] = useState<boolean>(false);
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const [selectedGenre, setGenre] = useState('All');
   const [selectedCertificate, setCertificate] = useState('All');
+
+  const genres = [
+    'All', 'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 
+    'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 
+    'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Sports', 'Thriller', 
+    'War', 'Western'
+  ];
+
+  const certificates = [
+    'All', 'G', 'PG', 'TV-PG', 'PG-13', 'TV-14', 'R', 'TV-MA'
+  ];
+
+  const Item = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(1),
+    textAlign: 'left',
+  }));
+
+  const pages = ['About', 'Help', 'My List'];
+  const settings = ['Profile', 'Account', 'Logout'];
+
+  const StyledRating = styled(Rating)({  
+    '& .MuiRating-iconFilled': {
+      color: '#ff6d75',
+    },
+  });
 
   const handleGenreChange = (event: SelectChangeEvent) => {
     setGenre(event.target.value as string);
@@ -126,19 +127,6 @@ function App() {
     setAnchorElUser(null);
   };
 
-  const Item = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(1),
-    textAlign: 'left',
-  }));
-
-  // const truncateString = (str: string, maxLength: number) => str.length > maxLength ? str.slice(0, maxLength) : str;
-
-  // const parseString = (str: string) => {
-  //   const segmentsArray = str.split('　');
-  //   // setSegments(segmentsArray);
-  //   return segmentsArray
-  // };
-
   const handleSearchSubmit = async () => {
     setClicked(false);
     setIsFilterLoading(true);
@@ -161,7 +149,7 @@ function App() {
   const handleClick = (movie: any) => {
     setMovieDetail(movie);
     setClicked(true);
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -203,31 +191,29 @@ function App() {
     }
   }, [movieDetail]);
 
-  // console.log(newsData)
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(`/generate_trailer?title=${movieDetail.title}`);
+  //       if (response.ok) {
+  //         const data = await response.json();
+  //         setTrailerData(await data);
+  //       } else {
+  //         console.error('Error fetching movie trailer data');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching movie trailer data:', error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/generate_trailer?title=${movieDetail.title}`);
-        if (response.ok) {
-          const data = await response.json();
-          setTrailerData(await data);
-        } else {
-          console.error('Error fetching movie trailer data');
-        }
-      } catch (error) {
-        console.error('Error fetching movie trailer data:', error);
-      }
-    };
-
-    if (movieDetail !== null) {
-      fetchData();
-    }
-  }, [movieDetail]);
+  //   if (movieDetail !== null) {
+  //     fetchData();
+  //   }
+  // }, [movieDetail]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
-  }
+  };
 
   useEffect(() => {
     setIsSimilarLoading(true);
@@ -275,7 +261,7 @@ function App() {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth' // Smooth scrolling animation
+      behavior: 'smooth'
     });
   }, [clicked]);
 
@@ -283,22 +269,6 @@ function App() {
     handleSearchSubmit();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const genres = [
-    'All', 'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 
-    'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 
-    'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Sports', 'Thriller', 
-    'War', 'Western'
-  ];
-
-  const certificates = [
-    'All', 'G', 'PG', 'TV-PG', 'PG-13', 'TV-14', 'R', 'TV-MA'
-  ]
-
-  // console.log(filterData);
-  // console.log(movieData);
-
-  // console.log(trailerData)
 
   return (
   <>
@@ -603,35 +573,6 @@ function App() {
                 
               </AccordionDetails>
             </Accordion>
-
-            {/* <FormControl fullWidth className='dropdown_form'>
-              <InputLabel id="simple-select-label">Genre</InputLabel>
-              <Select
-                labelId="simple-select-label"
-                id="simple-select"
-                value={genre}
-                label="Genre"
-                onChange={handleGenreChange}
-              >
-                {genres.map(genre => (
-                    <MenuItem key={genre} value={genre}>{genre}</MenuItem>
-                ))}
-              </Select>
-            </FormControl> */}
-            {/* <FormControl fullWidth className='dropdown_form margin_top'>
-              <InputLabel id="simple-select-label">Content Rating</InputLabel>
-              <Select
-                labelId="simple-select-label"
-                id="simple-select"
-                value={selectedCertificate}
-                label="Certificate"
-                onChange={handleCertChange}
-              >
-                {certificates.map(certificate => (
-                    <MenuItem key={certificate} value={selectedCertificate}>{certificate}</MenuItem>
-                ))}
-              </Select>
-            </FormControl> */}
           </Grid>
           
           <Grid className='right_container' item xs={12} sm={12} md={8.5} lg={8.5} xl={8.5}>
@@ -689,7 +630,7 @@ function App() {
                       <Grid item xs={12} sm={12} md={3} lg={3} xl={3} key={index}>
                         <FadeIn transitionDuration={700} key={index}>
                           <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
-                            <LazyLoadImage
+                            <img
                             className='image_fill'
                             alt={movie.title}
                             src={movie.img} // use normal <img> attributes as props
@@ -711,10 +652,10 @@ function App() {
                   <Item className='movie_detail_card'>
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                        <LazyLoadImage
+                        <img
                         className='image_fill'
                         alt={movieDetail.title}
-                        src={movieDetail.img} // use normal <img> attributes as props
+                        src={movieDetail.img}
                         />
                       </Grid>
                       <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
@@ -759,11 +700,14 @@ function App() {
                           </div>
                         </div>
 
-                        {(trailerData && !trailerError) ? (
-                          <ReactPlayer url={trailerData.trailer_url} onError={() => setTrailerError(true)}/>
+                        {/* {(trailerData && !trailerError) ? (
+                          <ReactPlayer url={trailerData.url} onError={(e) => {
+                            e.preventDefault()
+                            setTrailerError(true)
+                          }}/>
                         ) : (
                           <ReactPlayer url='https://youtu.be/dQw4w9WgXcQ?si=hJge3e8INVEqXkvK'/>
-                        )}
+                        )} */}
 
                         {castsData && castsData.director !== 'Unknown' && castsData.director !== '' ? (
                           <div className='padding-bottom'>
@@ -793,7 +737,7 @@ function App() {
                             <Grid item xs={12} sm={12} md={2.4} lg={2.4} xl={2.4} key={index}>
                               <FadeIn transitionDuration={700} key={index}>
                                 <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
-                                  <LazyLoadImage
+                                  <img
                                   className='image_fill'
                                   alt={movie.title}
                                   src={movie.img}

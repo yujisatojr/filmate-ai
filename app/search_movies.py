@@ -22,16 +22,17 @@ qdrant_client = QdrantClient(
 
 collection_name = 'movies'
 vector_name='metadata'
+llm_model_name="gpt-3.5-turbo-0125"
+embedding_model_name = 'text-embedding-3-small' # Be sure to use the same embedding model as the vectors in the collection
 
 print(qdrant_client.get_collections())
 qdrant_client.count(collection_name=collection_name)
 
 # Generate a query embedding and search in Qdrant
 def query_qdrant(query, collection_name, vector_name, top_k=12):
-    # Creates embedding vector from user query
     completion = openai.embeddings.create(
         input=query,
-        model='text-embedding-3-small'  # Be sure to use the same embedding model as the vectors in the collection
+        model=embedding_model_name
     )
 
     embedded_query = completion.data[0].embedding
@@ -87,7 +88,7 @@ def parse_user_query(user_query):
     ]
 
     stream = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=llm_model_name,
         messages=messages,
         max_tokens=500,
         temperature=0.5,
@@ -97,47 +98,10 @@ def parse_user_query(user_query):
     )
     return json.loads(stream.choices[0].message.content)
 
-# def get_movie_news(movie_title):
-
-#     prompt_template = f"""
-#         Your task is to provide up to 3 related news article information about this movie: {movie_title} in the JSON format. 
-#         Within the JSON template, headline represents the brief, one sentence summarization of the news articles, and source is the valid URL link to the article online.
-#         Below is the JSON template:
-#         {{
-#             "headline": "Jordan Peele Reveals Poster and Killer Cast for New Horror Flick",
-#             "source": "https://screenrant.com/godzilla-x-kong-monsterverse-sequel-updates/",
-#         }}
-#     """
-
-#     print(prompt_template)
-
-#     messages = [{
-#             "role": "system",
-#             "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
-#         },
-#         {
-#             "role": "user",
-#             "content": prompt_template
-#         }
-#     ]
-
-#     print(messages)
-
-#     stream = client.chat.completions.create(
-#         model="gpt-3.5-turbo-0125",
-#         messages=messages,
-#         max_tokens=100,
-#         temperature=0.5,
-#         frequency_penalty=0,
-#         presence_penalty=0,
-#         response_format={ "type": "json_object" }
-#     )
-#     return json.loads(stream.choices[0].message.content)
-
 def get_movie_news(movie_title):
 
     prompt_template = f"""
-        Your task is to provide 3 related news article information about this movie: {movie_title} in the JSON format. Within the JSON template, headline represents the brief, one sentence summarization of the news articles. Make each sentence around 25 words long.
+        Your task is to provide 3 related news article information about this movie: {movie_title} in the below example JSON format. Within the JSON template, headline represents the brief, one sentence summarization of the news articles. Make each sentence around 25 words long.
         {{
             "headline_1": "Christopher Nolan's Mind-Bending Thriller 'Inception' Turns 10: Celebrating a Decade of Dreams Within Dreams",
             "headline_2": "Exploring the Legacy: How 'Inception' Revolutionized the Science Fiction Genre and Inspired Filmmakers Worldwide",
@@ -156,7 +120,7 @@ def get_movie_news(movie_title):
     ]
 
     stream = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=llm_model_name,
         messages=messages,
         max_tokens=250,
         temperature=0.5,
@@ -174,12 +138,12 @@ def get_movie_trailer(movie_title):
         },
         {
             "role": "user",
-            "content": f"Provide me an URL link to the official trailer of the following movie from YouTube: '{movie_title}'. If the video does not exist on YouTube, return an empty string."
+            "content": f"""Provide me an URL link to the official trailer of the following movie from YouTube: '{movie_title}'. If the video does not exist on YouTube, return an empty string. The following is the expected JSON format: {{ "url": "https://youtu.be/YoHD9XEInc0?si=fr6_zmKA6gpoXVpL" }}"""
         }
     ]
 
     stream = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=llm_model_name,
         messages=messages,
         max_tokens=100,
         temperature=0.5,
@@ -213,7 +177,7 @@ def get_movie_casts(movie_title):
     ]
 
     stream = client.chat.completions.create(
-        model="gpt-3.5-turbo-0125",
+        model=llm_model_name,
         messages=messages,
         max_tokens=100,
         temperature=0.5,
@@ -352,7 +316,7 @@ def search_qdrant(metadata, collection_name, vector_name, top_k=5):
     
     completion = openai.embeddings.create(
         input=metadata,
-        model='text-embedding-3-small'  # Be sure to use the same embedding model as the vectors in the collection
+        model=embedding_model_name
     )
     
     embedded_query = completion.data[0].embedding
@@ -377,7 +341,7 @@ def search_filtered_vector(parsed_query, collection_name, vector_name, top_k=12)
     
     completion = openai.embeddings.create(
         input=user_query,
-        model='text-embedding-3-small'  # Be sure to use the same embedding model as the vectors in the collection
+        model=embedding_model_name
     )
     
     embedded_query = completion.data[0].embedding
@@ -396,7 +360,6 @@ def search_filtered_vector(parsed_query, collection_name, vector_name, top_k=12)
     
     return query_results
 
-# Format the response as json
 def format_time_to_minutes(minutes_float):
     minutes_int = int(minutes_float)
 
@@ -429,7 +392,6 @@ def convert_utc_to_mm_dd_yyyy(utc_datetime_str):
 # Search for similar vectors
 def search_movies_in_qdrant(parsed_query):
 
-    # json_query = json.loads(parsed_query)
     json_query = json.dumps(parsed_query)
 
     query_results = search_filtered_vector(json_query, collection_name, vector_name)

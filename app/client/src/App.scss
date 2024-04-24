@@ -263,7 +263,6 @@ input {
 
     .flex_section {
       display: flex;
-      // justify-content: space-between;
       padding-top: 20px;
       padding-bottom: 20px;
     }
@@ -287,6 +286,7 @@ input {
 .very_low .MuiRating-iconFilled {
   color: #ff6d75 !important;
 }
+
 .low .MuiRating-iconFilled {
   color: #ff9b9b !important;
 }
