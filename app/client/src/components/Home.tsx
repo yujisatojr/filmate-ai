@@ -43,6 +43,7 @@ function Home() {
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, PG14: true, TV14: true, R: true, TVMA: true, Approved: true, NotRated: true });
 	const [selectedGenre, setSelectedGenre] = useState({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
+	const [selectedPopularity, setSelectedPopularity] = useState<number[]>([1, 5]);
 	const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
 	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 566]);
 	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([1, 5]);
@@ -90,6 +91,10 @@ function Home() {
 		}));
 	};
 
+	const handlePopularityChange = (event: Event, newValue: number | number[]) => {
+		setSelectedPopularity(newValue as number[]);
+	};
+
 	const handleRatingChange = (event: Event, newValue: number | number[]) => {
 		setSelectedRating(newValue as number[]);
 	};
@@ -131,6 +136,7 @@ function Home() {
 			searchInput,
 			selectedCertificate,
 			selectedGenre,
+			selectedPopularity,
 			selectedRating,
 			selectedRuntime,
 			selectedSentiment,
@@ -195,6 +201,7 @@ function Home() {
 		setMovieDetail(null);
 		setSelectedCertificate({ G: true, PG: true, PG13: true, PG14: true, TV14: true, R: true, TVMA: true, Approved: true, NotRated: true });
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
+		setSelectedPopularity([1, 5]);
 		setSelectedRating([0, 10]);
 		setSelectedRuntime([45, 566]);
 		setSelectedYear([1915, 2024]);
@@ -368,6 +375,43 @@ function Home() {
 									))}
 								</FormGroup>
 							</FormControl>
+						</AccordionDetails>
+					</Accordion>
+
+					<Accordion className='accordion_container'>
+						<AccordionSummary
+						expandIcon={<ArrowDropDownIcon />}
+						aria-controls="panel2-content"
+						id="panel2-header"
+						>
+						Popularity
+						</AccordionSummary>
+						<AccordionDetails>
+							<Slider
+								getAriaLabel={() => 'Popularity range'}
+								value={selectedPopularity}
+								onChange={handlePopularityChange}
+								valueLabelDisplay="auto"
+								shiftStep={1}
+								step={1}
+								marks
+								min={1}
+								max={5}
+							/>
+							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								1
+								</Typography>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								5
+								</Typography>
+							</Box>
 						</AccordionDetails>
 					</Accordion>
 

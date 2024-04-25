@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import CORS
 from search_movies import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_news, get_movie_casts
 import logging
 
@@ -10,11 +11,13 @@ import logging
 
 app = Flask(__name__)
 
+CORS(app)
+
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route('/init_search')
+@app.route('/init_search', methods=['GET'])
 def get_init_movies():
     try:  
         response = get_default_list()

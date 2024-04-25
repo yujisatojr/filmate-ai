@@ -63,6 +63,12 @@ def get_default_list():
             gte=2024,
         )
     ))
+    filter_conditions.append(models.FieldCondition(
+        key="votes",
+        range=models.Range(
+            gte=20000,
+        )
+    ))
 
     query_results = qdrant_client.search(
         collection_name=collection_name,
@@ -106,6 +112,7 @@ def create_filter(json_query):
     # user_query = data['searchInput']
     certificate = data['selectedCertificate']
     genre = data['selectedGenre']
+    popularity = data['selectedPopularity']
     rating = data['selectedRating']
     runtime = data['selectedRuntime']
     sentiment = data['selectedSentiment']
@@ -156,6 +163,19 @@ def create_filter(json_query):
             key="genre",
             match=models.MatchAny(any=genreArray),
         ))
+    
+    popularity_mapping = {2: 200000, 3: 500000, 4: 1000000, 5: 2000000}
+
+    for i in range(len(popularity)):
+        popularity[i] = popularity_mapping.get(popularity[i], popularity[i])
+    
+    filter_conditions.append(models.FieldCondition(
+        key="votes",
+        range=models.Range(
+            gte=popularity[0],
+            lte=popularity[1]
+        )
+    ))
 
     filter_conditions.append(models.FieldCondition(
         key="rating",
