@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
-from search_movies import parse_user_query, search_movies_in_qdrant, search_similar_in_qdrant, get_movie_news, get_movie_trailer, get_movie_casts
+from search_movies import search_movies_in_qdrant, search_similar_in_qdrant, get_movie_news, get_movie_casts
 import logging
 
 # app = Flask(__name__, static_folder='client/build', static_url_path='')
@@ -14,69 +14,8 @@ app = Flask(__name__)
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route('/generate_filters')
-def get_filters():
-    try:
-        user_query = request.args.get('user_query')
-
-        response = parse_user_query(user_query)
-
-        if response is not None:
-            return jsonify(response)
-        else:
-            return jsonify({'error': 'Unable to parse user query.'}), 500
-    except Exception as e:
-        logging.error(f'Error generating filters from the query: {e}')
-        return jsonify({'error': str(e)}), 400
-    
-@app.route('/generate_news')
-def get_news():
-    try:
-        movie_title = request.args.get('title')
-        print(movie_title)
-
-        response = get_movie_news(movie_title)
-
-        if response is not None:
-            return jsonify(response)
-        else:
-            return jsonify({'error': 'Unable to parse user query.'}), 500
-    except Exception as e:
-        logging.error(f'Error generating news from the query: {e}')
-        return jsonify({'error': str(e)}), 400
-    
-@app.route('/generate_trailer')
-def get_trailer():
-    try:
-        movie_title = request.args.get('title')
-
-        response = get_movie_trailer(movie_title)
-
-        if response is not None:
-            return jsonify(response)
-        else:
-            return jsonify({'error': 'Unable to parse user query.'}), 500
-    except Exception as e:
-        logging.error(f'Error generating filters from the query: {e}')
-        return jsonify({'error': str(e)}), 400
-    
-@app.route('/generate_casts')
-def get_casts():
-    try:
-        movie_title = request.args.get('title')
-
-        response = get_movie_casts(movie_title)
-
-        if response is not None:
-            return jsonify(response)
-        else:
-            return jsonify({'error': 'Unable to parse user query.'}), 500
-    except Exception as e:
-        logging.error(f'Error generating filters from the query: {e}')
-        return jsonify({'error': str(e)}), 400
-
 @app.route('/search_movies', methods=['POST'])
-def get_movie_list():
+def get_movies():
     try:
         json_body = request.get_json()
 
@@ -107,4 +46,50 @@ def get_similar_movies():
             return jsonify({'error': 'Unable to fetch movie data.'}), 500
     except Exception as e:
         logging.error(f'Error processing search request: {e}')
+        return jsonify({'error': str(e)}), 400
+    
+@app.route('/generate_news')
+def get_news():
+    try:
+        movie_title = request.args.get('title')
+        print(movie_title)
+
+        response = get_movie_news(movie_title)
+
+        if response is not None:
+            return jsonify(response)
+        else:
+            return jsonify({'error': 'Unable to parse user query.'}), 500
+    except Exception as e:
+        logging.error(f'Error generating news from the query: {e}')
+        return jsonify({'error': str(e)}), 400
+    
+# @app.route('/generate_trailer')
+# def get_trailer():
+#     try:
+#         movie_title = request.args.get('title')
+
+#         response = get_movie_trailer(movie_title)
+
+#         if response is not None:
+#             return jsonify(response)
+#         else:
+#             return jsonify({'error': 'Unable to parse user query.'}), 500
+#     except Exception as e:
+#         logging.error(f'Error generating filters from the query: {e}')
+#         return jsonify({'error': str(e)}), 400
+    
+@app.route('/generate_casts')
+def get_casts():
+    try:
+        movie_title = request.args.get('title')
+
+        response = get_movie_casts(movie_title)
+
+        if response is not None:
+            return jsonify(response)
+        else:
+            return jsonify({'error': 'Unable to parse user query.'}), 500
+    except Exception as e:
+        logging.error(f'Error generating filters from the query: {e}')
         return jsonify({'error': str(e)}), 400

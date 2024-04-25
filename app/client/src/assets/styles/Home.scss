@@ -331,6 +331,31 @@ h1, h2, h3 {
 		color: #1663be;
 	}
 }
+
+.select_form_group {
+	display: flex !important;
+	flex-direction: row !important;
+
+	span {
+		font-family: "Lato", sans-serif !important;
+	}
+}
+
+fieldset {
+	margin: 0px !important;
+}
+
+.button_container {
+	padding-bottom: 15px;
+
+	button {
+		width: 100%;
+		padding: 10px;
+		font-family: "Lato", sans-serif !important;
+		background: rgb(130,63,251);
+		background: linear-gradient(0deg, rgba(130,63,251,1) 28%, rgba(252,89,70,1) 100%);
+	}
+}
   
 @media screen and (max-width: 1300px) {
 	.movie_app_root {
