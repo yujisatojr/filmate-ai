@@ -53,26 +53,68 @@ def search_qdrant(query, collection_name, vector_name, top_k):
     
     return query_results
 
+def get_default_list():
+    embedded_query = get_query_embeddings('')
+
+    filter_conditions = []
+    filter_conditions.append(models.FieldCondition(
+        key="year",
+        range=models.Range(
+            gte=2024,
+        )
+    ))
+
+    query_results = qdrant_client.search(
+        collection_name=collection_name,
+        query_filter=models.Filter(
+            must=filter_conditions,
+        ),
+        search_params=models.SearchParams(hnsw_ef=128, exact=False),
+        query_vector=(
+            vector_name, embedded_query
+        ),
+        limit=12,
+    )
+    
+    results = []
+    for i, vector in enumerate(query_results):
+        tmp = {
+            "rank": i,
+            "title": vector.payload["title"],
+            "summary": vector.payload["summary"],
+            "year": vector.payload["year"],
+            "certificate": vector.payload["certificate"],
+            "genre": vector.payload["genre"],
+            "runtime": vector.payload["runtime"],
+            "runtime_mins": vector.payload["runtime_mins"],
+            "rating": vector.payload["rating"],
+            "votes": int(vector.payload["votes"]),
+            "sentiment": vector.payload["sentiment_normalized"],
+            "metadata": vector.payload["metadata"],
+            "img": vector.payload["img"]
+        }
+        results.append(tmp)
+
+    return (json.loads(json.dumps(results)))
+
 # Create filter for Qdrant search
 def create_filter(json_query):
 
     # Extract values from json object
     data = json.loads(json_query)
 
-    user_query = data['searchInput']
+    # user_query = data['searchInput']
     certificate = data['selectedCertificate']
     genre = data['selectedGenre']
     rating = data['selectedRating']
-    # runtime = data['selectedRuntime']
-    # sentiment = data['selectedSentiment']
+    runtime = data['selectedRuntime']
+    sentiment = data['selectedSentiment']
     year = data['selectedYear']
 
-    # Build filter conditions based on user selection
     filter_conditions = []
 
     # Create filter for certificate selection
     certificateArray = []
-
     for key, value in certificate.items():
         if key == "PG13" and value:
             key = "PG-13"
@@ -99,7 +141,6 @@ def create_filter(json_query):
 
     # Create filter for genre selection
     genreArray = []
-
     for key, value in genre.items():
         if key == "SciFi" and value:
             key = "Sci-Fi"
@@ -124,21 +165,21 @@ def create_filter(json_query):
         )
     ))
 
-    # filter_conditions.append(models.FieldCondition(
-    #     key="runtime",
-    #     range=models.Range(
-    #         gte=runtime[0],
-    #         lte=runtime[1]
-    #     )
-    # ))
+    filter_conditions.append(models.FieldCondition(
+        key="runtime_mins",
+        range=models.Range(
+            gte=runtime[0],
+            lte=runtime[1]
+        )
+    ))
 
-    # filter_conditions.append(models.FieldCondition(
-    #     key="sentiment",
-    #     range=models.Range(
-    #         gte=sentiment[0],
-    #         lte=sentiment[1]
-    #     )
-    # ))
+    filter_conditions.append(models.FieldCondition(
+        key="sentiment_normalized",
+        range=models.Range(
+            gte=sentiment[0],
+            lte=sentiment[1]
+        )
+    ))
 
     filter_conditions.append(models.FieldCondition(
         key="year",
@@ -148,7 +189,9 @@ def create_filter(json_query):
         )
     ))
 
+    print('===============Filter Applied===============')
     print(filter_conditions)
+    print('============================================')
     
     return filter_conditions
 
@@ -193,9 +236,10 @@ def search_movies_in_qdrant(json_body):
             "certificate": vector.payload["certificate"],
             "genre": vector.payload["genre"],
             "runtime": vector.payload["runtime"],
+            "runtime_mins": vector.payload["runtime_mins"],
             "rating": vector.payload["rating"],
             "votes": int(vector.payload["votes"]),
-            "sentiment": vector.payload["sentiment"],
+            "sentiment": vector.payload["sentiment_normalized"],
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -219,9 +263,10 @@ def search_similar_in_qdrant(metadata):
             "certificate": vector.payload["certificate"],
             "genre": vector.payload["genre"],
             "runtime": vector.payload["runtime"],
+            "runtime_mins": vector.payload["runtime_mins"],
             "rating": vector.payload["rating"],
             "votes": int(vector.payload["votes"]),
-            "sentiment": vector.payload["sentiment"],
+            "sentiment": vector.payload["sentiment_normalized"],
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }

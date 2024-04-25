@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
-from search_movies import search_movies_in_qdrant, search_similar_in_qdrant, get_movie_news, get_movie_casts
+from search_movies import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_news, get_movie_casts
 import logging
 
 # app = Flask(__name__, static_folder='client/build', static_url_path='')
@@ -13,6 +13,19 @@ app = Flask(__name__)
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
+@app.route('/init_search')
+def get_init_movies():
+    try:  
+        response = get_default_list()
+
+        if response is not None:
+            return jsonify(response), 200
+        else:
+            return jsonify({'error': 'Unable to fetch default movie data.'}), 500
+    except Exception as e:
+        logging.error(f'Error processing initial search request: {e}')
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/search_movies', methods=['POST'])
 def get_movies():
@@ -47,12 +60,26 @@ def get_similar_movies():
     except Exception as e:
         logging.error(f'Error processing search request: {e}')
         return jsonify({'error': str(e)}), 400
-    
+
+@app.route('/generate_recommends')
+def get_recommends():
+    try:
+        user_query = request.args.get('user_query')
+
+        response = get_recommendations(user_query)
+
+        if response is not None:
+            return jsonify(response)
+        else:
+            return jsonify({'error': 'Unable to parse user query.'}), 500
+    except Exception as e:
+        logging.error(f'Error generating news from the query: {e}')
+        return jsonify({'error': str(e)}), 400
+
 @app.route('/generate_news')
 def get_news():
     try:
         movie_title = request.args.get('title')
-        print(movie_title)
 
         response = get_movie_news(movie_title)
 

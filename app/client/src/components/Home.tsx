@@ -34,11 +34,8 @@ import HelpIcon from '@mui/icons-material/Help';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SearchIcon from '@mui/icons-material/Search';
 
-function runtimeFormat(value: number) {
-	return `${value}min`;
-}
-
 function Home() {
+	const [initCall, setInitCall] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const [clicked, setClicked] = useState<boolean>(false);
@@ -46,10 +43,10 @@ function Home() {
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, PG14: true, TV14: true, R: true, TVMA: true, Approved: true, NotRated: true });
 	const [selectedGenre, setSelectedGenre] = useState({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
-	const [selectedRating, setSelectedRating] = React.useState<number[]>([0, 10]);
-	const [selectedRuntime, setSelectedRuntime] = React.useState<number[]>([30, 240]);
-	const [selectedSentiment, setSelectedSentiment] = useState<string>('All');
-	const [selectedYear, setSelectedYear] = React.useState<number[]>([1915, 2024]);
+	const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
+	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 566]);
+	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([1, 5]);
+	const [selectedYear, setSelectedYear] = useState<number[]>([1915, 2024]);
 
 	const [filterData, setFilterData] = useState<any>(null);
 	const [movieData, setMovieData] = useState<any>(null);
@@ -99,6 +96,10 @@ function Home() {
 
 	const handleRuntimeChange = (event: Event, newValue: number | number[]) => {
 		setSelectedRuntime(newValue as number[]);
+	};
+
+	const handleSentimentChange = (event: Event, newValue: number | number[]) => {
+		setSelectedSentiment(newValue as number[]);
 	};
 
 	const handleYearChange = (event: Event, newValue: number | number[]) => {
@@ -168,24 +169,36 @@ function Home() {
 	}, [clicked]);
 
 	useEffect(() => {
-		handleSearchSubmit();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		// handleSearchSubmit();
+		setIsLoading(true);
+		const fetchData = async () => {
+			try {
+				const response = await axios.get('/init_search');
+				setMovieData(response.data);
+				setIsLoading(false);
+			} catch (error) {
+				console.log(error);
+				setIsLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [initCall]);
 
 	const resetFilters = () => {
 		setIsLoading(false);
 		setOpen(false);
 		setClicked(false);
 		setSearchInput('');
-		setFilterData(null);
+		// setFilterData(null);
 		setMovieData(null);
 		setMovieDetail(null);
 		setSelectedCertificate({ G: true, PG: true, PG13: true, PG14: true, TV14: true, R: true, TVMA: true, Approved: true, NotRated: true });
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 		setSelectedRating([0, 10]);
-		setSelectedRuntime([30, 240]);
+		setSelectedRuntime([45, 566]);
 		setSelectedYear([1915, 2024]);
-		handleSearchSubmit();
+		setInitCall(prev => prev + 1);
 	};
 
   	return (
@@ -258,11 +271,7 @@ function Home() {
 							>
 								<TypeAnimation
 								sequence={[
-									`
-									${filterData['sentiment'] === 'positive' ? 'The search results have been tailored to include only movies that align with the positive emotions based on your input.\n' : ''}
-									${filterData['sentiment'] === 'negative' ? 'The search results have been tailored to include only movies that align with the negative emotions based on your input.\n': ''}
-									${filterData['insights'] !== '' ? filterData['insights'] : ''}
-									`,
+									`${filterData['insights'] !== '' ? filterData['insights'] : ''}`,
 								]}
 								speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
 								style={{ fontSize: '1em', display: 'block'}}
@@ -354,7 +363,7 @@ function Home() {
 										control={
 										<Checkbox checked={value} onChange={handleGenreChange} name={key} />
 										}
-										label={key}
+										label={key === 'SciFi' ? 'Sci-Fi' : key}
 									/>
 									))}
 								</FormGroup>
@@ -378,7 +387,6 @@ function Home() {
 								valueLabelDisplay="auto"
 								shiftStep={1}
 								step={1}
-								marks
 								min={0}
 								max={10}
 							/>
@@ -412,26 +420,24 @@ function Home() {
 								getAriaLabel={() => 'Runtime range'}
 								value={selectedRuntime}
 								onChange={handleRuntimeChange}
-								getAriaValueText={runtimeFormat}
 								valueLabelDisplay="auto"
 								shiftStep={10}
 								step={10}
-								marks
-								min={30}
-								max={240}
+								min={45}
+								max={566}
 							/>
 							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								30 mins
+								45 mins
 								</Typography>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								240 mins
+								566 mins
 								</Typography>
 							</Box>
 						</AccordionDetails>
@@ -446,7 +452,30 @@ function Home() {
 						Sentiment
 						</AccordionSummary>
 						<AccordionDetails>
-						
+							<Slider
+								getAriaLabel={() => 'Sentiment range'}
+								value={selectedSentiment}
+								onChange={handleSentimentChange}
+								valueLabelDisplay="auto"
+								shiftStep={1}
+								step={1}
+								min={1}
+								max={5}
+							/>
+							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								Very Sad
+								</Typography>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								Very Happy
+								</Typography>
+							</Box>
 						</AccordionDetails>
 					</Accordion>
 

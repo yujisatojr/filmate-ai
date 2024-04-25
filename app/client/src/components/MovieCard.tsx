@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Rating from '@mui/material/Rating';
+import Rating, { IconContainerProps } from '@mui/material/Rating';
 import Skeleton from '@mui/material/Skeleton';
 
 // Import icons
@@ -17,17 +17,43 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
-function convertToRating(sentimentScore: number) {
-    // Normalize the range from -1 to 1 to 0 to 2
-    var normalizedValue = sentimentScore + 1;
-    
-    // Scale the range from 0 to 2 to 0 to 5
-    var newValue = normalizedValue * 2.5;
-    newValue = Math.round(newValue * 10) / 10;
-    
-    return newValue;
+const customIcons: {
+  [index: string]: {
+    icon: React.ReactElement;
+    label: string;
+  };
+} = {
+  1: {
+    icon: <SentimentVeryDissatisfiedIcon color="error" />,
+    label: 'Very Sad',
+  },
+  2: {
+    icon: <SentimentDissatisfiedIcon color="warning" />,
+    label: 'Sad',
+  },
+  3: {
+    icon: <SentimentSatisfiedIcon color="primary" />,
+    label: 'Neutral',
+  },
+  4: {
+    icon: <SentimentSatisfiedAltIcon color="success" />,
+    label: 'Happy',
+  },
+  5: {
+    icon: <SentimentVerySatisfiedIcon color="success" />,
+    label: 'Very Happy',
+  },
+};
+
+function IconContainer(props: IconContainerProps) {
+  const { value, ...other } = props;
+  return <span {...other}>{customIcons[value].icon}</span>;
 }
 
 function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
@@ -189,24 +215,14 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                     <div>
                                         <h3>Sentiment Score</h3>
                                         <StyledRating
-                                        name="customized-color"
-                                        className={
-                                        (movieDetail.sentiment < -0.7) ? 'very_low' :
-                                        (movieDetail.sentiment >= -0.7 && movieDetail.sentiment < -0.3) ? 'low' :
-                                        (movieDetail.sentiment >= -0.3 && movieDetail.sentiment < 0.3) ? 'neutral' :
-                                        (movieDetail.sentiment >= 0.3 && movieDetail.sentiment < 0.7) ? 'high' :
-                                        (movieDetail.sentiment >= 0.7 && movieDetail.sentiment <= 1) ? 'very_high' :
-                                        ''
-                                        }
-                                        value={convertToRating(movieDetail.sentiment)}
-                                        precision={0.1}
-                                        max={5}
-                                        icon={<SentimentSatisfiedIcon fontSize="inherit" />}
-                                        emptyIcon={<SentimentSatisfiedIcon fontSize="inherit" />}
-                                        style={{ color: 'blue' }}
+                                        name="highlight-selected-only"
+                                        value={movieDetail.sentiment}
+                                        IconContainerComponent={IconContainer}
+                                        getLabelText={(value: number) => customIcons[value].label}
+                                        highlightSelectedOnly
                                         readOnly
                                         />
-                                        <p>{convertToRating(movieDetail.sentiment)}/5</p>
+                                        <p>{movieDetail.sentiment}/5 ({movieDetail.sentiment === 1 ? 'Very Sad' : movieDetail.sentiment === 2 ? 'Sad' : movieDetail.sentiment === 3 ? 'Neutral' : movieDetail.sentiment === 4 ? 'Happy' : 'Very Happy'})</p>
                                     </div>
                                 </div>
 
