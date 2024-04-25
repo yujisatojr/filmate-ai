@@ -12,6 +12,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Collapse from '@mui/material/Collapse';
@@ -23,6 +24,7 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Slider from '@mui/material/Slider';
+import Typography from '@mui/material/Typography';
 
 // Import icons
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -49,9 +51,6 @@ function Home() {
 	const [selectedSentiment, setSelectedSentiment] = useState<string>('All');
 	const [selectedYear, setSelectedYear] = React.useState<number[]>([1915, 2024]);
 
-	const { G, PG, PG13, PG14, TV14, R, TVMA, Approved, NotRated } = selectedCertificate;
-	const { Action, Adventure, Animation, Biography, Comedy, Crime, Documentary, Drama, Family, Fantasy, History, Horror, Musical, Mystery, Romance, SciFi, Sports, Thriller, War, Western } = selectedGenre;
-
 	const [filterData, setFilterData] = useState<any>(null);
 	const [movieData, setMovieData] = useState<any>(null);
 	const [movieDetail, setMovieDetail] = useState<any>(null);
@@ -60,12 +59,30 @@ function Home() {
 		setSearchInput(e.target.value);
 	};
 
+	const handleCertParentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const isChecked = event.target.checked;
+		const updatedCertificate = Object.keys(selectedCertificate).reduce((acc: any, key) => {
+		  acc[key] = isChecked;
+		  return acc;
+		}, {});
+		setSelectedCertificate(updatedCertificate);
+	};
+
 	const handleCertChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, checked } = event.target;
 		setSelectedCertificate(prevState => ({
 			...prevState,
 			[name]: checked,
 		}));
+	};
+
+	const handleGenreParentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const isChecked = event.target.checked;
+		const updatedGenre = Object.keys(selectedGenre).reduce((acc: any, key) => {
+		  acc[key] = isChecked;
+		  return acc;
+		}, {});
+		setSelectedGenre(updatedGenre);
 	};
 
 	const handleGenreChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,66 +303,26 @@ function Home() {
 						Content Rating
 						</AccordionSummary>
 						<AccordionDetails>
-							<FormControl
-								component="fieldset"
-								sx={{ m: 3 }}
-								variant="standard"
-							>
+							<FormControl component="fieldset" sx={{ m: 3 }} variant="standard">
 								<FormGroup className='select_form_group'>
 									<FormControlLabel
-										control={
-										<Checkbox checked={G} onChange={handleCertChange} name="G" />
-										}
-										label="G"
+									control={
+										<Checkbox
+										checked={Object.values(selectedCertificate).every(val => val)}
+										onChange={handleCertParentChange}
+										/>
+									}
+									label="Select All"
 									/>
+									{Object.entries(selectedCertificate).map(([key, value]) => (
 									<FormControlLabel
+										key={key}
 										control={
-										<Checkbox checked={PG} onChange={handleCertChange} name="PG" />
+										<Checkbox checked={value} onChange={handleCertChange} name={key} />
 										}
-										label="PG"
+										label={key === 'PG13' ? 'PG-13' : key === 'PG14' ? 'PG-14' : key === 'TV14' ? 'TV-14' : key === 'TVMA' ? 'TV-MA' : key === 'NotRated' ? 'Not Rated' : key}
 									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={PG13} onChange={handleCertChange} name="PG13" />
-										}
-										label="PG-13"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={PG14} onChange={handleCertChange} name="PG14" />
-										}
-										label="PG-14"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={TV14} onChange={handleCertChange} name="TV14" />
-										}
-										label="TV-14"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={R} onChange={handleCertChange} name="R" />
-										}
-										label="R"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={TVMA} onChange={handleCertChange} name="TVMA" />
-										}
-										label="TV-MA"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Approved} onChange={handleCertChange} name="Approved" />
-										}
-										label="Approved"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={NotRated} onChange={handleCertChange} name="NotRated" />
-										}
-										label="Not Rated"
-									/>
+									))}
 								</FormGroup>
 							</FormControl>
 						</AccordionDetails>
@@ -360,132 +337,26 @@ function Home() {
 						Genre
 						</AccordionSummary>
 						<AccordionDetails>
-							<FormControl
-								component="fieldset"
-								sx={{ m: 3 }}
-								variant="standard"
-							>
+							<FormControl component="fieldset" sx={{ m: 3 }} variant="standard">
 								<FormGroup className='select_form_group'>
 									<FormControlLabel
-										control={
-										<Checkbox checked={Action} onChange={handleGenreChange} name="Action" />
-										}
-										label="Action"
+									control={
+										<Checkbox
+										checked={Object.values(selectedGenre).every(val => val)}
+										onChange={handleGenreParentChange}
+										/>
+									}
+									label="Select All"
 									/>
+									{Object.entries(selectedGenre).map(([key, value]) => (
 									<FormControlLabel
+										key={key}
 										control={
-										<Checkbox checked={Adventure} onChange={handleGenreChange} name="Adventure" />
+										<Checkbox checked={value} onChange={handleGenreChange} name={key} />
 										}
-										label="Adventure"
+										label={key}
 									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Animation} onChange={handleGenreChange} name="Animation" />
-										}
-										label="Animation"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Biography} onChange={handleGenreChange} name="Biography" />
-										}
-										label="Biography"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Comedy} onChange={handleGenreChange} name="Comedy" />
-										}
-										label="Comedy"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Crime} onChange={handleGenreChange} name="Crime" />
-										}
-										label="Crime"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Documentary} onChange={handleGenreChange} name="Documentary" />
-										}
-										label="Documentary"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Drama} onChange={handleGenreChange} name="Drama" />
-										}
-										label="Drama"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Family} onChange={handleGenreChange} name="Family" />
-										}
-										label="Family"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Fantasy} onChange={handleGenreChange} name="Fantasy" />
-										}
-										label="Fantasy"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={History} onChange={handleGenreChange} name="History" />
-										}
-										label="History"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Horror} onChange={handleGenreChange} name="Horror" />
-										}
-										label="Horror"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Musical} onChange={handleGenreChange} name="Musical" />
-										}
-										label="Musical"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Mystery} onChange={handleGenreChange} name="Mystery" />
-										}
-										label="Mystery"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Romance} onChange={handleGenreChange} name="Romance" />
-										}
-										label="Romance"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={SciFi} onChange={handleGenreChange} name="SciFi" />
-										}
-										label="SciFi"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Sports} onChange={handleGenreChange} name="Sports" />
-										}
-										label="Sports"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Thriller} onChange={handleGenreChange} name="Thriller" />
-										}
-										label="Thriller"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={War} onChange={handleGenreChange} name="War" />
-										}
-										label="War"
-									/>
-									<FormControlLabel
-										control={
-										<Checkbox checked={Western} onChange={handleGenreChange} name="Western" />
-										}
-										label="Western"
-									/>
+									))}
 								</FormGroup>
 							</FormControl>
 						</AccordionDetails>
@@ -511,6 +382,20 @@ function Home() {
 								min={0}
 								max={10}
 							/>
+							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								0 star
+								</Typography>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								10 stars
+								</Typography>
+							</Box>
 						</AccordionDetails>
 					</Accordion>
 
@@ -535,6 +420,20 @@ function Home() {
 								min={30}
 								max={240}
 							/>
+							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								30 mins
+								</Typography>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								240 mins
+								</Typography>
+							</Box>
 						</AccordionDetails>
 					</Accordion>
 
@@ -571,6 +470,20 @@ function Home() {
 								min={1915}
 								max={2024}
 							/>
+							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								1915
+								</Typography>
+								<Typography
+								variant="body2"
+								sx={{ cursor: 'pointer' }}
+								>
+								2024
+								</Typography>
+							</Box>
 						</AccordionDetails>
 					</Accordion>
 				</Grid>
