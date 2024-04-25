@@ -609,7 +609,7 @@ function Home() {
 							<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
 								<Grid container spacing={2}>
 								{movieData && movieData.map((movie: any, index: number) => (
-									<Grid item xs={12} sm={12} md={3} lg={3} xl={3} key={index}>
+									<Grid item xs={6} sm={6} md={3} lg={3} xl={3} key={index}>
 										<FadeIn transitionDuration={700} key={index}>
 											<div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
 												<img className='image_fill' alt={movie.title} src={movie.img}/>

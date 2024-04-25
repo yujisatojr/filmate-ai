@@ -17,6 +17,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import RedditIcon from '@mui/icons-material/Reddit';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import XIcon from '@mui/icons-material/X';
+
 function App() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -48,7 +52,7 @@ function App() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -102,7 +106,7 @@ function App() {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -165,7 +169,17 @@ function App() {
       <Home/>
     </React.StrictMode>
 
-    <p className='footer'>The app designed & created by Yuji Sato</p>
+    <footer>
+      <div className="social_links">
+        <a href="/" target="_blank" rel="noreferrer"><RedditIcon/></a>
+        <a href="/" target="_blank" rel="noreferrer"><YouTubeIcon/></a>
+        <a href="/" target="_blank" rel="noreferrer"><XIcon/></a>
+      </div>
+
+      <div className="footer-copyright">
+          <p>© 2024 Filmate</p>
+      </div>
+    </footer>
   </>
   );
 }

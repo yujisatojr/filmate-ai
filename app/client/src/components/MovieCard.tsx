@@ -266,7 +266,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                     <h3>You may also like:</h3>
                                     <Grid container spacing={2}>
                                         {similarMoviesData && similarMoviesData.map((movie: any, index: number) => (
-                                        <Grid item xs={12} sm={12} md={2.4} lg={2.4} xl={2.4} key={index}>
+                                        <Grid item xs={6} sm={6} md={2.4} lg={2.4} xl={2.4} key={index}>
                                             <div key={index} className='movie_img zoom' onClick={() => movieChange(movie)}>
                                                 <img
                                                 className='image_fill'
