@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import FadeIn from 'react-fade-in';
+import FadeIn from './FadeIn';
 import { styled } from '@mui/material/styles';
 
 // Import MUI components

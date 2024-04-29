@@ -3,19 +3,18 @@ from flask_cors import CORS
 from search_movies import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_news, get_movie_casts
 import logging
 
-# app = Flask(__name__, static_folder='client/build', static_url_path='')
-
-# @app.route("/")
-# def index():
-#     return send_from_directory(app.static_folder, 'index.html')
-
-app = Flask(__name__)
-
+app = Flask(__name__, static_folder='./client/build', static_url_path='')
 CORS(app)
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# app = Flask(__name__)
+
+# @app.route("/")
+# def hello_world():
+#     return "<p>Hello, World!</p>"
 
 @app.route('/init_search', methods=['GET'])
 def get_init_movies():
@@ -123,3 +122,6 @@ def get_casts():
     except Exception as e:
         logging.error(f'Error generating filters from the query: {e}')
         return jsonify({'error': str(e)}), 400
+    
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

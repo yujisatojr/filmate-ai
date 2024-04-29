@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import FadeIn from 'react-fade-in';
+import FadeIn from './FadeIn';
 import { Oval, ThreeDots } from 'react-loader-spinner'
 import { TypeAnimation } from 'react-type-animation';
 import MovieCard from './MovieCard';
