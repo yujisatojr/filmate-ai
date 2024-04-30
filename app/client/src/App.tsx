@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import Home from './components/Home';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+import {
+  Home,
+  Register,
+  Login,
+  Dashboard
+} from "./components";
 import Logo from './assets/images/logo.png';
 import './App.scss';
 
@@ -25,8 +31,25 @@ function App() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  const pages = ['About', 'Help', 'My List'];
-  const settings = ['Profile', 'Account', 'Logout'];
+  // const navigate = useNavigate();
+
+  // const pages = ['About', 'My List'];
+
+  // Check if user is authenticated
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkCookies = async () => {
+      const authSessionCookie = document.cookie.match("auth-session=([^;]+)");
+      setIsAuthenticated(!!authSessionCookie);
+    };
+
+    checkCookies();
+  }); // Run once on component mount
+
+  const handleLogout = () => {
+    document.cookie = `auth-session=; max-age=0`;
+  };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -44,7 +67,7 @@ function App() {
   };
 
   return (
-  <>
+  <Router>
     <AppBar className='navi-bar' position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -95,11 +118,12 @@ function App() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
+                <Typography textAlign="center">About</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
+                <Typography textAlign="center">My List</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <Typography
@@ -121,15 +145,20 @@ function App() {
             <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            <NavLink to='/profile'>
               <Button
-                key={page}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                About
               </Button>
-            ))}
+            </NavLink>
+            <Button
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              My List
+            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -138,7 +167,8 @@ function App() {
                 <Avatar alt="John Doe" />
               </IconButton>
             </Tooltip>
-            <Menu
+            {isAuthenticated ? (
+              <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
@@ -153,21 +183,54 @@ function App() {
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              >
+                <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/profile">
+                  <Typography textAlign="center">Account</Typography>
                 </MenuItem>
-              ))}
-            </Menu>
+                <MenuItem onClick={() => {
+                  handleLogout();
+                  handleCloseUserMenu();
+                  }} component={NavLink} to="/auth">
+                  <Typography textAlign="center">Log Out</Typography>
+                </MenuItem>
+              </Menu>
+            ) : (
+              <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+              >
+                <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/signup">
+                  <Typography textAlign="center">Sign Up</Typography>
+                </MenuItem>
+                <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/login">
+                  <Typography textAlign="center">Login</Typography>
+                </MenuItem>
+              </Menu>
+            )}
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
 
-    <React.StrictMode>
-      <Home/>
-    </React.StrictMode>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Register />} />
+        <Route path="/profile" element={<Dashboard />} />
+        <Route path="/auth" element={<Home />} />
+      </Routes>
 
     <footer>
       <div className="social_links">
@@ -177,10 +240,10 @@ function App() {
       </div>
 
       <div className="footer-copyright">
-          <p>© 2024 Filmate</p>
+          <p>© 2024 Filmate AI</p>
       </div>
     </footer>
-  </>
+  </Router>
   );
 }
 

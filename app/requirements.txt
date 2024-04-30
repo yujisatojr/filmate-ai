@@ -3,11 +3,13 @@ aiosignal==1.3.1
 annotated-types==0.6.0
 anyio==4.3.0
 attrs==23.2.0
+authsignal==1.0.4
 blinker==1.7.0
 certifi==2024.2.2
 charset-normalizer==3.3.2
 click==8.1.7
 dataclasses-json==0.6.4
+decouple==0.0.7
 distro==1.9.0
 filelock==3.13.4
 Flask==3.0.2

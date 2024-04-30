@@ -31,7 +31,7 @@ import React, {
         count = 0;
       }
   
-      if (count == maxIsVisible) {
+      if (count === maxIsVisible) {
         // We're done updating maxVisible, notify when animation is done
         const timeout = setTimeout(() => {
           if (props.onComplete) props.onComplete();
@@ -45,7 +45,9 @@ import React, {
         setMaxIsVisible(maxIsVisible + increment);
       }, delay);
       return () => clearTimeout(timeout);
+      // eslint-disable-next-line
     }, [
+      // eslint-disable-next-line
       React.Children.count(props.children),
       delay,
       maxIsVisible,
