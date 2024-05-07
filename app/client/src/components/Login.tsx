@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import '../assets/styles/Register.scss';
+import InputBase from '@mui/material/InputBase';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import SendIcon from '@mui/icons-material/Send';
 
 const Login = () => {
   const [username, setUsername] = useState<string>("");
@@ -25,7 +29,7 @@ const Login = () => {
     setUsernameError("");
 
     if ("" === username) {
-      setUsernameError("Username is mandatory!");
+      setUsernameError("Username is required!");
       return;
     }
 
@@ -33,7 +37,7 @@ const Login = () => {
   };
 
   const login = async () => {
-    const response = await fetch("http://localhost:5000/api/login", {
+    const response = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,32 +55,39 @@ const Login = () => {
   };
 
   return (
-    <div className={"mainContainer"}>
-      <div className={"titleContainer"}>
-        <div>Login</div>
+    <div className='main_container'>
+      <div className='title_container'>
+        <h1>Login</h1>
       </div>
-      <br />
-      <div className={"inputContainer"}>
-        <input
+
+      <div className='search_form_wrapper'>
+        <Paper
+        className='search_form'
+        component="form"
+        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '400px' }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          onButtonClick();
+        }}
+        >
+          <InputBase
+          className='input_form'
+          sx={{ ml: 1, flex: 1 }}
+          placeholder='Enter your username'
+          inputProps={{ 'aria-label': 'login' }}
           value={username}
-          placeholder="Enter your username"
           onChange={(ev) => setUsername(ev.target.value)}
-          className={"inputBox"}
-        />
-        <label className="errorLabel text-center">{usernameError}</label>
+          />
+          <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+            <SendIcon />
+          </IconButton>
+        </Paper>
+        {usernameError !== '' && (<span className="validation">{usernameError}</span>)}
       </div>
-      <br />
-      <div className={"inputContainer"}>
-        <input
-          className={"inputButton"}
-          type="button"
-          onClick={onButtonClick}
-          value={"Log in"}
-        />
-      </div>
-      <div>
+
+      <span>
         New User? <Link to="/signup">Sign up here</Link>
-      </div>
+      </span>
     </div>
   );
 };

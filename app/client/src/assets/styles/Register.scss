@@ -1,69 +1,35 @@
-.mainContainer {
-    flex-direction: column;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
-  
-  .titleContainer {
-    display: flex;
-    flex-direction: column;
-    font-size: 48px;
-    font-weight: bolder;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .resultContainer,
-  .historyItem {
-    flex-direction: row;
-    display: flex;
-    width: 400px;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .historyContainer {
-    flex-direction: column;
-    display: flex;
-    height: 200px;
-    align-items: center;
-    flex-grow: 5;
-    justify-content: flex-start;
-  }
-  
-  .buttonContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 260px;
-  }
-  
-  .inputContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-  }
-  
-  .inputContainer>.errorLabel {
-    color: red;
-    font-size: 16px;
-    text-align: center;
-  }
-  
-  .inputBox {
-    height: 48px;
-    width: 400px;
-    font-size: medium;
-    border-radius: 8px;
-    border: 1px solid grey;
-    padding-left: 8px;
-  }
-  
-  .inputButton {
-    height: 48px;
-    width: 400px;
-  }
+.main_container {
+	flex-direction: column;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+
+	.title_container {
+		display: flex;
+		flex-direction: column;
+		font-weight: bolder;
+		align-items: center;
+		justify-content: center;
+
+		h1 {
+			font-size: 4rem;
+			margin-block-start: 0px;
+			margin-block-end: 10px;
+		}
+	}
+
+	span {
+		color: white;
+
+		a {
+			padding-left: 10px;
+			color: #6551F3;
+		}
+	}
+
+	.validation {
+		padding-top: 15px;
+		color: rgb(244, 67, 54);
+	}
+}

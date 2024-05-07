@@ -35,7 +35,7 @@ def signup():
         action="signUp",
         payload={
             "user_id": username,
-            "redirectUrl": "http://localhost:3000/api/callback" # Change to 5000 for production build
+            "redirectUrl": "http://localhost:5000/api/callback" # Change the address for dev/prod
         }
     )
     return jsonify(response), 200
@@ -44,6 +44,8 @@ def signup():
 def callback():
     token = request.args.get('token')
     challenge_response = authsignal_client.validate_challenge(token)
+
+    print(challenge_response)
 
     if challenge_response["state"] == 'CHALLENGE_SUCCEEDED':
         encoded_token = jwt.encode(
@@ -73,7 +75,7 @@ def login():
         action="signIn",
         payload={
             "user_id": username,
-            "redirectUrl": "http://localhost:3000/api/callback" # Change to 5000 for production build
+            "redirectUrl": "http://localhost:5000/api/callback" # Change the address for dev/prod
         }
     )
     return jsonify(response), 200

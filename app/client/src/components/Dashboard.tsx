@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 import '../assets/styles/Dashboard.scss';
 
 const Dashboard = () => {
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [userData, setUserData] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkCookies = async () => {
       const authSessionCookie = document.cookie.match("auth-session=([^;]+)");
-
-      console.log(authSessionCookie)
+      // console.log(authSessionCookie)
 
       if (!authSessionCookie) {
         navigate("/auth");
@@ -38,8 +37,8 @@ const Dashboard = () => {
         }
 
         const data = await response.json();
-        console.log(data)
-        setUserEmail(data.email);
+        // console.log(data)
+        setUserData([data.username, data.email]);
       } catch (error) {
         navigate("/auth");
       }
@@ -48,28 +47,20 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
-  const handleLogout = () => {
-    document.cookie = `auth-session=; max-age=0`;
-    navigate("/auth");
-  };
+  // const handleLogout = () => {
+  //   document.cookie = `auth-session=; max-age=0`;
+  //   navigate("/");
+  // };
 
   return (
-    <div className="profile-root">
-        <div className="d-flex justify-content-center align-items-center vh-100">
-            <main className="px-3 text-center">
-                <h1>Welcome Home!</h1>
-                <p className="lead">You're logged in as {userEmail}!</p>
-                <div className="d-flex justify-content-center">
-                <button
-                    className="btn btn-lg btn-dark fw-bold border-white bg-dark"
-                    onClick={handleLogout}
-                >
-                    Log Out
-                </button>
-                </div>
-            </main>
-        </div>
-    </div>
+    <>
+    {userData && (
+      <div className="profile_root">
+        <h1>Welcome, {userData[0]}!</h1>
+        <p>You're logged in with {userData[1]}</p>
+      </div>
+    )}
+    </>
   );
 };
 

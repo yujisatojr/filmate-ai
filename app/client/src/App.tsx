@@ -33,8 +33,6 @@ function App() {
 
   // const navigate = useNavigate();
 
-  // const pages = ['About', 'My List'];
-
   // Check if user is authenticated
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -190,7 +188,7 @@ function App() {
                 <MenuItem onClick={() => {
                   handleLogout();
                   handleCloseUserMenu();
-                  }} component={NavLink} to="/auth">
+                  }} component={NavLink} to="/">
                   <Typography textAlign="center">Log Out</Typography>
                 </MenuItem>
               </Menu>

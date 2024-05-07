@@ -3,7 +3,6 @@ import FadeIn from './FadeIn';
 import { styled } from '@mui/material/styles';
 
 // Import MUI components
-// import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
