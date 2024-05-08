@@ -25,7 +25,7 @@ const Profile = () => {
       if (!cookiesValid) return;
 
       try {
-        const response = await fetch("/api/user", {
+        const response = await fetch("/user", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

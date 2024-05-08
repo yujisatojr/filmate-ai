@@ -1,5 +1,6 @@
 aiohttp==3.9.5
 aiosignal==1.3.1
+alembic==1.13.1
 annotated-types==0.6.0
 anyio==4.3.0
 attrs==23.2.0
@@ -13,6 +14,9 @@ decouple==0.0.7
 distro==1.9.0
 filelock==3.13.4
 Flask==3.0.2
+Flask-Cors==4.0.0
+Flask-Migrate==4.0.7
+Flask-SQLAlchemy==3.1.1
 frozenlist==1.4.1
 fsspec==2024.3.1
 grpcio==1.62.1
@@ -35,6 +39,7 @@ langchain-community==0.0.31
 langchain-core==0.1.43
 langchain-text-splitters==0.0.1
 langsmith==0.1.48
+Mako==1.3.3
 MarkupSafe==2.1.5
 marshmallow==3.21.1
 mpmath==1.3.0
@@ -49,8 +54,11 @@ packaging==23.2
 pillow==10.3.0
 portalocker==2.8.2
 protobuf==4.25.3
+psycopg2-binary==2.9.9
 pydantic==2.7.0
 pydantic_core==2.18.1
+pyhumps==3.8.0
+PyJWT==2.8.0
 python-dotenv==1.0.1
 PyYAML==6.0.1
 qdrant-client==1.8.2
