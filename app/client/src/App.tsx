@@ -122,6 +122,9 @@ function App() {
               <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
                 <Typography textAlign="center">My List</Typography>
               </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
+                <Typography textAlign="center">Help</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <Typography
@@ -154,6 +157,12 @@ function App() {
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               My List
+            </Button>
+            <Button
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Help
             </Button>
           </Box>
 
