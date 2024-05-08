@@ -1,0 +1,21 @@
+.profile_root {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    .profile_contents {
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+
+        h1 {
+            font-size: 4rem;
+            margin-block-start: 0px;
+            margin-block-end: 10px;
+        }
+    }
+}

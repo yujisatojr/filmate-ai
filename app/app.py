@@ -20,10 +20,6 @@ def index():
 def page_not_found(error):
     return redirect('/')
 
-@app.route('/auth')
-def auth():
-    return redirect('/')
-
 @app.route('/api/signup', methods=['POST'])
 def signup():
     username = request.json.get('username')

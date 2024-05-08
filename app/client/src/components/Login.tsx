@@ -48,6 +48,8 @@ const Login = () => {
       credentials: "include",
     });
 
+    console.log(response);
+
     const { url } = await response.json();
 
     // Redirect to verification URL

@@ -4,7 +4,7 @@ import {
   Home,
   Register,
   Login,
-  Dashboard
+  Profile
 } from "./components";
 import Logo from './assets/images/logo.png';
 import './App.scss';
@@ -143,14 +143,12 @@ function App() {
             <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <NavLink to='/profile'>
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                About
-              </Button>
-            </NavLink>
+            <Button
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              About
+            </Button>
             <Button
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
@@ -226,8 +224,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
-        <Route path="/profile" element={<Dashboard />} />
-        <Route path="/auth" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
 
     <footer>

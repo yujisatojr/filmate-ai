@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import '../assets/styles/Dashboard.scss';
+import FadeIn from './FadeIn';
+import '../assets/styles/Profile.scss';
 
-const Dashboard = () => {
+const Profile = () => {
   const [userData, setUserData] = useState<any>(null);
   const navigate = useNavigate();
 
@@ -12,7 +13,7 @@ const Dashboard = () => {
       // console.log(authSessionCookie)
 
       if (!authSessionCookie) {
-        navigate("/auth");
+        navigate("/");
         return false;
       }
 
@@ -40,7 +41,7 @@ const Dashboard = () => {
         // console.log(data)
         setUserData([data.username, data.email]);
       } catch (error) {
-        navigate("/auth");
+        navigate("/");
       }
     };
 
@@ -53,15 +54,15 @@ const Dashboard = () => {
   // };
 
   return (
-    <>
+    <div className="profile_root">
     {userData && (
-      <div className="profile_root">
+      <FadeIn transitionDuration={700} className="profile_contents">
         <h1>Welcome, {userData[0]}!</h1>
         <p>You're logged in with {userData[1]}</p>
-      </div>
+      </FadeIn>
     )}
-    </>
+    </div>
   );
 };
 
-export default Dashboard;
+export default Profile;
