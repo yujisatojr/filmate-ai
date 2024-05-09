@@ -81,6 +81,25 @@ def handle_favorite(favorite_id):
         db.session.delete(favorite)
         db.session.commit()
         return {"message": f"Favorite {favorite.film_id} successfully deleted."}
+    
+@app.route("/query_favorite")
+def favorite_by_film_id_and_username():
+    data = request.get_json()
+    film_id = data.get('film_id')
+    username = data.get('username')
+    
+    favorite = Favorites.query.filter_by(film_id=film_id, username=username).first()
+
+    print(favorite)
+    
+    if favorite is None:
+        return jsonify({'error': 'Favorite not found'}), 404
+    
+    response = {
+        "film_id": favorite.film_id,
+        "username": favorite.username,
+    }
+    return {"message": "success", "favorite": response}, 200
 
 @app.route('/signup', methods=['POST'])
 def signup():

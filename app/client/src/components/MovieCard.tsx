@@ -187,32 +187,56 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         };
     
         const fetchData = async () => {
-          const cookiesValid = await checkCookies();
-          if (!cookiesValid) return;
-    
-          try {
-            const response = await fetch("/user", {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include"
-            });
-    
-            if (!response.ok) {
-              throw new Error("Failed to fetch user data");
+            const cookiesValid = await checkCookies();
+            if (!cookiesValid) return;
+        
+            try {
+                const response = await fetch("/user", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include"
+                });
+        
+                if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+                }
+        
+                const data = await response.json();
+                // console.log(data);
+                setUserData([data.username, data.email]);
+            } catch (error) {
+                console.log('User is not logged in.');
             }
-    
-            const data = await response.json();
-            console.log(data)
-            setUserData([data.username, data.email]);
-          } catch (error) {
-            console.log('User is not logged in.')
-          }
         };
     
         fetchData();
     }, []);
+
+    const appendMovie = async (film_id: number) => {
+        try {
+            const response = await fetch("/favorites", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "film_id": film_id,
+                    "username": userData[0]
+                })
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to post film data");
+            }
+        
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    // console.log(userData);
 
     // useEffect(() => {
     //     const fetchData = async () => {
@@ -249,7 +273,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
                                 {userData && (
                                     <div className='checkbox_elements'>
-                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} />
+                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} checked onClick={() => appendMovie(movieDetail.id)}/>
                                         <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
                                     </div>
                                 )}
