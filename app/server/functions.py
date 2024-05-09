@@ -86,6 +86,7 @@ def get_default_list():
     for i, vector in enumerate(query_results):
         tmp = {
             "rank": i,
+            "id": vector.payload["id"],
             "title": vector.payload["title"],
             "summary": vector.payload["summary"],
             "year": vector.payload["year"],
@@ -250,6 +251,7 @@ def search_movies_in_qdrant(json_body):
     for i, vector in enumerate(query_results):
         tmp = {
             "rank": i,
+            "id": vector.payload["id"],
             "title": vector.payload["title"],
             "summary": vector.payload["summary"],
             "year": vector.payload["year"],
@@ -277,6 +279,7 @@ def search_similar_in_qdrant(metadata):
     for i, vector in enumerate(query_results):
         tmp = {
             "rank": i,
+            "id": vector.payload["id"],
             "title": vector.payload["title"],
             "summary": vector.payload["summary"],
             "year": vector.payload["year"],

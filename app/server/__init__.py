@@ -8,7 +8,7 @@ import jwt
 import logging
 import os
 
-app = Flask(__name__, static_folder='./client/build', static_url_path='')
+app = Flask(__name__, static_folder='../client/build', static_url_path='')
 CORS(app, supports_credentials=True)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/filmate"
@@ -27,6 +27,7 @@ def index():
 
 @app.errorhandler(404)
 def page_not_found(error):
+    print(error)
     return redirect('/')
 
 @app.route('/favorites', methods=['POST', 'GET'])

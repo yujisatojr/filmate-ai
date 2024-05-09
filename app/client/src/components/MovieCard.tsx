@@ -69,6 +69,8 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     const [isCastsLoading, setIsCastsLoading] = useState<boolean>(false);
     const [isNewsLoading, setIsNewsLoading] = useState<boolean>(false);
 
+    const [userData, setUserData] = useState<any>(null);
+
     const Item = styled(Paper)(({ theme }) => ({
         padding: theme.spacing(1),
         textAlign: 'left',
@@ -172,6 +174,69 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         }
     }, [movieDetail]);
 
+    useEffect(() => {
+        const checkCookies = async () => {
+          const authSessionCookie = document.cookie.match("auth-session=([^;]+)");
+          // console.log(authSessionCookie)
+    
+          if (!authSessionCookie) {
+            return false;
+          }
+    
+          return true;
+        };
+    
+        const fetchData = async () => {
+          const cookiesValid = await checkCookies();
+          if (!cookiesValid) return;
+    
+          try {
+            const response = await fetch("/user", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include"
+            });
+    
+            if (!response.ok) {
+              throw new Error("Failed to fetch user data");
+            }
+    
+            const data = await response.json();
+            console.log(data)
+            setUserData([data.username, data.email]);
+          } catch (error) {
+            console.log('User is not logged in.')
+          }
+        };
+    
+        fetchData();
+    }, []);
+
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //         const response = await fetch("/favorites/<favorite_id>", {
+    //             method: "GET",
+    //             headers: {
+    //             "Content-Type": "application/json",
+    //             }
+    //         });
+
+    //         const data = await response.json();
+    //         console.log(data)
+    //         // setQueryResult();
+    //         } catch (error) {
+    //         console.log('User is not logged in.')
+    //         }
+    //     };
+
+    //     fetchData();
+    // }, [userData]);
+
+    // console.log(movieDetail)
+
     return (
         <>
         {!isFilterLoading && clicked && (
@@ -182,10 +247,12 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
-                                <div className='checkbox_elements'>
-                                    <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} />
-                                    <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
-                                </div>
+                                {userData && (
+                                    <div className='checkbox_elements'>
+                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} />
+                                        <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
+                                    </div>
+                                )}
                             </Grid>
                             <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
                                 <div className='right_header'>
