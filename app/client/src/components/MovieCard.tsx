@@ -110,7 +110,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         setIsNewsLoading(true);
         const fetchData = async () => {
             try {
-                const response = await fetch(`/generate_news?title=${movieDetail.title}(${movieDetail.year})`);
+                const response = await fetch(`/generate_facts?title=${movieDetail.title}(${movieDetail.year})`);
                 if (response.ok) {
                     const data = await response.json();
                     setNewsData(await data);
@@ -341,7 +341,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                 {!isNewsLoading ? (
                                     newsData && newsData.headline_1 !== '' && (
                                         <div className='movie_news padding-bottom'>
-                                        <h3>Related News</h3>
+                                        <h3>Interesting Facts</h3>
                                         <p><ArrowRightIcon/> {newsData.headline_1}</p>
                                         <p><ArrowRightIcon/> {newsData.headline_2}</p>
                                         <p><ArrowRightIcon/> {newsData.headline_3}</p>

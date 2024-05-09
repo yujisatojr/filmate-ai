@@ -18,7 +18,7 @@ migrate = Migrate(app, db)
 api_key = os.getenv('AUTHSIGNAL_API_KEY')
 authsignal_client = authsignal.Client(api_key=api_key)
 
-from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_news, get_movie_casts
+from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_movie_casts
 from server.models import Favorites
 
 @app.route("/")
@@ -227,19 +227,19 @@ def get_recommends():
         logging.error(f'Error generating news from the query: {e}')
         return jsonify({'error': str(e)}), 400
 
-@app.route('/generate_news')
-def get_news():
+@app.route('/generate_facts')
+def get_facts():
     try:
         movie_title = request.args.get('title')
 
-        response = get_movie_news(movie_title)
+        response = get_movie_facts(movie_title)
 
         if response is not None:
             return jsonify(response)
         else:
             return jsonify({'error': 'Unable to parse user query.'}), 500
     except Exception as e:
-        logging.error(f'Error generating news from the query: {e}')
+        logging.error(f'Error generating facts from the query: {e}')
         return jsonify({'error': str(e)}), 400
     
 # @app.route('/generate_trailer')

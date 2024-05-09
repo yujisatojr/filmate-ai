@@ -8,11 +8,17 @@ import os
 from qdrant_client import models, QdrantClient
 from qdrant_client.http import models as rest
 from qdrant_client.http.models import Record
+from groq import Groq
 
 load_dotenv(find_dotenv())
-client = OpenAI(
-    api_key=os.getenv('OPENAI_API_KEY'),
+
+client = Groq(
+    api_key=os.getenv('GROQ_API_KEY'),
 )
+
+# client = OpenAI(
+#     api_key=os.getenv('OPENAI_API_KEY'),
+# )
 
 # Connect to the Qdrant cloud
 qdrant_client = QdrantClient(
@@ -22,7 +28,8 @@ qdrant_client = QdrantClient(
 
 collection_name = 'movies'
 vector_name='metadata'
-llm_model_name="gpt-3.5-turbo-0125"
+llm_model_name="mixtral-8x7b-32768"
+# llm_model_name="gpt-3.5-turbo-0125"
 embedding_model_name = 'text-embedding-3-small' # Be sure to use the same embedding model as the vectors in the collection
 
 print(qdrant_client.get_collections())
@@ -331,20 +338,20 @@ def get_recommendations(user_query):
     return json.loads(stream.choices[0].message.content)
 
 # Get related news based on the given movie title
-def get_movie_news(movie_title):
+def get_movie_facts(movie_title):
 
     prompt_template = f"""
-        Your task is to provide 3 related news article information about this movie: {movie_title} in the below example JSON format. Within the JSON template, headline represents the brief, one sentence summarization of the news articles. Make each sentence around 25 words long.
+        Your task is to provide 3 insightful facts or trivias about this movie: {movie_title} by strictly following the below example JSON format. The JSON output needs to be correctly formatted and is valid. Avoid the use of single quotes, special characters, and newlines. Within the JSON template, headline represents the brief, one sentence summarization of the news articles. Make each sentence around 25 words long.
         {{
-            "headline_1": "Christopher Nolan's Mind-Bending Thriller 'Inception' Turns 10: Celebrating a Decade of Dreams Within Dreams",
-            "headline_2": "Exploring the Legacy: How 'Inception' Revolutionized the Science Fiction Genre and Inspired Filmmakers Worldwide",
-            "headline_3": "Unraveling the Mysteries: Fans and Theorists Still Debate the Ambiguous Ending of 'Inception' 10 Years Later",
+            "headline_1": "Directorial Vision: Paris, Texas (1984) is directed by the acclaimed German filmmaker Wim Wenders. Known for his poetic and atmospheric storytelling, Wenders brings a unique perspective to the American landscape in this film.",
+            "headline_2": "Collaborative Screenplay: The screenplay for Paris, Texas (1984) is credited to Pulitzer Prize-winning playwright Sam Shepard. Shepard's talent for crafting authentic dialogue and exploring complex human relationships shines through in the film.",
+            "headline_3": "Iconic Cinematography: One of the most striking aspects of Paris, Texas (1984) is its stunning cinematography, captured by legendary cinematographer Robby Müller. Müller's use of wide shots and evocative lighting enhances the film's themes of isolation and longing, while also showcasing the beauty of the American Southwest.",
         }}
     """
 
     messages = [{
             "role": "system",
-            "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
+            "content": "Please generate output in the correct and valid JSON format exclusively, avoiding any additional text or explanations.",
         },
         {
             "role": "user",
