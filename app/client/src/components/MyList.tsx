@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FadeIn from './FadeIn';
+import MovieCard from './MovieCard';
 import '../assets/styles/MyList.scss';
 import Grid from '@mui/material/Grid';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const MyList = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -12,6 +12,27 @@ const MyList = () => {
 
     const [favoriteIds, setFavoriteIds] = useState<any>([]);
     const [favoritesData, setFavoritesData] = useState<any>(null);
+
+    const [movieDetail, setMovieDetail] = useState<any>(null);
+    const [clicked, setClicked] = useState<boolean>(false);
+
+    const handleClickedChange = () => {
+		setClicked(false)
+	};
+		
+	const handleClick = (movie: any) => {
+		setMovieDetail(movie);
+		setClicked(true);
+	};
+
+    const handleMovieChange = (data: any) => {
+		setMovieDetail(data);
+		// setClicked(true);
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	};
 
     useEffect(() => {
         const checkCookies = async () => {
@@ -101,7 +122,7 @@ const MyList = () => {
                 });
 
                 const data = await response.json();
-                console.log(data)
+                // console.log(data)
                 setFavoritesData(data);
                 setIsLoading(false);
             } catch (error) {
@@ -112,18 +133,23 @@ const MyList = () => {
         fetchData();
     }, [favoriteIds]);
 
+    console.log(favoritesData)
+
   return (
     <div className="mylist_root">
-    {userData && !isLoading && (
+    {userData && !isLoading && !clicked && (
         <FadeIn transitionDuration={700}>
-            <h1>My Favorites <FavoriteIcon/></h1>
+            <h1>My Favorites</h1>
+            {favoritesData && favoritesData.length === 0 && (
+                <p>Your favorite list is empty!</p>
+            )}
             <Grid container spacing={2} className='result_container'>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <Grid container spacing={2}>
                     {favoritesData && favoritesData.map((movie: any, index: number) => (
                         <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
                             <FadeIn transitionDuration={700} key={index}>
-                                <div key={index} className='movie_img zoom'>
+                                <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
                                     <img className='image_fill' alt={movie.title} src={movie.img}/>
                                 </div>
                             </FadeIn>
@@ -134,6 +160,14 @@ const MyList = () => {
             </Grid>
         </FadeIn>
     )}
+
+        <React.StrictMode>
+            <MovieCard
+            parentToChild={{ movieDetail, isLoading, clicked }}
+            movieChange={handleMovieChange}
+            clickedChange={handleClickedChange}
+            />
+        </React.StrictMode>
     </div>
   );
 };

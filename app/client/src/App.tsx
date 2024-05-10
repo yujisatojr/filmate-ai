@@ -120,9 +120,11 @@ function App() {
               <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
                 <Typography textAlign="center">About</Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
-                <Typography textAlign="center">My List</Typography>
-              </MenuItem>
+              {isAuthenticated && (
+                <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
+                  <Typography textAlign="center">My List</Typography>
+                </MenuItem>
+              )}
               <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
                 <Typography textAlign="center">Help</Typography>
               </MenuItem>
@@ -153,14 +155,16 @@ function App() {
             >
               About
             </Button>
-            <Button
-              className='nav_button_link'
-              component={NavLink} to="/mylist"
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              My List
-            </Button>
+            {isAuthenticated && (
+              <Button
+                className='nav_button_link'
+                component={NavLink} to="/mylist"
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                My List
+              </Button>
+            )}
             <Button
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
