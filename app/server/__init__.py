@@ -18,8 +18,8 @@ migrate = Migrate(app, db)
 api_key = os.getenv('AUTHSIGNAL_API_KEY')
 authsignal_client = authsignal.Client(api_key=api_key)
 
-from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_movie_casts, get_favorites_in_qdrant
-from server.models import Favorites
+from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_movie_casts, get_favorites_in_qdrant, get_bookmarks_in_qdrant
+from server.models import Favorites, Bookmarks
 
 @app.route("/")
 def index():
@@ -30,6 +30,7 @@ def page_not_found(error):
     print(error)
     return redirect('/')
 
+# Favorites model
 @app.route('/favorites', methods=['POST', 'GET'])
 def handle_favorites():
     if request.method == 'POST':
@@ -120,6 +121,90 @@ def favorites_by_username():
             } for favorite in favorites]
 
         return {"count": len(results), "favorites": results}
+    
+# Bookmarks model
+@app.route('/bookmarks', methods=['POST', 'GET'])
+def handle_bookmarks():
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
+
+            current_datetime = datetime.datetime.now()
+
+            new_bookmark = Bookmarks(film_id=data['film_id'], username=data['username'], date_added=current_datetime)
+            db.session.add(new_bookmark)
+            db.session.commit()
+            return {"message": f"bookmark {new_bookmark.film_id} has been created successfully."}
+        else:
+            return {"error": "The request payload is not in JSON format"}
+
+    elif request.method == 'GET':            
+        bookmarks = Bookmarks.query.all()
+        results = [
+            {
+                "film_id": bookmark.film_id,
+                "username": bookmark.username,
+                "date_added": bookmark.date_added
+            } for bookmark in bookmarks]
+
+        return {"count": len(results), "bookmarks": results}
+    
+@app.route('/bookmark', methods=['PUT', 'DELETE'])
+def handle_bookmark():
+    data = request.get_json()
+    bookmark_id = data['bookmark_id']
+    # print(favorite_id)
+    bookmark = Bookmarks.query.get_or_404(bookmark_id)
+
+    if request.method == 'PUT':
+        data = request.get_json()
+        bookmark.film_id = data['film_id']
+        bookmark.username = data['username']
+        bookmark.date_added = data['date_added']
+        db.session.add(bookmark)
+        db.session.commit()
+        return {"message": f"Bookmark {bookmark.film_id} successfully updated"}
+
+    elif request.method == 'DELETE':
+        db.session.delete(bookmark)
+        db.session.commit()
+        return {"message": f"Bookmark {bookmark.film_id} successfully deleted."}
+    
+@app.route("/query_bookmark", methods=['POST'])
+def bookmark_by_film_id_and_username():
+    data = request.get_json()
+    film_id = data.get('film_id')
+    username = data.get('username')
+    
+    bookmark = Bookmarks.query.filter_by(film_id=film_id, username=username).first()
+    
+    if bookmark is None:
+        return jsonify({'message': 'not found'}), 200
+    
+    response = {
+        "bookmark_id": bookmark.id,
+        "film_id": bookmark.film_id,
+        "username": bookmark.username,
+    }
+    return {"message": "success", "bookmark": response}, 200
+
+@app.route("/query_bookmarks", methods=['POST'])
+def bookmarks_by_username():
+    if request.is_json:
+        data = request.get_json()
+        username = data['username']
+
+        print(username)
+
+        bookmarks = Bookmarks.query.filter_by(username=username)
+        results = [
+            {
+                "film_id": bookmark.film_id,
+                "username": bookmark.username,
+                "date_added": bookmark.date_added
+            } for bookmark in bookmarks]
+
+        return {"count": len(results), "bookmarks": results}
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -243,9 +328,25 @@ def index_favortie_movies():
         if response is not None:
             return jsonify(response), 200
         else:
-            return jsonify({'error': 'Unable to fetch default movie data.'}), 500
+            return jsonify({'error': 'Unable to fetch favorite movies data.'}), 500
     except Exception as e:
-        logging.error(f'Error processing initial search request: {e}')
+        logging.error(f'Error processing favorites search request: {e}')
+        return jsonify({'error': str(e)}), 400
+    
+@app.route('/index_bookmarks', methods=['POST'])
+def index_bookmark_movies():
+    data = request.get_json()
+    id_list = data['id_list']
+
+    try:
+        response = get_bookmarks_in_qdrant(id_list)
+
+        if response is not None:
+            return jsonify(response), 200
+        else:
+            return jsonify({'error': 'Unable to fetch saved movies data.'}), 500
+    except Exception as e:
+        logging.error(f'Error processing saved movies search request: {e}')
         return jsonify({'error': str(e)}), 400
 
 @app.route('/generate_recommends')

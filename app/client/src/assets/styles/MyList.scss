@@ -3,14 +3,22 @@
     padding: 25px 50px;
     min-height: 100vh;
 
+    .mylist_header {
+        display: flex;
+        align-items: flex-start;
+    }
+
     h1 {
         font-size: 2em;
         margin-block-start: 0px;
         margin-block-end: 10px;
+    }
 
-        svg {
-            vertical-align: middle;
-        }
+    svg {
+        color: white;
+        font-size: 1.7rem;
+        vertical-align: middle;
+        margin-left: 5px;
     }
 
     p {

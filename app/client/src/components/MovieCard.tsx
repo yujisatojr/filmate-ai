@@ -70,8 +70,10 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     const [isNewsLoading, setIsNewsLoading] = useState<boolean>(false);
 
     const [userData, setUserData] = useState<any>(null);
-    const [isMovieInDB, setIsMovieInDB] = useState<any>(null);
+    const [isMovieLiked, setIsMovieLiked] = useState<any>(null);
     const [movieChanged, setMovieChanged] = useState<any>(null);
+    const [movieSaved, setMovieSaved] = useState<any>(null);
+    const [isMovieSaved, setIsMovieSaved] = useState<any>(null);
 
     const Item = styled(Paper)(({ theme }) => ({
         padding: theme.spacing(1),
@@ -265,6 +267,55 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         }
     }
 
+    const saveMovie = async (film_id: number) => {
+        try {
+            const response = await fetch("/bookmarks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "film_id": film_id,
+                    "username": userData[0]
+                })
+            });
+    
+            if (response.ok) {
+                console.log(film_id + ' is saved to the database.')
+                setMovieSaved(film_id);
+            } else {
+                throw new Error("Failed to post film data");
+            }
+        
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const unsaveMovie = async (bookmark_id: number) => {
+        try {
+            const response = await fetch("/bookmark", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "bookmark_id": bookmark_id,
+                })
+            });
+    
+            if (response.ok) {
+                console.log(bookmark_id + ' is unsaved from the database.')
+                setMovieSaved(bookmark_id);
+            } else {
+                throw new Error("Failed to delete film data");
+            }
+        
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         const checkIsValid = async () => {
             if (!userData || !movieDetail) {
@@ -291,7 +342,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 
                 const data = await response.json();
                 // console.log(data)
-                setIsMovieInDB(data);
+                setIsMovieLiked(data);
             } catch (error) {
                 console.log(error);
             }
@@ -299,6 +350,41 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 
         fetchData();
     }, [userData, movieDetail, movieChanged]);
+
+    useEffect(() => {
+        const checkIsValid = async () => {
+            if (!userData || !movieDetail) {
+              return false;
+            }
+            return true;
+        };
+
+        const fetchData = async () => {
+            const isValid = await checkIsValid();
+            if (!isValid) return;
+
+            try {
+                const response = await fetch("/query_bookmark", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "film_id": movieDetail.id,
+                        "username": userData[0]
+                    })
+                });
+
+                const data = await response.json();
+                // console.log(data)
+                setIsMovieSaved(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
+    }, [userData, movieDetail, movieSaved]);
 
     return (
         <>
@@ -310,18 +396,20 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
-                                {userData && isMovieInDB && isMovieInDB.message === "success" && (
-                                    <div className='checkbox_elements'>
-                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} checked onClick={() => removeMovie(isMovieInDB.favorite.favorite_id)}/>
-                                        <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
-                                    </div>
-                                )}
-                                {userData && isMovieInDB && isMovieInDB.message === "not found" && (
-                                    <div className='checkbox_elements'>
+                                <div className='checkbox_elements'>
+                                    {userData && isMovieLiked && isMovieLiked.message === "success" && (
+                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} checked onClick={() => removeMovie(isMovieLiked.favorite.favorite_id)}/>
+                                    )}
+                                    {userData && isMovieLiked && isMovieLiked.message === "not found" && (
                                         <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} onClick={() => appendMovie(movieDetail.id)}/>
-                                        <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
-                                    </div>
-                                )}
+                                    )}
+                                    {userData && isMovieSaved && isMovieSaved.message === "success" && (
+                                        <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} checked onClick={() => unsaveMovie(isMovieSaved.bookmark.bookmark_id)}/>
+                                    )}
+                                    {userData && isMovieSaved && isMovieSaved.message === "not found" && (
+                                        <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} onClick={() => saveMovie(movieDetail.id)}/>
+                                    )}
+                                </div>
                             </Grid>
                             <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
                                 <div className='right_header'>
