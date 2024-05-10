@@ -56,19 +56,22 @@ def handle_favorites():
 
         return {"count": len(results), "favorites": results}
     
-@app.route('/favorites/<favorite_id>', methods=['GET', 'PUT', 'DELETE'])
-def handle_favorite(favorite_id):
+@app.route('/favorite', methods=['PUT', 'DELETE'])
+def handle_favorite():
+    data = request.get_json()
+    favorite_id = data['favorite_id']
+    print(favorite_id)
     favorite = Favorites.query.get_or_404(favorite_id)
 
-    if request.method == 'GET':
-        response = {
-            "film_id": favorite.film_id,
-            "username": favorite.username,
-            "date_added": favorite.date_added
-        }
-        return {"message": "success", "favorite": response}
+    # if request.method == 'GET':
+    #     response = {
+    #         "film_id": favorite.film_id,
+    #         "username": favorite.username,
+    #         "date_added": favorite.date_added
+    #     }
+    #     return {"message": "success", "favorite": response}
 
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         data = request.get_json()
         favorite.film_id = data['film_id']
         favorite.username = data['username']
@@ -82,20 +85,19 @@ def handle_favorite(favorite_id):
         db.session.commit()
         return {"message": f"Favorite {favorite.film_id} successfully deleted."}
     
-@app.route("/query_favorite")
+@app.route("/query_favorite", methods=['POST'])
 def favorite_by_film_id_and_username():
     data = request.get_json()
     film_id = data.get('film_id')
     username = data.get('username')
     
     favorite = Favorites.query.filter_by(film_id=film_id, username=username).first()
-
-    print(favorite)
     
     if favorite is None:
-        return jsonify({'error': 'Favorite not found'}), 404
+        return jsonify({'message': 'not found'}), 200
     
     response = {
+        "favorite_id": favorite.id,
         "film_id": favorite.film_id,
         "username": favorite.username,
     }

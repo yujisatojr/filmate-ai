@@ -70,6 +70,8 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     const [isNewsLoading, setIsNewsLoading] = useState<boolean>(false);
 
     const [userData, setUserData] = useState<any>(null);
+    const [isMovieInDB, setIsMovieInDB] = useState<any>(null);
+    const [movieChanged, setMovieChanged] = useState<any>(null);
 
     const Item = styled(Paper)(({ theme }) => ({
         padding: theme.spacing(1),
@@ -227,7 +229,10 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                 })
             });
     
-            if (!response.ok) {
+            if (response.ok) {
+                console.log(film_id + ' is added to the database.')
+                setMovieChanged(film_id);
+            } else {
                 throw new Error("Failed to post film data");
             }
         
@@ -235,31 +240,67 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
             console.log(error);
         }
     }
+
+    const removeMovie = async (favorite_id: number) => {
+        try {
+            const response = await fetch("/favorite", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "favorite_id": favorite_id,
+                })
+            });
     
-    // console.log(userData);
+            if (response.ok) {
+                console.log(favorite_id + ' is deleted from the database.')
+                setMovieChanged(favorite_id);
+            } else {
+                throw new Error("Failed to delete film data");
+            }
+        
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //         const response = await fetch("/favorites/<favorite_id>", {
-    //             method: "GET",
-    //             headers: {
-    //             "Content-Type": "application/json",
-    //             }
-    //         });
+    useEffect(() => {
+        const checkIsValid = async () => {
+            if (!userData || !movieDetail) {
+              return false;
+            }
+            return true;
+        };
 
-    //         const data = await response.json();
-    //         console.log(data)
-    //         // setQueryResult();
-    //         } catch (error) {
-    //         console.log('User is not logged in.')
-    //         }
-    //     };
+        const fetchData = async () => {
+            const isValid = await checkIsValid();
+            if (!isValid) return;
 
-    //     fetchData();
-    // }, [userData]);
+            try {
+                const response = await fetch("/query_favorite", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "film_id": movieDetail.id,
+                        "username": userData[0]
+                    })
+                });
 
-    // console.log(movieDetail)
+                const data = await response.json();
+                // console.log(data)
+                setIsMovieInDB(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchData();
+    }, [userData, movieDetail, movieChanged]);
+
+    console.log(isMovieInDB)
 
     return (
         <>
@@ -271,9 +312,15 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
-                                {userData && (
+                                {userData && isMovieInDB && isMovieInDB.message === "success" && (
                                     <div className='checkbox_elements'>
-                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} checked onClick={() => appendMovie(movieDetail.id)}/>
+                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} checked onClick={() => removeMovie(isMovieInDB.favorite.favorite_id)}/>
+                                        <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
+                                    </div>
+                                )}
+                                {userData && isMovieInDB && isMovieInDB.message === "not found" && (
+                                    <div className='checkbox_elements'>
+                                        <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} onClick={() => appendMovie(movieDetail.id)}/>
                                         <Checkbox icon={<BookmarkBorderIcon />} checkedIcon={<BookmarkIcon className='save_icon' />} />
                                     </div>
                                 )}

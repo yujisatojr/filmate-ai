@@ -398,13 +398,13 @@ def get_movie_trailer(movie_title):
 def get_movie_casts(movie_title):
 
     prompt_template = f"""
-        Your task is to provide up to 5 main cast names of this movie: '{movie_title}' in the following JSON format. If the name is unknown, leave the field empty. The response has to include director, writer, and three top casts/crews.
+        Your task is to provide up to 5 main cast names of this movie: '{movie_title}' in the following JSON format. If the name is unknown, please leave the each field empty. The response has to include director, writer, and three top casts/crews.
         {{
-            "director": "Quentin Tarantino",
-            "writer": "Quentin Tarantino",
-            "main_cast_1": "Jamie Foxx",
-            "main_cast_2": "Christoph Waltz",
-            "main_cast_2": "Leonardo DiCaprio",
+            "director": "",
+            "writer": "",
+            "main_cast_1": "",
+            "main_cast_2": "",
+            "main_cast_2": "",
         }}
     """
 
