@@ -18,7 +18,7 @@ migrate = Migrate(app, db)
 api_key = os.getenv('AUTHSIGNAL_API_KEY')
 authsignal_client = authsignal.Client(api_key=api_key)
 
-from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_movie_casts
+from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_movie_casts, get_favorites_in_qdrant
 from server.models import Favorites
 
 @app.route("/")
@@ -45,12 +45,12 @@ def handle_favorites():
         else:
             return {"error": "The request payload is not in JSON format"}
 
-    elif request.method == 'GET':
+    elif request.method == 'GET':            
         favorites = Favorites.query.all()
         results = [
             {
                 "film_id": favorite.film_id,
-                "user": favorite.username,
+                "username": favorite.username,
                 "date_added": favorite.date_added
             } for favorite in favorites]
 
@@ -60,7 +60,7 @@ def handle_favorites():
 def handle_favorite():
     data = request.get_json()
     favorite_id = data['favorite_id']
-    print(favorite_id)
+    # print(favorite_id)
     favorite = Favorites.query.get_or_404(favorite_id)
 
     # if request.method == 'GET':
@@ -102,6 +102,24 @@ def favorite_by_film_id_and_username():
         "username": favorite.username,
     }
     return {"message": "success", "favorite": response}, 200
+
+@app.route("/query_favorites", methods=['POST'])
+def favorites_by_username():
+    if request.is_json:
+        data = request.get_json()
+        username = data['username']
+
+        print(username)
+
+        favorites = Favorites.query.filter_by(username=username)
+        results = [
+            {
+                "film_id": favorite.film_id,
+                "username": favorite.username,
+                "date_added": favorite.date_added
+            } for favorite in favorites]
+
+        return {"count": len(results), "favorites": results}
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -212,6 +230,22 @@ def get_similar_movies():
             return jsonify({'error': 'Unable to fetch movie data.'}), 500
     except Exception as e:
         logging.error(f'Error processing search request: {e}')
+        return jsonify({'error': str(e)}), 400
+    
+@app.route('/index_favorites', methods=['POST'])
+def index_favortie_movies():
+    data = request.get_json()
+    id_list = data['id_list']
+
+    try:
+        response = get_favorites_in_qdrant(id_list)
+
+        if response is not None:
+            return jsonify(response), 200
+        else:
+            return jsonify({'error': 'Unable to fetch default movie data.'}), 500
+    except Exception as e:
+        logging.error(f'Error processing initial search request: {e}')
         return jsonify({'error': str(e)}), 400
 
 @app.route('/generate_recommends')

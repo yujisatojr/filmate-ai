@@ -1,0 +1,19 @@
+.mylist_root {
+    // flex-direction: column;
+    // display: flex;
+    // align-items: center;
+    // justify-content: center;
+    margin-top: 80px;
+    padding: 25px;
+    min-height: 100vh;
+
+    h1 {
+        font-size: 2em;
+        margin-block-start: 0px;
+        margin-block-end: 10px;
+
+        svg {
+            vertical-align: middle;
+        }
+    }
+}

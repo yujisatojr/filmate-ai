@@ -428,3 +428,42 @@ def get_movie_casts(movie_title):
         response_format={ "type": "json_object" }
     )
     return json.loads(stream.choices[0].message.content)
+
+def get_favorites_in_qdrant(id_list):
+
+    query_results = qdrant_client.scroll(
+        collection_name=collection_name,
+        scroll_filter=models.Filter(
+            should=[
+                models.FieldCondition(
+                    key="id",
+                    match=models.MatchAny(any=id_list),
+                )
+            ]
+        )
+    )
+
+    # print(query_results)
+    results = []
+    for record in query_results[0]:
+        # id = record.id
+        payload = record.payload
+
+        tmp = {
+            "id": payload['id'],
+            "title": payload['title'],
+            "summary": payload['summary'],
+            "year": payload['year'],
+            "certificate": payload['certificate'],
+            "genre": payload['genre'],
+            "runtime": payload['runtime'],
+            "runtime_mins": payload['runtime_mins'],
+            "rating": payload['rating'],
+            "votes": int(payload['votes']),
+            "sentiment": payload['sentiment_normalized'],
+            "metadata": payload['metadata'],
+            "img": payload['img']
+        }
+        results.append(tmp)
+
+    return (json.loads(json.dumps(results)))

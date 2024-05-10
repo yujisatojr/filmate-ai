@@ -4,7 +4,8 @@ import {
   Home,
   Register,
   Login,
-  Profile
+  Profile,
+  MyList
 } from "./components";
 import Logo from './assets/images/logo.png';
 import './App.scss';
@@ -119,7 +120,7 @@ function App() {
               <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
                 <Typography textAlign="center">About</Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
+              <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
                 <Typography textAlign="center">My List</Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
@@ -153,6 +154,8 @@ function App() {
               About
             </Button>
             <Button
+              className='nav_button_link'
+              component={NavLink} to="/mylist"
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -234,6 +237,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/mylist" element={<MyList />} />
       </Routes>
 
     <footer>

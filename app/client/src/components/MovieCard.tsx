@@ -300,8 +300,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         fetchData();
     }, [userData, movieDetail, movieChanged]);
 
-    console.log(isMovieInDB)
-
     return (
         <>
         {!isFilterLoading && clicked && (
