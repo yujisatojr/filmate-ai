@@ -41,12 +41,12 @@ function Home() {
 	const [clicked, setClicked] = useState<boolean>(false);
 
 	const [searchInput, setSearchInput] = useState<string>('');
-	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, PG14: true, TV14: true, R: true, TVMA: true, Approved: true, NotRated: true });
+	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
 	const [selectedGenre, setSelectedGenre] = useState({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 	const [selectedPopularity, setSelectedPopularity] = useState<number[]>([1, 5]);
 	const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
 	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 566]);
-	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([1, 5]);
+	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([0, 10]);
 	const [selectedYear, setSelectedYear] = useState<number[]>([1915, 2024]);
 
 	const [filterData, setFilterData] = useState<any>(null);
@@ -199,7 +199,7 @@ function Home() {
 		// setFilterData(null);
 		setMovieData(null);
 		setMovieDetail(null);
-		setSelectedCertificate({ G: true, PG: true, PG13: true, PG14: true, TV14: true, R: true, TVMA: true, Approved: true, NotRated: true });
+		setSelectedCertificate({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 		setSelectedPopularity([1, 5]);
 		setSelectedRating([0, 10]);
@@ -336,7 +336,7 @@ function Home() {
 										control={
 										<Checkbox checked={value} onChange={handleCertChange} name={key} />
 										}
-										label={key === 'PG13' ? 'PG-13' : key === 'PG14' ? 'PG-14' : key === 'TV14' ? 'TV-14' : key === 'TVMA' ? 'TV-MA' : key === 'NotRated' ? 'Not Rated' : key}
+										label={key === 'PG13' ? 'PG-13' : key === 'NC17' ? 'NC-17' : key === 'TVMA' ? 'TV-MA' : key === 'NotRated' ? 'Not Rated' : key}
 									/>
 									))}
 								</FormGroup>
@@ -503,21 +503,21 @@ function Home() {
 								valueLabelDisplay="auto"
 								shiftStep={1}
 								step={1}
-								min={1}
-								max={5}
+								min={0}
+								max={10}
 							/>
 							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								Very Sad
+								Sad Movie
 								</Typography>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								Very Happy
+								Happy Movie
 								</Typography>
 							</Box>
 						</AccordionDetails>

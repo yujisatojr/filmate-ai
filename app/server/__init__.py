@@ -18,7 +18,7 @@ migrate = Migrate(app, db)
 api_key = os.getenv('AUTHSIGNAL_API_KEY')
 authsignal_client = authsignal.Client(api_key=api_key)
 
-from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_movie_casts, get_favorites_in_qdrant, get_bookmarks_in_qdrant
+from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_favorites_in_qdrant, get_bookmarks_in_qdrant
 from server.models import Favorites, Bookmarks
 
 @app.route("/")
@@ -393,18 +393,3 @@ def get_facts():
 #     except Exception as e:
 #         logging.error(f'Error generating filters from the query: {e}')
 #         return jsonify({'error': str(e)}), 400
-    
-@app.route('/generate_casts')
-def get_casts():
-    try:
-        movie_title = request.args.get('title')
-
-        response = get_movie_casts(movie_title)
-
-        if response is not None:
-            return jsonify(response)
-        else:
-            return jsonify({'error': 'Unable to parse user query.'}), 500
-    except Exception as e:
-        logging.error(f'Error generating filters from the query: {e}')
-        return jsonify({'error': str(e)}), 400

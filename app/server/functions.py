@@ -1,9 +1,9 @@
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 import json
-import locale
 from openai import OpenAI
 import openai
+import ast
 import os
 from qdrant_client import models, QdrantClient
 from qdrant_client.http import models as rest
@@ -91,6 +91,11 @@ def get_default_list():
     
     results = []
     for i, vector in enumerate(query_results):
+
+        directors = [director for director in [vector.payload["director_1"], vector.payload["director_2"], vector.payload["director_3"]] if director != '']
+        writers = [writer for writer in [vector.payload["writer_1"], vector.payload["writer_2"], vector.payload["writer_3"]] if writer != '']
+        casts = [cast for cast in [vector.payload["cast_1"], vector.payload["cast_2"], vector.payload["cast_3"]] if cast != '']
+
         tmp = {
             "rank": i,
             "id": vector.payload["id"],
@@ -98,12 +103,17 @@ def get_default_list():
             "summary": vector.payload["summary"],
             "year": vector.payload["year"],
             "certificate": vector.payload["certificate"],
-            "genre": vector.payload["genre"],
             "runtime": vector.payload["runtime"],
             "runtime_mins": vector.payload["runtime_mins"],
             "rating": vector.payload["rating"],
             "votes": int(vector.payload["votes"]),
-            "sentiment": vector.payload["sentiment_normalized"],
+            "sentiment_score": vector.payload["sentiment_score"],
+            "sentiment_reason": vector.payload["sentiment_reason"],
+            "recommended_audience": vector.payload["recommended_audience"],
+            "directors": ast.literal_eval(str(directors)),
+            "writers": ast.literal_eval(str(writers)),
+            "casts": ast.literal_eval(str(casts)),
+            "genres": ast.literal_eval(str(vector.payload["genres"])),
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -127,16 +137,15 @@ def create_filter(json_query):
     year = data['selectedYear']
 
     filter_conditions = []
+    genres_conditions = []
 
     # Create filter for certificate selection
     certificateArray = []
     for key, value in certificate.items():
         if key == "PG13" and value:
             key = "PG-13"
-        elif key == "PG14" and value:
-            key = "PG-14"
-        elif key == "TV14" and value:
-            key = "TV-14"
+        elif key == "NC17" and value:
+            key = "NC-17"
         elif key == "TVMA" and value:
             key = "TV-MA"
         elif key == "NotRated" and value:
@@ -167,10 +176,22 @@ def create_filter(json_query):
         genreArray = []
     
     if genreArray != []:
-        filter_conditions.append(models.FieldCondition(
-            key="genre",
+        genres_conditions.append(models.FieldCondition(
+            key="genre_1",
             match=models.MatchAny(any=genreArray),
         ))
+        genres_conditions.append(models.FieldCondition(
+            key="genre_2",
+            match=models.MatchAny(any=genreArray),
+        ))
+        genres_conditions.append(models.FieldCondition(
+            key="genre_3",
+            match=models.MatchAny(any=genreArray),
+        ))
+        # filter_conditions.append(models.FieldCondition(
+        #         key="genres",
+        #         match=models.MatchAny(any=genreArray),
+        # ))
     
     popularity_mapping = {2: 200000, 3: 500000, 4: 1000000, 5: 2000000}
 
@@ -202,7 +223,7 @@ def create_filter(json_query):
     ))
 
     filter_conditions.append(models.FieldCondition(
-        key="sentiment_normalized",
+        key="sentiment_score",
         range=models.Range(
             gte=sentiment[0],
             lte=sentiment[1]
@@ -221,11 +242,11 @@ def create_filter(json_query):
     print(filter_conditions)
     print('============================================')
     
-    return filter_conditions
+    return filter_conditions, genres_conditions
 
 def filter_and_search(json_query, collection_name, vector_name, top_k):
 
-    filter_conditions = create_filter(json_query)
+    filter_conditions, genres_conditions = create_filter(json_query)
 
     json_parsed = json.loads(json_query)
     user_query = json_parsed['searchInput']
@@ -236,6 +257,7 @@ def filter_and_search(json_query, collection_name, vector_name, top_k):
         collection_name=collection_name,
         query_filter=models.Filter(
             must=filter_conditions,
+            should=genres_conditions,
         ),
         search_params=models.SearchParams(hnsw_ef=128, exact=False),
         query_vector=(
@@ -256,6 +278,11 @@ def search_movies_in_qdrant(json_body):
     results = []
     
     for i, vector in enumerate(query_results):
+
+        directors = [director for director in [vector.payload["director_1"], vector.payload["director_2"], vector.payload["director_3"]] if director != '']
+        writers = [writer for writer in [vector.payload["writer_1"], vector.payload["writer_2"], vector.payload["writer_3"]] if writer != '']
+        casts = [cast for cast in [vector.payload["cast_1"], vector.payload["cast_2"], vector.payload["cast_3"]] if cast != '']
+
         tmp = {
             "rank": i,
             "id": vector.payload["id"],
@@ -263,12 +290,17 @@ def search_movies_in_qdrant(json_body):
             "summary": vector.payload["summary"],
             "year": vector.payload["year"],
             "certificate": vector.payload["certificate"],
-            "genre": vector.payload["genre"],
             "runtime": vector.payload["runtime"],
             "runtime_mins": vector.payload["runtime_mins"],
             "rating": vector.payload["rating"],
             "votes": int(vector.payload["votes"]),
-            "sentiment": vector.payload["sentiment_normalized"],
+            "sentiment_score": vector.payload["sentiment_score"],
+            "sentiment_reason": vector.payload["sentiment_reason"],
+            "recommended_audience": vector.payload["recommended_audience"],
+            "directors": directors,
+            "writers": writers,
+            "casts": casts,
+            "genres": vector.payload["genres"],
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -284,6 +316,11 @@ def search_similar_in_qdrant(metadata):
     results = []
     
     for i, vector in enumerate(query_results):
+
+        directors = [director for director in [vector.payload["director_1"], vector.payload["director_2"], vector.payload["director_3"]] if director != '']
+        writers = [writer for writer in [vector.payload["writer_1"], vector.payload["writer_2"], vector.payload["writer_3"]] if writer != '']
+        casts = [cast for cast in [vector.payload["cast_1"], vector.payload["cast_2"], vector.payload["cast_3"]] if cast != '']
+
         tmp = {
             "rank": i,
             "id": vector.payload["id"],
@@ -291,12 +328,17 @@ def search_similar_in_qdrant(metadata):
             "summary": vector.payload["summary"],
             "year": vector.payload["year"],
             "certificate": vector.payload["certificate"],
-            "genre": vector.payload["genre"],
             "runtime": vector.payload["runtime"],
             "runtime_mins": vector.payload["runtime_mins"],
             "rating": vector.payload["rating"],
             "votes": int(vector.payload["votes"]),
-            "sentiment": vector.payload["sentiment_normalized"],
+            "sentiment_score": vector.payload["sentiment_score"],
+            "sentiment_reason": vector.payload["sentiment_reason"],
+            "recommended_audience": vector.payload["recommended_audience"],
+            "directors": directors,
+            "writers": writers,
+            "casts": casts,
+            "genres": vector.payload["genres"],
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -394,41 +436,6 @@ def get_movie_trailer(movie_title):
     )
     return json.loads(stream.choices[0].message.content)
 
-# Get top cast member names based on the given movie title
-def get_movie_casts(movie_title):
-
-    prompt_template = f"""
-        Your task is to provide up to 5 main cast names of this movie: '{movie_title}' in the following JSON format. If the name is unknown, please leave the each field empty. The response has to include director, writer, and three top casts/crews.
-        {{
-            "director": "",
-            "writer": "",
-            "main_cast_1": "",
-            "main_cast_2": "",
-            "main_cast_2": "",
-        }}
-    """
-
-    messages = [{
-            "role": "system",
-            "content": "Please generate output in JSON format exclusively, avoiding any additional text or explanations.",
-        },
-        {
-            "role": "user",
-            "content": prompt_template
-        }
-    ]
-
-    stream = client.chat.completions.create(
-        model=llm_model_name,
-        messages=messages,
-        max_tokens=100,
-        temperature=0.5,
-        frequency_penalty=0,
-        presence_penalty=0,
-        response_format={ "type": "json_object" }
-    )
-    return json.loads(stream.choices[0].message.content)
-
 def get_favorites_in_qdrant(id_list):
 
     query_results = qdrant_client.scroll(
@@ -449,20 +456,29 @@ def get_favorites_in_qdrant(id_list):
         # id = record.id
         payload = record.payload
 
+        directors = [director for director in [payload["director_1"], payload["director_2"], payload["director_3"]] if director != '']
+        writers = [writer for writer in [payload["writer_1"], payload["writer_2"], payload["writer_3"]] if writer != '']
+        casts = [cast for cast in [payload["cast_1"], payload["cast_2"], payload["cast_3"]] if cast != '']
+
         tmp = {
-            "id": payload['id'],
-            "title": payload['title'],
-            "summary": payload['summary'],
-            "year": payload['year'],
-            "certificate": payload['certificate'],
-            "genre": payload['genre'],
-            "runtime": payload['runtime'],
-            "runtime_mins": payload['runtime_mins'],
-            "rating": payload['rating'],
-            "votes": int(payload['votes']),
-            "sentiment": payload['sentiment_normalized'],
-            "metadata": payload['metadata'],
-            "img": payload['img']
+            "id": payload["id"],
+            "title": payload["title"],
+            "summary": payload["summary"],
+            "year": payload["year"],
+            "certificate": payload["certificate"],
+            "runtime": payload["runtime"],
+            "runtime_mins": payload["runtime_mins"],
+            "rating": payload["rating"],
+            "votes": int(payload["votes"]),
+            "sentiment_score": payload["sentiment_score"],
+            "sentiment_reason": payload["sentiment_reason"],
+            "recommended_audience": payload["recommended_audience"],
+            "directors": directors,
+            "writers": writers,
+            "casts": casts,
+            "genres": payload["genres"],
+            "metadata": payload["metadata"],
+            "img": payload["img"]
         }
         results.append(tmp)
 
@@ -488,20 +504,29 @@ def get_bookmarks_in_qdrant(id_list):
         # id = record.id
         payload = record.payload
 
+        directors = [director for director in [payload["director_1"], payload["director_2"], payload["director_3"]] if director != '']
+        writers = [writer for writer in [payload["writer_1"], payload["writer_2"], payload["writer_3"]] if writer != '']
+        casts = [cast for cast in [payload["cast_1"], payload["cast_2"], payload["cast_3"]] if cast != '']
+
         tmp = {
-            "id": payload['id'],
-            "title": payload['title'],
-            "summary": payload['summary'],
-            "year": payload['year'],
-            "certificate": payload['certificate'],
-            "genre": payload['genre'],
-            "runtime": payload['runtime'],
-            "runtime_mins": payload['runtime_mins'],
-            "rating": payload['rating'],
-            "votes": int(payload['votes']),
-            "sentiment": payload['sentiment_normalized'],
-            "metadata": payload['metadata'],
-            "img": payload['img']
+            "id": payload["id"],
+            "title": payload["title"],
+            "summary": payload["summary"],
+            "year": payload["year"],
+            "certificate": payload["certificate"],
+            "runtime": payload["runtime"],
+            "runtime_mins": payload["runtime_mins"],
+            "rating": payload["rating"],
+            "votes": int(payload["votes"]),
+            "sentiment_score": payload["sentiment_score"],
+            "sentiment_reason": payload["sentiment_reason"],
+            "recommended_audience": payload["recommended_audience"],
+            "directors": directors,
+            "writers": writers,
+            "casts": casts,
+            "genres": payload["genres"],
+            "metadata": payload["metadata"],
+            "img": payload["img"]
         }
         results.append(tmp)
 
