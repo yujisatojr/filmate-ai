@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Rating, { IconContainerProps } from '@mui/material/Rating';
 import Skeleton from '@mui/material/Skeleton';
+import { RadialGauge, RadialGaugeArc, StackedRadialGaugeSeries, StackedRadialGaugeValueLabel, StackedRadialGaugeDescriptionLabel } from 'reaviz';
 
 // Import icons
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
@@ -21,6 +22,12 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+
+const data = [
+    { key: 'IDS', data: 14 },
+    { key: 'Malware', data: 5 },
+    { key: 'DLP', data: 18 }
+  ];
 
 const customIcons: {
   [index: string]: {
@@ -108,13 +115,14 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         },
     });
 
-    movieDetail && console.log(movieDetail.sentiment_score)
-
     useEffect(() => {
+        let controller = new AbortController();
+        let signal = controller.signal;
+
         setIsNewsLoading(true);
         const fetchData = async () => {
             try {
-                const response = await fetch(`/generate_facts?title=${movieDetail.title}(${movieDetail.year})`);
+                const response = await fetch(`/generate_facts?title=${movieDetail.title}(${movieDetail.year})`, {signal});
                 if (response.ok) {
                     const data = await response.json();
                     setNewsData(await data);
@@ -132,33 +140,21 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         if (movieDetail !== null) {
             fetchData();
         }
+
+        return () => {
+            controller.abort();
+            controller = new AbortController();
+        }
     }, [movieDetail]);
-
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     try {
-    //       const response = await fetch(`/generate_trailer?title=${movieDetail.title}`);
-    //       if (response.ok) {
-    //         const data = await response.json();
-    //         setTrailerData(await data);
-    //       } else {
-    //         console.error('Error fetching movie trailer data');
-    //       }
-    //     } catch (error) {
-    //       console.error('Error fetching movie trailer data:', error);
-    //     }
-    //   };
-
-    //   if (movieDetail !== null) {
-    //     fetchData();
-    //   }
-    // }, [movieDetail]);
     
     useEffect(() => {
+        let controller = new AbortController();
+        let signal = controller.signal;
+
         setIsSimilarLoading(true);
         const fetchData = async () => {
             try {
-                const response = await fetch(`/similarity_search?metadata=${movieDetail.metadata}`);
+                const response = await fetch(`/similarity_search?metadata=${movieDetail.metadata}`, {signal});
             if (response.ok) {
                 const data = await response.json();
                 setSimilarMoviesData(await data);
@@ -175,6 +171,11 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 
         if (movieDetail !== null) {
             fetchData();
+        }
+
+        return () => {
+            controller.abort();
+            controller = new AbortController();
         }
     }, [movieDetail]);
 
@@ -201,7 +202,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                     "Content-Type": "application/json",
                 },
                 credentials: "include"
-                });
+                },);
         
                 if (!response.ok) {
                 throw new Error("Failed to fetch user data");
@@ -317,6 +318,9 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     }
 
     useEffect(() => {
+        let controller = new AbortController();
+        let signal = controller.signal;
+        
         const checkIsValid = async () => {
             if (!userData || !movieDetail) {
               return false;
@@ -330,6 +334,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 
             try {
                 const response = await fetch("/query_favorite", {
+                    signal,
                     method: "POST",
                     headers: {
                     "Content-Type": "application/json",
@@ -349,9 +354,16 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         };
 
         fetchData();
+        return () => {
+            controller.abort();
+            controller = new AbortController();
+        }
     }, [userData, movieDetail, movieChanged]);
 
     useEffect(() => {
+        let controller = new AbortController();
+        let signal = controller.signal;
+
         const checkIsValid = async () => {
             if (!userData || !movieDetail) {
               return false;
@@ -365,6 +377,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 
             try {
                 const response = await fetch("/query_bookmark", {
+                    signal,
                     method: "POST",
                     headers: {
                     "Content-Type": "application/json",
@@ -384,6 +397,10 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         };
 
         fetchData();
+        return () => {
+            controller.abort();
+            controller = new AbortController();
+        }
     }, [userData, movieDetail, movieSaved]);
 
     return (
@@ -428,37 +445,83 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                 
                                 <p>{movieDetail.summary}</p>
 
+                                <h3>Sentiment Score</h3>
                                 <div className='flex_section'>
-                                    <div className='sub_section'>
-                                        <h3>Rating</h3>
-                                        <Rating name="rating_star" value={movieDetail.rating} precision={0.1} max={10} readOnly />
-                                        <p>{movieDetail.rating}/10 ({movieDetail.votes} votes)</p>
+                                    <div className='gauge_chart_wrapper'>
+                                        <RadialGauge
+                                        data={[{
+                                        key: 'Sentiment',
+                                        data: movieDetail ? movieDetail.sentiment_score : 0
+                                        }]}
+                                        height={120} 
+                                        width={120} 
+                                        minValue={0}
+                                        maxValue={10}
+                                        series={
+                                            <StackedRadialGaugeSeries
+                                            outerArc={
+                                                <RadialGaugeArc 
+                                                disabled={true}
+                                                animated={false}
+                                                />
+                                            }
+                                            label={
+                                                <StackedRadialGaugeValueLabel
+                                                label={movieDetail ? movieDetail.sentiment_score : 0}
+                                                className="gauge_chart_center"
+                                                // yOffset={5}
+                                                />
+                                            }
+                                            innerArc={
+                                                <RadialGaugeArc cornerRadius={12.5} />
+                                            } 
+                                            // arcWidth={25}
+                                            colorScheme={
+                                                movieDetail && (movieDetail.sentiment_score === 0 || movieDetail.sentiment_score === 1) ? ['#d32f2f'] 
+                                                : movieDetail && (movieDetail.sentiment_score === 2 || movieDetail.sentiment_score === 3) ? ['#f57c00'] 
+                                                : movieDetail && (movieDetail.sentiment_score === 4 || movieDetail.sentiment_score === 5 || movieDetail.sentiment_score === 6) ? ['#ab47bc'] 
+                                                : movieDetail && (movieDetail.sentiment_score === 7 || movieDetail.sentiment_score === 8) ? ['#0288d1'] 
+                                                : movieDetail && (movieDetail.sentiment_score === 9 || movieDetail.sentiment_score === 10) ? ['#388e3c'] 
+                                                : ['gray']
+                                            }
+                                            descriptionLabel={
+                                                <StackedRadialGaugeDescriptionLabel
+                                                label='/10'
+                                                yOffset={-5}
+                                                className='gauge_chart_desc'
+                                                />
+                                            }
+                                            />
+                                        }
+                                        />
                                     </div>
 
                                     <div>
-                                        <h3>Sentiment Score</h3>
-                                        <StyledRating
-                                        name="highlight-selected-only"
-                                        value={movieDetail.sentiment_score}
-                                        IconContainerComponent={IconContainer}
-                                        getLabelText={(value: number) => customIcons[value].label}
-                                        highlightSelectedOnly
-                                        readOnly
-                                        />
-                                        <p>{movieDetail.sentiment_score}/10</p>
-                                        <p>{movieDetail.sentiment_reason}</p>
+                                        <p className='sentiment_header'>
+                                            {
+                                            movieDetail && (movieDetail.sentiment_score === 0) ? 'Depressing Movie' 
+                                            : movieDetail && (movieDetail.sentiment_score === 1) ? 'Very Sad Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 2) ? 'Sad Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 3) ? 'Somewhat Sad Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 4) ? 'Neutral, Slightly Sad Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 5) ? 'Neutral Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 6) ? 'Neutral, Slightly Happy Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 7) ? 'Somewhat Happy Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 8) ? 'Happy Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 9) ? 'Very Happy Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 10) ? 'Joyful Movie'
+                                            : 'No Data Available'
+                                            }
+                                        </p>
+                                       <p>{movieDetail.sentiment_reason}</p>
                                     </div>
                                 </div>
 
-                                {/* {(trailerData && !trailerError) ? (
-                                    <ReactPlayer url={trailerData.url} onError={(e) => {
-                                    e.preventDefault()
-                                    setTrailerError(true)
-                                    }}/>
-                                ) : (
-                                    <ReactPlayer url='https://youtu.be/dQw4w9WgXcQ?si=hJge3e8INVEqXkvK'/>
-                                )} */}
-
+                                <div className='sub_section'>
+                                    <h3>Rating</h3>
+                                    <Rating name="rating_star" value={movieDetail.rating} precision={0.1} max={10} readOnly />
+                                    <p>{movieDetail.rating}/10 ({movieDetail.votes} votes)</p>
+                                </div>
 
                                 <div className='padding-bottom'>
                                     <h3>Top Crew</h3>

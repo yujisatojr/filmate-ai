@@ -261,14 +261,22 @@ input {
   
 		.detail_section {
 			display: flex;
+			flex-direction: row;
 			padding-top: 10px;
 			padding-bottom: 10px;
 		}
 	
 		.flex_section {
 			display: flex;
-			padding-top: 20px;
+			gap: 15px;
+			align-items: center;
+			flex-direction: row;
+			padding-top: 10px;
 			padding-bottom: 20px;
+
+			.sentiment_header {
+				font-weight: bold;
+			}
 		}
 	
 		.movie_news {
@@ -355,6 +363,23 @@ fieldset {
 		background: rgb(130,63,251);
 		background: linear-gradient(0deg, rgba(130,63,251,1) 28%, rgba(252,89,70,1) 100%);
 	}
+}
+
+.gauge_chart_wrapper {
+	min-width: 120px;
+	min-height: 120px;
+}
+
+.gauge_chart_center {
+	font-size: 2rem !important;
+	font-family: "Lato", sans-serif !important;
+	font-weight: bold !important;
+	transform: translate(-10px, 0px) !important;
+}
+
+.gauge_chart_desc {
+	font-size: 16px !important;
+	transform: translate(17px, 30px) !important;
 }
   
 @media screen and (max-width: 1300px) {
