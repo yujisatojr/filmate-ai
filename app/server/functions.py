@@ -297,10 +297,10 @@ def search_movies_in_qdrant(json_body):
             "sentiment_score": vector.payload["sentiment_score"],
             "sentiment_reason": vector.payload["sentiment_reason"],
             "recommended_audience": vector.payload["recommended_audience"],
-            "directors": directors,
-            "writers": writers,
-            "casts": casts,
-            "genres": vector.payload["genres"],
+            "directors": ast.literal_eval(str(directors)),
+            "writers": ast.literal_eval(str(writers)),
+            "casts": ast.literal_eval(str(casts)),
+            "genres": ast.literal_eval(str(vector.payload["genres"])),
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -335,10 +335,10 @@ def search_similar_in_qdrant(metadata):
             "sentiment_score": vector.payload["sentiment_score"],
             "sentiment_reason": vector.payload["sentiment_reason"],
             "recommended_audience": vector.payload["recommended_audience"],
-            "directors": directors,
-            "writers": writers,
-            "casts": casts,
-            "genres": vector.payload["genres"],
+            "directors": ast.literal_eval(str(directors)),
+            "writers": ast.literal_eval(str(writers)),
+            "casts": ast.literal_eval(str(casts)),
+            "genres": ast.literal_eval(str(vector.payload["genres"])),
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -473,10 +473,10 @@ def get_favorites_in_qdrant(id_list):
             "sentiment_score": payload["sentiment_score"],
             "sentiment_reason": payload["sentiment_reason"],
             "recommended_audience": payload["recommended_audience"],
-            "directors": directors,
-            "writers": writers,
-            "casts": casts,
-            "genres": payload["genres"],
+            "directors": ast.literal_eval(str(directors)),
+            "writers": ast.literal_eval(str(writers)),
+            "casts": ast.literal_eval(str(casts)),
+            "genres": ast.literal_eval(str(payload["genres"])),
             "metadata": payload["metadata"],
             "img": payload["img"]
         }
@@ -521,10 +521,10 @@ def get_bookmarks_in_qdrant(id_list):
             "sentiment_score": payload["sentiment_score"],
             "sentiment_reason": payload["sentiment_reason"],
             "recommended_audience": payload["recommended_audience"],
-            "directors": directors,
-            "writers": writers,
-            "casts": casts,
-            "genres": payload["genres"],
+            "directors": ast.literal_eval(str(directors)),
+            "writers": ast.literal_eval(str(writers)),
+            "casts": ast.literal_eval(str(casts)),
+            "genres": ast.literal_eval(str(payload["genres"])),
             "metadata": payload["metadata"],
             "img": payload["img"]
         }

@@ -45,7 +45,7 @@ function Home() {
 	const [selectedGenre, setSelectedGenre] = useState({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 	const [selectedPopularity, setSelectedPopularity] = useState<number[]>([1, 5]);
 	const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
-	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 566]);
+	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 300]);
 	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([0, 10]);
 	const [selectedYear, setSelectedYear] = useState<number[]>([1915, 2024]);
 
@@ -203,7 +203,7 @@ function Home() {
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 		setSelectedPopularity([1, 5]);
 		setSelectedRating([0, 10]);
-		setSelectedRuntime([45, 566]);
+		setSelectedRuntime([45, 300]);
 		setSelectedYear([1915, 2024]);
 		setInitCall(prev => prev + 1);
 	};
@@ -468,7 +468,7 @@ function Home() {
 								shiftStep={10}
 								step={10}
 								min={45}
-								max={566}
+								max={300}
 							/>
 							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Typography
@@ -481,7 +481,7 @@ function Home() {
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								566 mins
+								300 mins
 								</Typography>
 							</Box>
 						</AccordionDetails>

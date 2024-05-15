@@ -248,15 +248,37 @@ input {
 			color: #B9BDCB;
 			margin-block-start: 0px !important;
 			margin-block-end: 10px !important;
+
+			svg {
+				vertical-align: middle;
+			}
 		}
   
 		p {
 			margin-block-end: 0.5em !important;
 		}
+
+		a {
+			// color: #ab47bc;
+			color: #42a5f5;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
   
 		hr {
 			margin-bottom: 15px;
 			border-color: #B9BDCB;
+		}
+
+		.header_flex {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding-top: 15px;
+			padding-bottom: 15px;
 		}
   
 		.detail_section {
@@ -265,13 +287,38 @@ input {
 			padding-top: 10px;
 			padding-bottom: 10px;
 		}
+
+		.genres_section {
+			display: flex;
+			flex-direction: row;
+			padding-bottom: 10px;
+			gap: 10px;
+
+			.genre_chip {
+				font-size: 1rem;
+			}
+
+			span {
+				color: #b9bdcb;
+				font-family: "Lato", sans-serif;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+		}
+
+		.summary_section {
+			padding-bottom: 20px;
+		}
+
+		.rating_section {
+			padding-bottom: 20px;
+		}
 	
 		.flex_section {
 			display: flex;
 			gap: 15px;
 			align-items: center;
 			flex-direction: row;
-			padding-top: 10px;
 			padding-bottom: 20px;
 
 			.sentiment_header {
@@ -290,7 +337,7 @@ input {
 		}
 	
 		.sub_section {
-			margin-right: 50px;
+			margin-right: 25px;
 		}
     }
 }

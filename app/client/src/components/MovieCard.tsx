@@ -4,9 +4,10 @@ import { styled } from '@mui/material/styles';
 
 // Import MUI components
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Rating, { IconContainerProps } from '@mui/material/Rating';
+import Rating from '@mui/material/Rating';
 import Skeleton from '@mui/material/Skeleton';
 import { RadialGauge, RadialGaugeArc, StackedRadialGaugeSeries, StackedRadialGaugeValueLabel, StackedRadialGaugeDescriptionLabel } from 'reaviz';
 
@@ -17,74 +18,6 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-
-const data = [
-    { key: 'IDS', data: 14 },
-    { key: 'Malware', data: 5 },
-    { key: 'DLP', data: 18 }
-  ];
-
-const customIcons: {
-  [index: string]: {
-    icon: React.ReactElement;
-    label: string;
-  };
-} = {
-    0: {
-        icon: <SentimentVeryDissatisfiedIcon color="error" />,
-        label: 'Extremely Sad Movie',
-    },
-    1: {
-        icon: <SentimentVeryDissatisfiedIcon color="error" />,
-        label: 'Very Sad Movie',
-    },
-    2: {
-        icon: <SentimentVeryDissatisfiedIcon color="warning" />,
-        label: 'Sad Movie',
-    },
-    3: {
-        icon: <SentimentVeryDissatisfiedIcon color="warning" />,
-        label: 'Somewhat Sad Movie',
-    },
-    4: {
-        icon: <SentimentVeryDissatisfiedIcon color="primary" />,
-        label: 'Neutral, Slightly Sad Movie',
-    },
-    5: {
-        icon: <SentimentVeryDissatisfiedIcon color="primary" />,
-        label: 'Neutral Movie',
-    },
-    6: {
-        icon: <SentimentVeryDissatisfiedIcon color="primary" />,
-        label: 'Neutral, Slightly Happy Movie',
-    },
-    7: {
-        icon: <SentimentVeryDissatisfiedIcon color="success" />,
-        label: 'Somewhat Happy Movie',
-    },
-    8: {
-        icon: <SentimentVeryDissatisfiedIcon color="success" />,
-        label: 'Happy Movie',
-    },
-    9: {
-        icon: <SentimentVeryDissatisfiedIcon color="success" />,
-        label: 'Very Happy Movie',
-    },
-    10: {
-        icon: <SentimentVeryDissatisfiedIcon color="success" />,
-        label: 'Extremely Happy Movie',
-    },
-};
-
-function IconContainer(props: IconContainerProps) {
-  const { value, ...other } = props;
-  return <span {...other}>{customIcons[value].icon}</span>;
-}
 
 function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 
@@ -430,20 +363,25 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                             </Grid>
                             <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
                                 <div className='right_header'>
-                                    <h1>
-                                        {movieDetail.title}
-                                        <span> ({movieDetail.year})</span>
-                                    </h1>
+                                    <h1>{movieDetail.title}</h1>
                                     <CloseIcon fontSize="inherit" onClick={() => clickedChange(false)}/>
                                 </div>
                                 
-                                <div className='detail_section'>
-                                    <p className='sub_section'>{movieDetail.genre_1}</p>
-                                    <p className='sub_section'>{movieDetail.runtime}</p>
-                                    <p>{movieDetail.certificate}</p>
+                                <div className='header_flex'>
+                                    <div className='detail_section'>
+                                        <p className='sub_section'>{movieDetail.year}</p>
+                                        <p className='sub_section'>{movieDetail.runtime}</p>
+                                        <p>{movieDetail.certificate}</p>
+                                    </div>
+
+                                    <div className='genres_section'>
+                                        {movieDetail && movieDetail.genres.map((genre: any, index: number) => (
+                                            <Chip key={index} label={`${genre}`} variant="outlined" className='genre_chip' />
+                                        ))}
+                                    </div>
                                 </div>
                                 
-                                <p>{movieDetail.summary}</p>
+                                <p className='summary_section'>{movieDetail.summary}</p>
 
                                 <h3>Sentiment Score</h3>
                                 <div className='flex_section'>
@@ -475,7 +413,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                             innerArc={
                                                 <RadialGaugeArc cornerRadius={12.5} />
                                             } 
-                                            // arcWidth={25}
                                             colorScheme={
                                                 movieDetail && (movieDetail.sentiment_score === 0 || movieDetail.sentiment_score === 1) ? ['#d32f2f'] 
                                                 : movieDetail && (movieDetail.sentiment_score === 2 || movieDetail.sentiment_score === 3) ? ['#f57c00'] 
@@ -503,9 +440,9 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                             : movieDetail && (movieDetail.sentiment_score === 1) ? 'Very Sad Movie'
                                             : movieDetail && (movieDetail.sentiment_score === 2) ? 'Sad Movie'
                                             : movieDetail && (movieDetail.sentiment_score === 3) ? 'Somewhat Sad Movie'
-                                            : movieDetail && (movieDetail.sentiment_score === 4) ? 'Neutral, Slightly Sad Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 4) ? 'Neutral, Occasional Sad Moments'
                                             : movieDetail && (movieDetail.sentiment_score === 5) ? 'Neutral Movie'
-                                            : movieDetail && (movieDetail.sentiment_score === 6) ? 'Neutral, Slightly Happy Movie'
+                                            : movieDetail && (movieDetail.sentiment_score === 6) ? 'Neutral, Occasional Happy Moments'
                                             : movieDetail && (movieDetail.sentiment_score === 7) ? 'Somewhat Happy Movie'
                                             : movieDetail && (movieDetail.sentiment_score === 8) ? 'Happy Movie'
                                             : movieDetail && (movieDetail.sentiment_score === 9) ? 'Very Happy Movie'
@@ -517,33 +454,41 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                     </div>
                                 </div>
 
-                                <div className='sub_section'>
+                                {/* <div className='rating_section sub_section'>
                                     <h3>Rating</h3>
                                     <Rating name="rating_star" value={movieDetail.rating} precision={0.1} max={10} readOnly />
                                     <p>{movieDetail.rating}/10 ({movieDetail.votes} votes)</p>
+                                </div> */}
+
+                                <div className='padding-bottom'>
+                                    <h3>Who should watch this?</h3>
+                                    <p>{movieDetail && movieDetail.recommended_audience}</p>
                                 </div>
 
                                 <div className='padding-bottom'>
                                     <h3>Top Crew</h3>
-                                    <p>Directors:
+                                    <p>Director:
                                         {movieDetail && movieDetail.directors.map((director: any, index: number, directorsArray: any[]) => (
-                                            <React.Fragment key={director}>
-                                                {' ' + director} {index === directorsArray.length - 1 ? '' : ' | '}
-                                            </React.Fragment>
+                                        <>
+                                            <a href='/' key={director}>{' ' + director}</a>
+                                            {index === directorsArray.length - 1 ? '' : ' | '}
+                                        </>
                                         ))}
                                     </p>
-                                    <p>Writers:
+                                    <p>Writer:
                                         {movieDetail && movieDetail.writers.map((writer: any, index: number, writersArray: any[]) => (
-                                            <React.Fragment key={writer}>
-                                                {' ' + writer} {index === writersArray.length - 1 ? '' : ' | '}
-                                            </React.Fragment>
+                                        <>
+                                            <a href='/' key={writer}>{' ' + writer}</a>
+                                            {index === writersArray.length - 1 ? '' : ' | '}
+                                        </>
                                         ))}
                                     </p>
                                     <p>Top Casts:
                                         {movieDetail && movieDetail.casts.map((cast: any, index: number, castsArray: any[]) => (
-                                            <React.Fragment key={cast}>
-                                                {' ' + cast} {index === castsArray.length - 1 ? '' : ' | '}
-                                            </React.Fragment>
+                                        <>
+                                            <a href='/' key={cast}>{' ' + cast}</a>
+                                            {index === castsArray.length - 1 ? '' : ' | '}
+                                        </>
                                         ))}
                                     </p>
                                 </div>
