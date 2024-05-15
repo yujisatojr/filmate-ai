@@ -43,13 +43,14 @@ function Home() {
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
 	const [selectedGenre, setSelectedGenre] = useState({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
-	const [selectedPopularity, setSelectedPopularity] = useState<number[]>([1, 5]);
-	const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
-	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 300]);
+	const [selectedPopularity, setSelectedPopularity] = useState<number[]>([1, 10]);
+	// const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
+	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 240]);
 	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([0, 10]);
 	const [selectedYear, setSelectedYear] = useState<number[]>([1915, 2024]);
 
 	const [filterData, setFilterData] = useState<any>(null);
+	const [recommendsData, setRecommendsData] = useState<any>(null);
 	const [movieData, setMovieData] = useState<any>(null);
 	const [movieDetail, setMovieDetail] = useState<any>(null);
 
@@ -102,9 +103,9 @@ function Home() {
 		setSelectedPopularity(newValue as number[]);
 	};
 
-	const handleRatingChange = (event: Event, newValue: number | number[]) => {
-		setSelectedRating(newValue as number[]);
-	};
+	// const handleRatingChange = (event: Event, newValue: number | number[]) => {
+	// 	setSelectedRating(newValue as number[]);
+	// };
 
 	const handleRuntimeChange = (event: Event, newValue: number | number[]) => {
 		setSelectedRuntime(newValue as number[]);
@@ -144,7 +145,7 @@ function Home() {
 			selectedCertificate,
 			selectedGenre,
 			selectedPopularity,
-			selectedRating,
+			// selectedRating,
 			selectedRuntime,
 			selectedSentiment,
 			selectedYear
@@ -165,8 +166,18 @@ function Home() {
 			}
 		};
 
+		const fetchRecommends = async () => {
+			try {
+				const response = await axios.get(`/generate_recommends?keyword=${searchInput}`);
+				setRecommendsData(response.data);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+
 		if (filterData !== null) {
 			fetchData();
+			fetchRecommends();
 		}
 
 		return () => {
@@ -201,16 +212,16 @@ function Home() {
 	const resetFilters = () => {
 		setIsLoading(false);
 		setOpen(false);
+		setExpanded(false);
 		setClicked(false);
 		setSearchInput('');
-		// setFilterData(null);
 		setMovieData(null);
 		setMovieDetail(null);
 		setSelectedCertificate({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
-		setSelectedPopularity([1, 5]);
-		setSelectedRating([0, 10]);
-		setSelectedRuntime([45, 300]);
+		setSelectedPopularity([1, 10]);
+		// setSelectedRating([0, 10]);
+		setSelectedRuntime([45, 240]);
 		setSelectedYear([1915, 2024]);
 		setInitCall(prev => prev + 1);
 	};
@@ -267,7 +278,7 @@ function Home() {
 							</span>
 						) : (
 							<span className='accordion_label'>
-								{filterData && filterData['insights'] !== '' ? (
+								{recommendsData ? (
 								<><CheckCircleIcon/> Finished generating recommends!</>
 								) : (
 								<><CheckCircleIcon/> No user query found!</>
@@ -277,7 +288,7 @@ function Home() {
 						</AccordionSummary>
 
 						<AccordionDetails className='accordion_details_container'>
-						{(!isLoading && filterData && filterData['insights'] !== '') ? (
+						{(!isLoading && recommendsData) ? (
 							<Alert
 							className='alert_container filter_list'
 							severity="info"
@@ -285,7 +296,7 @@ function Home() {
 							>
 								<TypeAnimation
 								sequence={[
-									`${filterData['insights'] !== '' ? filterData['insights'] : ''}`,
+									`${recommendsData['insights'] !== '' ? recommendsData['insights'] : ''}`,
 								]}
 								speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
 								style={{ fontSize: '1em', display: 'block'}}
@@ -403,26 +414,26 @@ function Home() {
 								step={1}
 								marks
 								min={1}
-								max={5}
+								max={10}
 							/>
 							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								1
+								Indie
 								</Typography>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								5
+								Popular
 								</Typography>
 							</Box>
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+					{/* <Accordion className='accordion_container' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -456,7 +467,7 @@ function Home() {
 								</Typography>
 							</Box>
 						</AccordionDetails>
-					</Accordion>
+					</Accordion> */}
 
 					<Accordion className='accordion_container' expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
 						<AccordionSummary
@@ -475,20 +486,20 @@ function Home() {
 								shiftStep={10}
 								step={10}
 								min={45}
-								max={300}
+								max={240}
 							/>
 							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								45 mins
+								45 minutes
 								</Typography>
 								<Typography
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								300 mins
+								240 minutes
 								</Typography>
 							</Box>
 						</AccordionDetails>

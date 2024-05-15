@@ -127,11 +127,10 @@ def create_filter(json_query):
     # Extract values from json object
     data = json.loads(json_query)
 
-    # user_query = data['searchInput']
     certificate = data['selectedCertificate']
     genre = data['selectedGenre']
     popularity = data['selectedPopularity']
-    rating = data['selectedRating']
+    # rating = data['selectedRating']
     runtime = data['selectedRuntime']
     sentiment = data['selectedSentiment']
     year = data['selectedYear']
@@ -188,12 +187,8 @@ def create_filter(json_query):
             key="genre_3",
             match=models.MatchAny(any=genreArray),
         ))
-        # filter_conditions.append(models.FieldCondition(
-        #         key="genres",
-        #         match=models.MatchAny(any=genreArray),
-        # ))
     
-    popularity_mapping = {2: 200000, 3: 500000, 4: 1000000, 5: 2000000}
+    popularity_mapping = {1: 5000, 2: 10000, 3: 50000, 4: 80000, 5: 100000, 6: 200000, 7: 400000, 8: 600000, 9: 800000, 10: 1000000}
 
     for i in range(len(popularity)):
         popularity[i] = popularity_mapping.get(popularity[i], popularity[i])
@@ -206,13 +201,13 @@ def create_filter(json_query):
         )
     ))
 
-    filter_conditions.append(models.FieldCondition(
-        key="rating",
-        range=models.Range(
-            gte=rating[0],
-            lte=rating[1]
-        )
-    ))
+    # filter_conditions.append(models.FieldCondition(
+    #     key="rating",
+    #     range=models.Range(
+    #         gte=rating[0],
+    #         lte=rating[1]
+    #     )
+    # ))
 
     filter_conditions.append(models.FieldCondition(
         key="runtime_mins",
@@ -346,16 +341,19 @@ def search_similar_in_qdrant(metadata):
 
     return (json.loads(json.dumps(results)))
 
-def get_recommendations(user_query):
+# Generate insights and recommendations based on user's keyword
+def get_recommendations(keyword):
 
     prompt_template = f"""
-        Your task is to parse the following query '{user_query}' provided by a user and generate JSON output according to the template provided later.
+        Your task is to parse the following keyword '{keyword}' provided by a user and generate JSON output according to the template provided later.
         The explanation of each value in the JSON template is as follows:
-        "insights": For this field, provide a brief, ~70 word sentence(s) on which movies, directors, and/or actors/actresses the user might like based on the user's query.  Use 'you' to refer to the user. The entire sentence needs to have a friendly tone and avoid fluff. Do not use words like 'delve' or 'dive into'. If the user query is empty, please leave this field empty.
+        "insights": For this field, provide a brief, ~70 word sentence(s) on which movies, directors, and/or actors/actresses the user might like based on the user's keyword.  Use 'you' to refer to the user. The entire sentence needs to have a friendly tone and avoid fluff. Do not use words like 'delve' or 'dive into'. 
+        If the user's keyword is completely empty and does not contain anything, put 'Please enter your keyword to generate personalized movie recommendations 😎' in the insights field in output.
         Below is the JSON template:
         {{
             "insights": "If you're into sea-themed adventures, you might enjoy movies like "Pirates of the Caribbean" or "The Life Aquatic with Steve Zissou" for a quirky deep-sea exploration. Directors like James Cameron, known for "Titanic" and "The Abyss," or Steven Spielberg's "Jaws" could also float your boat."
         }}
+        Again, if the user's keyword is completely empty and does not contain anything, write 'Please enter your keyword to generate personalized movie recommendations 😎' in the insights field.
     """
 
     messages = [{
@@ -450,10 +448,8 @@ def get_favorites_in_qdrant(id_list):
         )
     )
 
-    # print(query_results)
     results = []
     for record in query_results[0]:
-        # id = record.id
         payload = record.payload
 
         directors = [director for director in [payload["director_1"], payload["director_2"], payload["director_3"]] if director != '']
@@ -498,10 +494,8 @@ def get_bookmarks_in_qdrant(id_list):
         )
     )
 
-    # print(query_results)
     results = []
     for record in query_results[0]:
-        # id = record.id
         payload = record.payload
 
         directors = [director for director in [payload["director_1"], payload["director_2"], payload["director_3"]] if director != '']

@@ -30,7 +30,7 @@ def page_not_found(error):
     print(error)
     return redirect('/')
 
-# Favorites model
+# Favorites model routes
 @app.route('/favorites', methods=['POST', 'GET'])
 def handle_favorites():
     if request.method == 'POST':
@@ -61,7 +61,7 @@ def handle_favorites():
 def handle_favorite():
     data = request.get_json()
     favorite_id = data['favorite_id']
-    # print(favorite_id)
+
     favorite = Favorites.query.get_or_404(favorite_id)
 
     # if request.method == 'GET':
@@ -122,7 +122,7 @@ def favorites_by_username():
 
         return {"count": len(results), "favorites": results}
     
-# Bookmarks model
+# Bookmarks model routes
 @app.route('/bookmarks', methods=['POST', 'GET'])
 def handle_bookmarks():
     if request.method == 'POST':
@@ -153,7 +153,6 @@ def handle_bookmarks():
 def handle_bookmark():
     data = request.get_json()
     bookmark_id = data['bookmark_id']
-    # print(favorite_id)
     bookmark = Bookmarks.query.get_or_404(bookmark_id)
 
     if request.method == 'PUT':
@@ -352,9 +351,9 @@ def index_bookmark_movies():
 @app.route('/generate_recommends')
 def get_recommends():
     try:
-        user_query = request.args.get('user_query')
+        keyword = request.args.get('keyword')
 
-        response = get_recommendations(user_query)
+        response = get_recommendations(keyword)
 
         if response is not None:
             return jsonify(response)
