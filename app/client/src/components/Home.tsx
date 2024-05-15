@@ -53,6 +53,13 @@ function Home() {
 	const [movieData, setMovieData] = useState<any>(null);
 	const [movieDetail, setMovieDetail] = useState<any>(null);
 
+	const [expanded, setExpanded] = React.useState<string | false>(false);
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchInput(e.target.value);
 	};
@@ -310,7 +317,7 @@ function Home() {
 						</Grid>
 					</Grid>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -344,7 +351,7 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -378,7 +385,7 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -415,7 +422,7 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -451,7 +458,7 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -487,7 +494,7 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel6'} onChange={handleChange('panel6')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -523,7 +530,7 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 
-					<Accordion className='accordion_container'>
+					<Accordion className='accordion_container' expanded={expanded === 'panel7'} onChange={handleChange('panel7')}>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
