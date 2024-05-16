@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react';
 import FadeIn from './FadeIn';
 import { styled } from '@mui/material/styles';
 import '../assets/styles/MovieCard.scss';
+import apple from '../assets/images/apple.png';
+import disney from '../assets/images/disney.png';
+import hulu from '../assets/images/hulu.png';
+import max from '../assets/images/max.png';
+import mgm from '../assets/images/mgm.png';
+import netflix from '../assets/images/netflix.png';
+import paramount from '../assets/images/paramount.png';
+import prime from '../assets/images/prime.png';
 
 // Import MUI components
 import Checkbox from '@mui/material/Checkbox';
@@ -27,14 +35,17 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     // const [trailerData, setTrailerData] = useState<any>(null);
     // const [trailerError, setTrailerError] = useState<boolean>(false);
 
-    const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
-    const [isNewsLoading, setIsNewsLoading] = useState<boolean>(false);
+    const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(true);
+    const [isNewsLoading, setIsNewsLoading] = useState<boolean>(true);
 
     const [userData, setUserData] = useState<any>(null);
     const [isMovieLiked, setIsMovieLiked] = useState<any>(null);
     const [movieChanged, setMovieChanged] = useState<any>(null);
     const [movieSaved, setMovieSaved] = useState<any>(null);
     const [isMovieSaved, setIsMovieSaved] = useState<any>(null);
+
+    const [isNetworksLoading, setNetworksLoading] = useState<boolean>(true);
+    const [networksData, setNetworksData] = useState<any>(null);
 
     const Item = styled(Paper)(({ theme }) => ({
         padding: theme.spacing(1),
@@ -329,6 +340,40 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         }
     }, [userData, movieDetail, movieSaved]);
 
+    useEffect(() => {
+        let controller = new AbortController();
+        let signal = controller.signal;
+
+        setNetworksLoading(true);
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`/networks?movie_id=${movieDetail.id}`, {signal});
+            if (response.ok) {
+                const data = await response.json();
+                setNetworksData(await data);
+                setNetworksLoading(false);
+            } else {
+                console.error('Error fetching movie data');
+                setNetworksLoading(false);
+            }
+            } catch (error) {
+                console.error('Error fetching movie data:', error);
+                setNetworksLoading(false);
+            }
+        };
+
+        if (movieDetail !== null) {
+            fetchData();
+        }
+
+        return () => {
+            controller.abort();
+            controller = new AbortController();
+        }
+    }, [movieDetail]);
+
+    console.log(networksData)
+
     return (
         <>
         {!isFilterLoading && clicked && (
@@ -474,9 +519,70 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                     </Box>
                                 </ThemeProvider> */}
                                 <div className='padding-bottom'>
-                                    <h3>Who should watch this?</h3>
+                                    <h3>Who is this movie for?</h3>
                                     <p>{movieDetail && movieDetail.recommended_audience}</p>
                                 </div>
+
+                                {!isNetworksLoading ? (
+                                    networksData && networksData.length > 0 ? (
+                                        <div className='padding-bottom'>
+                                            <h3>Where can I watch this?</h3>
+                                            <div className='networks_container'>
+                                            {networksData.map((network: any, index: number) => (
+                                                <React.Fragment key={index}>
+                                                    {network.name === 'Netflix' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={netflix} alt='netflix'/>
+                                                        </a>
+                                                    )}
+                                                    {network.name === 'Prime Video' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={prime} alt='prime'/>
+                                                        </a>
+                                                    )}
+                                                    {network.name === 'Paramount Plus' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={paramount} alt='paramount'/>
+                                                        </a>
+                                                    )}
+                                                    {network.name === 'Disney+' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={disney} alt='disney'/>
+                                                        </a>
+                                                    )}
+                                                    {network.name === 'MAX' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={max} alt='max'/>
+                                                        </a>
+                                                    )}
+                                                    {(network.name === 'Hulu') && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={hulu} alt='hulu'/>
+                                                        </a>
+                                                    )}
+                                                    {network.name === 'AppleTV+' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={apple} alt='apple'/>
+                                                        </a>
+                                                    )}
+                                                    {network.name === 'MGM+' && (
+                                                        <a href={network.url} target="_blank" rel="noopener noreferrer">
+                                                            <img className='network_img' src={mgm} alt='mgm'/>
+                                                        </a>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className='padding-bottom'>
+                                            <h3>Where can I watch this?</h3>
+                                            <p>This title is not currently streaming on any providers.</p>
+                                        </div>
+                                    )
+                                ) : (
+                                    <Skeleton variant="rounded" width="100%" height={150} style={{marginBottom: '15px', backgroundColor: 'rgb(124, 124, 124)'}} />
+                                )}
 
                                 <div className='padding-bottom'>
                                     <h3>Top Crew</h3>

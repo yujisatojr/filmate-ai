@@ -1,16 +1,23 @@
 {
   "files": {
-    "main.css": "/static/css/main.712d4ce9.css",
-    "main.js": "/static/js/main.73930401.js",
+    "main.css": "/static/css/main.44d2600c.css",
+    "main.js": "/static/js/main.22ed4034.js",
     "static/js/453.258b012d.chunk.js": "/static/js/453.258b012d.chunk.js",
+    "static/media/disney.png": "/static/media/disney.48adcdda80cf2bb50226.png",
+    "static/media/netflix.png": "/static/media/netflix.387209abe1ced54112b4.png",
+    "static/media/hulu.png": "/static/media/hulu.437e290ce919ee4104d6.png",
+    "static/media/apple.png": "/static/media/apple.6db120b4f70db2e7e2c9.png",
+    "static/media/max.png": "/static/media/max.f17d3f785ae93919f161.png",
+    "static/media/paramount.png": "/static/media/paramount.94da253a3c62e7a10a91.png",
+    "static/media/prime.png": "/static/media/prime.7d4aeb05acf7e5796b3b.png",
     "static/media/logo.png": "/static/media/logo.1f249a47f7c7670af0d1.png",
     "index.html": "/index.html",
-    "main.712d4ce9.css.map": "/static/css/main.712d4ce9.css.map",
-    "main.73930401.js.map": "/static/js/main.73930401.js.map",
+    "main.44d2600c.css.map": "/static/css/main.44d2600c.css.map",
+    "main.22ed4034.js.map": "/static/js/main.22ed4034.js.map",
     "453.258b012d.chunk.js.map": "/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.712d4ce9.css",
-    "static/js/main.73930401.js"
+    "static/css/main.44d2600c.css",
+    "static/js/main.22ed4034.js"
   ]
 }

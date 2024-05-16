@@ -8,6 +8,7 @@ import datetime
 import jwt
 import logging
 import os
+import requests
 
 load_dotenv(find_dotenv())
 
@@ -395,3 +396,33 @@ def get_facts():
 #     except Exception as e:
 #         logging.error(f'Error generating filters from the query: {e}')
 #         return jsonify({'error': str(e)}), 400
+
+@app.route('/networks')
+def get_networks():
+    movie_id = request.args.get('movie_id', default=None)
+    formatted_movie_id = ''
+    if movie_id is not None and len(movie_id) < 7:
+        formatted_movie_id = '{:07d}'.format(int(movie_id))
+    else:
+        formatted_movie_id = movie_id
+
+    watchmode_api_key = os.getenv('WATCHMODE_API_KEY')
+    url = f'https://api.watchmode.com/v1/title/tt{formatted_movie_id}/sources/?apiKey={watchmode_api_key}&regions=US'
+
+    response = requests.get(url)
+    data = response.json()
+
+    if response.status_code == 200 and data:
+        result = []
+        for network in data:
+            if network['type'] == 'sub' and network['name'] in ['Netflix', 'Prime Video', 'Disney+', 'MAX', 'Hulu', 'Paramount Plus', 'MGM+']:
+                result_dict = {
+                    'name': network['name'],
+                    'price': network['price'],
+                    'url': network['web_url']
+                }
+                result.append(result_dict)
+
+        return jsonify(result)
+    else:
+        return jsonify([])
