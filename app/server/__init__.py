@@ -1,3 +1,4 @@
+from dotenv import load_dotenv, find_dotenv
 from flask import Flask, jsonify, request, redirect, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -7,6 +8,8 @@ import datetime
 import jwt
 import logging
 import os
+
+load_dotenv(find_dotenv())
 
 app = Flask(__name__, static_folder='../client/build', static_url_path='')
 CORS(app, supports_credentials=True)
