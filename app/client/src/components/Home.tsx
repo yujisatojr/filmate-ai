@@ -421,7 +421,7 @@ function Home() {
 								variant="body2"
 								sx={{ cursor: 'pointer' }}
 								>
-								Indie
+								Minor
 								</Typography>
 								<Typography
 								variant="body2"

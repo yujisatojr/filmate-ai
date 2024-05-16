@@ -188,18 +188,28 @@ def create_filter(json_query):
             match=models.MatchAny(any=genreArray),
         ))
     
-    popularity_mapping = {1: 5000, 2: 10000, 3: 50000, 4: 80000, 5: 100000, 6: 200000, 7: 400000, 8: 600000, 9: 800000, 10: 1000000}
-
-    for i in range(len(popularity)):
-        popularity[i] = popularity_mapping.get(popularity[i], popularity[i])
-    
-    filter_conditions.append(models.FieldCondition(
-        key="votes",
-        range=models.Range(
-            gte=popularity[0],
-            lte=popularity[1]
-        )
-    ))
+    # Apply popularity filter for empty search
+    keyword = data['searchInput']
+    if keyword == '' and popularity[0] == 1 and popularity[1] == 10:
+        filter_conditions.append(models.FieldCondition(
+            key="votes",
+            range=models.Range(
+                gte=450000,
+            )
+        ))
+    else:
+        popularity_mapping = {1: 5000, 2: 30000, 3: 50000, 4: 80000, 5: 100000, 6: 400000, 7: 600000, 8: 800000, 9: 1500000, 10: 10000000}
+        
+        for i in range(len(popularity)):
+            popularity[i] = popularity_mapping.get(popularity[i], popularity[i])
+        
+        filter_conditions.append(models.FieldCondition(
+            key="votes",
+            range=models.Range(
+                gte=popularity[0],
+                lte=popularity[1]
+            )
+        ))
 
     # filter_conditions.append(models.FieldCondition(
     #     key="rating",
