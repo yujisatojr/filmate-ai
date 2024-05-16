@@ -68,7 +68,7 @@ function App() {
   return (
   <Router>
     <AppBar className='navi-bar' position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" className='main_app_container'>
         <Toolbar disableGutters>
           <Typography
             variant="h6"
