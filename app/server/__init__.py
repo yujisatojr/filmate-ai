@@ -11,7 +11,7 @@ import os
 app = Flask(__name__, static_folder='../client/build', static_url_path='')
 CORS(app, supports_credentials=True)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/filmate"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRESQL_DATABASE_URL')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
