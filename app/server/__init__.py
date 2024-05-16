@@ -216,7 +216,7 @@ def signup():
         action="signUp",
         payload={
             "user_id": username,
-            "redirectUrl": "http://localhost:5000/callback" # Change the address for dev/prod
+            "redirectUrl": os.getenv('HOST_URL') + "/callback" # Change the address for dev/prod
         }
     )
     return jsonify(response), 200
@@ -232,7 +232,7 @@ def login():
         action="signIn",
         payload={
             "user_id": username,
-            "redirectUrl": "http://localhost:5000/callback" # Change the address for dev/prod
+            "redirectUrl": os.getenv('HOST_URL') + "/callback" # Change the address for dev/prod
         }
     )
     return jsonify(response), 200
