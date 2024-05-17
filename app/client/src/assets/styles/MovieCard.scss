@@ -16,7 +16,6 @@
 	}
 
     .header_close_button {
-
         svg {
             font-size: 2rem;
             vertical-align: middle;
@@ -81,7 +80,7 @@
 
 		.header_flex {
 			display: flex;
-			align-items: center;
+			// align-items: center;
 			justify-content: space-between;
 			padding-top: 15px;
 			padding-bottom: 15px;
@@ -250,5 +249,94 @@ fieldset {
 		border-radius: 15px;
 		box-shadow: 0 11px 15px -7px #0003, 0 24px 38px 3px rgba(0, 0, 0, .141), 0 9px 46px 8px rgba(0, 0, 0, .122);
 		border: none;
+	}
+}
+
+.mobile_grid_area {
+	display: none;
+}
+
+@media screen and (max-width: 900px) {
+	.mobile_grid_area {
+		display: block;
+	}
+
+	.desktop_area {
+		display: none;
+	}
+
+	.movie_detail_card {
+		padding-top: 0px !important;
+
+		span, p, a {
+			font-size: 0.8rem;
+		}
+	}
+
+	.header_close_button {
+		display: none;
+	}
+
+	.right_header h1 {
+		font-size: 1.5rem;
+	}
+
+	.mobile_close_btn {
+		display: block;
+
+		svg {
+            font-size: 2rem;
+            vertical-align: middle;
+            color: #B9BDCB;
+            cursor: pointer;
+            float: right;
+            filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
+			padding-top: 15px;
+        }
+	}
+
+    .movie_detail_card .right_area .header_flex {
+		flex-direction: column;
+		padding-bottom: 0px;
+	}
+	
+	.movie_detail_card .right_area .flex_section {
+		flex-direction: column;
+	}
+
+	.movie_detail_card .right_area .genres_section span {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	.gauge_chart_wrapper {
+		min-height: 120px;
+		min-width: 120px;
+	}
+
+	.gauge_chart_center {
+		font-size: 2.5rem !important;
+	}
+
+	.gauge_chart_desc {
+		font-size: 18px !important;
+		transform: translate(20px, 30px) !important;
+	}
+
+	.card_content {
+		text-align: center;
+	}
+
+	.genres_section {
+		gap: 5px;
+	}
+
+	.sentiment_reason {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.checkbox_elements {
+		padding-top: 0px;
 	}
 }

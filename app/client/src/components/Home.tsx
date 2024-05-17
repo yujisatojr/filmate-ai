@@ -316,12 +316,12 @@ function Home() {
 					</Accordion>
 
 					<Grid container spacing={2}>
-						<Grid className='button_container' item xs={12} sm={12} md={6} lg={6} xl={6}>
+						<Grid className='button_container' item xs={6} sm={6} md={6} lg={6} xl={6}>
 							<Button variant="contained" startIcon={<RestartAltIcon />} onClick={resetFilters}>
 								RESET
 							</Button>
 						</Grid>
-						<Grid className='button_container' item xs={12} sm={12} md={6} lg={6} xl={6}>
+						<Grid className='button_container apply_filter_btn' item xs={6} sm={6} md={6} lg={6} xl={6}>
 							<Button variant="contained" startIcon={<DoneOutlineIcon />} onClick={handleSearchSubmit}>
 								APPLY FILTERS
 							</Button>

@@ -381,8 +381,11 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
 			<Grid container spacing={2} className='result_container'>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <Item className='movie_detail_card'>
+                        <div className='mobile_close_btn'>
+                            <CloseIcon fontSize="inherit" onClick={() => clickedChange(false)}/>
+                        </div>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
                                 <div className='checkbox_elements'>
                                     {userData && isMovieLiked && isMovieLiked.message === "success" && (
@@ -399,12 +402,9 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                     )}
                                 </div>
                             </Grid>
-                            <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
+                            <Grid className='mobile_grid_area right_area' item xs={8} sm={8} md={4} lg={4} xl={4}>
                                 <div className='right_header'>
                                     <h1>{movieDetail && movieDetail.title}</h1>
-                                    <div className='header_close_button'>
-                                        <CloseIcon fontSize="inherit" onClick={() => clickedChange(false)}/>
-                                    </div>
                                 </div>
                                 
                                 <div className='header_flex'>
@@ -422,6 +422,32 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                 </div>
                                 
                                 <p className='summary_section'>{movieDetail.summary}</p>
+                            </Grid>
+                            <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
+                                <div className='desktop_area'>
+                                    <div className='right_header'>
+                                        <h1>{movieDetail && movieDetail.title}</h1>
+                                        <div className='header_close_button'>
+                                            <CloseIcon fontSize="inherit" onClick={() => clickedChange(false)}/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className='header_flex'>
+                                        <div className='genres_section'>
+                                            {movieDetail && movieDetail.genres.map((genre: any, index: number) => (
+                                                <Chip key={index} label={`${genre}`} variant="outlined" className='genre_chip' />
+                                            ))}
+                                        </div>
+
+                                        <div className='detail_section'>
+                                            <p className='sub_section'>{movieDetail.year}</p>
+                                            <p className='sub_section'>{movieDetail.runtime}</p>
+                                            <p>{movieDetail.certificate}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p className='summary_section'>{movieDetail.summary}</p>
+                                </div>
 
                                 {/* <div className='rating_section sub_section'>
                                     <h3>Rating</h3>
@@ -480,7 +506,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                                             />
                                         </div>
 
-                                        <div>
+                                        <div className='sentiment_reason'>
                                             <p className='sentiment_header'>
                                                 {
                                                 movieDetail && (movieDetail.sentiment_score === 0) ? 'Depressing Movie' 

@@ -25,3 +25,10 @@
         color: white;
     }
 }
+
+@media screen and (max-width: 900px) {
+    .mylist_root {
+        min-height: 100vh;
+        padding: 10px 15px;
+    }
+}

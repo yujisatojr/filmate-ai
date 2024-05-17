@@ -19,3 +19,13 @@
         }
     }
 }
+
+@media screen and (max-width: 900px) {
+    .profile_root {
+        height: 80vh;
+    }
+
+    .profile_contents {
+        text-align: center;
+    }
+}

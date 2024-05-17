@@ -213,10 +213,54 @@ input {
     padding-right: 10px !important;
     padding-bottom: 0px !important;
 }
+
+.button_container {
+	button {
+		border-radius: 10px;
+	}
+}
   
 @media screen and (max-width: 1300px) {
 	.movie_app_root {
 		margin-left: 5%;
 		margin-right: 5%;
+	}
+}
+
+@media screen and (max-width: 900px) {
+    .sidebar_filter {
+        padding-top: 0px !important;
+    }
+
+	.accordion_label {
+		font-size: 0.8rem;
+	}
+
+	.search_form_wrapper {
+		margin-bottom: 10px;
+	}
+
+	.button_container {
+		padding-bottom: 10px;
+
+		button {
+			border-radius: 10px;
+		}
+	}
+
+	.apply_filter_btn {
+		padding-left: 5px !important;
+	}
+
+	.MuiAccordionSummary-content {
+		font-size: 0.8rem;
+	}
+
+	.accordion_container {
+		margin-bottom: 10px !important;
+
+		div {
+			min-height: 15px;
+		}
 	}
 }

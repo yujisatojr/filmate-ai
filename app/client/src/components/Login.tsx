@@ -64,7 +64,7 @@ const Login = () => {
 
       <div className='search_form_wrapper'>
         <Paper
-        className='search_form'
+        className='search_form username_form'
         component="form"
         sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '400px' }}
         onSubmit={(e) => {
