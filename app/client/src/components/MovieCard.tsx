@@ -372,8 +372,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
         }
     }, [movieDetail]);
 
-    console.log(networksData)
-
     return (
         <>
         {!isFilterLoading && clicked && (

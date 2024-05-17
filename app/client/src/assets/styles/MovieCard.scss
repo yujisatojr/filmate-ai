@@ -256,6 +256,10 @@ fieldset {
 	display: none;
 }
 
+.mobile_close_btn {
+	display: none;
+}
+
 @media screen and (max-width: 900px) {
 	.mobile_grid_area {
 		display: block;
