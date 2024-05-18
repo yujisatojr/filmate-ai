@@ -3,6 +3,7 @@ import axios from 'axios';
 import FadeIn from './FadeIn';
 import { Oval, ThreeDots } from 'react-loader-spinner'
 import { TypeAnimation } from 'react-type-animation';
+import {withAuthInfo} from '@propelauth/react';
 import MovieCard from './MovieCard';
 import '../assets/styles/Home.scss';
 
@@ -34,7 +35,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SearchIcon from '@mui/icons-material/Search';
 
-function Home() {
+function Home({ isLoggedIn, user }: any) {
 	const [initCall, setInitCall] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
@@ -55,6 +56,22 @@ function Home() {
 	const [movieDetail, setMovieDetail] = useState<any>(null);
 
 	const [expanded, setExpanded] = React.useState<string | false>(false);
+
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const response = await axios.post('/get_user', user);
+				console.log(response);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+
+        if (isLoggedIn) {
+			fetchUser();
+            // console.log('User is logged in.');
+        };
+    }, [isLoggedIn, user]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -655,4 +672,4 @@ function Home() {
   );
 };
   
-export default Home;
+export default withAuthInfo(Home);

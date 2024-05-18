@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import {
   Home,
@@ -9,6 +9,7 @@ import {
 } from "./components";
 import Logo from './assets/images/logo.png';
 import './App.scss';
+import {withAuthInfo, useLogoutFunction, useRedirectFunctions} from '@propelauth/react';
 
 // Import MUI components
 import AppBar from '@mui/material/AppBar';
@@ -28,27 +29,12 @@ import RedditIcon from '@mui/icons-material/Reddit';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import XIcon from '@mui/icons-material/X';
 
-function App() {
+function App({isLoggedIn}: any)  {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
-  // const navigate = useNavigate();
-
-  // Check if user is authenticated
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const checkCookies = async () => {
-      const authSessionCookie = document.cookie.match("auth-session=([^;]+)");
-      setIsAuthenticated(!!authSessionCookie);
-    };
-
-    checkCookies();
-  }); // Run once on component mount
-
-  const handleLogout = () => {
-    document.cookie = `auth-session=; max-age=0`;
-  };
+  const logoutFn = useLogoutFunction()
+  const {redirectToSignupPage, redirectToLoginPage, redirectToAccountPage} = useRedirectFunctions()
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -120,7 +106,7 @@ function App() {
               <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
                 <Typography textAlign="center">About</Typography>
               </MenuItem>
-              {isAuthenticated && (
+              {isLoggedIn && (
                 <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
                   <Typography textAlign="center">My List</Typography>
                 </MenuItem>
@@ -155,7 +141,7 @@ function App() {
             >
               About
             </Button>
-            {isAuthenticated && (
+            {isLoggedIn && (
               <Button
                 className='nav_button_link'
                 component={NavLink} to="/mylist"
@@ -179,7 +165,7 @@ function App() {
                 <Avatar alt="John Doe" />
               </IconButton>
             </Tooltip>
-            {isAuthenticated ? (
+            {isLoggedIn? (
               <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -196,18 +182,21 @@ function App() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/profile">
+                <MenuItem onClick={() => {
+                  handleCloseUserMenu();
+                  redirectToAccountPage();
+                }}>
                   <Typography textAlign="center">Account</Typography>
                 </MenuItem>
                 <MenuItem onClick={() => {
-                  handleLogout();
+                  logoutFn(true);
                   handleCloseUserMenu();
                   }} component={NavLink} to="/">
                   <Typography textAlign="center">Log Out</Typography>
                 </MenuItem>
               </Menu>
-            ) : (
-              <Menu
+          ) : (
+            <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
@@ -223,14 +212,20 @@ function App() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/signup">
+                <MenuItem onClick={() => {
+                  handleCloseUserMenu();
+                  redirectToSignupPage();
+                }}>
                   <Typography textAlign="center">Sign Up</Typography>
                 </MenuItem>
-                <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/login">
+                <MenuItem onClick={() => {
+                  handleCloseUserMenu();
+                  redirectToLoginPage();
+                }}>
                   <Typography textAlign="center">Login</Typography>
                 </MenuItem>
-              </Menu>
-            )}
+            </Menu>
+          )}
           </Box>
         </Toolbar>
       </Container>
@@ -259,4 +254,4 @@ function App() {
   );
 }
 
-export default App;
+export default  withAuthInfo(App);

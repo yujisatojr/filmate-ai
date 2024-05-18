@@ -3,7 +3,6 @@ from flask import Flask, jsonify, request, redirect, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import authsignal.client
 import datetime
 import jwt
 import logging
@@ -19,11 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRESQL_DATABASE_URL')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-api_key = os.getenv('AUTHSIGNAL_API_KEY')
-authsignal_client = authsignal.Client(api_key=api_key)
-
 from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_favorites_in_qdrant, get_bookmarks_in_qdrant
-from server.models import Favorites, Bookmarks
+from server.models import Users, Favorites, Bookmarks
 
 @app.route("/")
 def index():
@@ -34,6 +30,41 @@ def page_not_found(error):
     print(error)
     return redirect('/')
 
+@app.route("/get_user", methods=['POST'])
+def get_user():
+    data = request.get_json()
+    user_id = data.get('userId')
+    
+    user = Users.query.filter_by(user_id=user_id).first()
+    
+    if user is None:
+        # current_datetime = datetime.datetime.now()
+        timestamp = data['createdAt']
+        formatted_timestamp = datetime.datetime.fromtimestamp(timestamp)
+
+        new_user = Users(user_id=data['userId'], username=data['username'], email=data['email'], first_name=data['firstName'], last_name=data['lastName'], picture_url=data['pictureUrl'], date_added=formatted_timestamp)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({'message': 'New user was added to the table.'}), 200
+    
+    response = {
+        "user_id": user.user_id,
+    }
+    
+    if (user.username != data['username'] or user.email != data['email'] or user.first_name != data['firstName'] or user.last_name != data['lastName'] or user.picture_url != data['pictureUrl']):
+        user.username = data['username']
+        user.email = data['email']
+        user.first_name = data['firstName']
+        user.last_name = data['lastName']
+        user.picture_url = data['pictureUrl']
+        
+        db.session.add(user)
+        db.session.commit()
+        return {"message": "User information is updated.", "user": response}, 200
+    else:
+        return {"message": "User already exists.", "user": response}, 200
+    
 # Favorites model routes
 @app.route('/favorites', methods=['POST', 'GET'])
 def handle_favorites():
@@ -43,7 +74,7 @@ def handle_favorites():
 
             current_datetime = datetime.datetime.now()
 
-            new_favorite = Favorites(film_id=data['film_id'], username=data['username'], date_added=current_datetime)
+            new_favorite = Favorites(film_id=data['film_id'], user_id=data['user_id'], date_added=current_datetime)
             db.session.add(new_favorite)
             db.session.commit()
             return {"message": f"favorite {new_favorite.film_id} has been created successfully."}
@@ -55,7 +86,7 @@ def handle_favorites():
         results = [
             {
                 "film_id": favorite.film_id,
-                "username": favorite.username,
+                "user_id": favorite.user_id,
                 "date_added": favorite.date_added
             } for favorite in favorites]
 
@@ -71,7 +102,7 @@ def handle_favorite():
     # if request.method == 'GET':
     #     response = {
     #         "film_id": favorite.film_id,
-    #         "username": favorite.username,
+    #         "user_id": favorite.user_id,
     #         "date_added": favorite.date_added
     #     }
     #     return {"message": "success", "favorite": response}
@@ -79,7 +110,7 @@ def handle_favorite():
     if request.method == 'PUT':
         data = request.get_json()
         favorite.film_id = data['film_id']
-        favorite.username = data['username']
+        favorite.user_id = data['user_id']
         favorite.date_added = data['date_added']
         db.session.add(favorite)
         db.session.commit()
@@ -91,12 +122,12 @@ def handle_favorite():
         return {"message": f"Favorite {favorite.film_id} successfully deleted."}
     
 @app.route("/query_favorite", methods=['POST'])
-def favorite_by_film_id_and_username():
+def favorite_by_film_id_and_user_id():
     data = request.get_json()
     film_id = data.get('film_id')
-    username = data.get('username')
+    user_id = data.get('user_id')
     
-    favorite = Favorites.query.filter_by(film_id=film_id, username=username).first()
+    favorite = Favorites.query.filter_by(film_id=film_id, user_id=user_id).first()
     
     if favorite is None:
         return jsonify({'message': 'not found'}), 200
@@ -104,23 +135,23 @@ def favorite_by_film_id_and_username():
     response = {
         "favorite_id": favorite.id,
         "film_id": favorite.film_id,
-        "username": favorite.username,
+        "user_id": favorite.user_id,
     }
     return {"message": "success", "favorite": response}, 200
 
 @app.route("/query_favorites", methods=['POST'])
-def favorites_by_username():
+def favorites_by_user_id():
     if request.is_json:
         data = request.get_json()
-        username = data['username']
+        user_id = data['user_id']
 
-        print(username)
+        print(user_id)
 
-        favorites = Favorites.query.filter_by(username=username)
+        favorites = Favorites.query.filter_by(user_id=user_id)
         results = [
             {
                 "film_id": favorite.film_id,
-                "username": favorite.username,
+                "user_id": favorite.user_id,
                 "date_added": favorite.date_added
             } for favorite in favorites]
 
@@ -135,7 +166,7 @@ def handle_bookmarks():
 
             current_datetime = datetime.datetime.now()
 
-            new_bookmark = Bookmarks(film_id=data['film_id'], username=data['username'], date_added=current_datetime)
+            new_bookmark = Bookmarks(film_id=data['film_id'], user_id=data['user_id'], date_added=current_datetime)
             db.session.add(new_bookmark)
             db.session.commit()
             return {"message": f"bookmark {new_bookmark.film_id} has been created successfully."}
@@ -147,7 +178,7 @@ def handle_bookmarks():
         results = [
             {
                 "film_id": bookmark.film_id,
-                "username": bookmark.username,
+                "user_id": bookmark.user_id,
                 "date_added": bookmark.date_added
             } for bookmark in bookmarks]
 
@@ -162,7 +193,7 @@ def handle_bookmark():
     if request.method == 'PUT':
         data = request.get_json()
         bookmark.film_id = data['film_id']
-        bookmark.username = data['username']
+        bookmark.user_id = data['user_id']
         bookmark.date_added = data['date_added']
         db.session.add(bookmark)
         db.session.commit()
@@ -174,12 +205,12 @@ def handle_bookmark():
         return {"message": f"Bookmark {bookmark.film_id} successfully deleted."}
     
 @app.route("/query_bookmark", methods=['POST'])
-def bookmark_by_film_id_and_username():
+def bookmark_by_film_id_and_user_id():
     data = request.get_json()
     film_id = data.get('film_id')
-    username = data.get('username')
+    user_id = data.get('user_id')
     
-    bookmark = Bookmarks.query.filter_by(film_id=film_id, username=username).first()
+    bookmark = Bookmarks.query.filter_by(film_id=film_id, user_id=user_id).first()
     
     if bookmark is None:
         return jsonify({'message': 'not found'}), 200
@@ -187,91 +218,27 @@ def bookmark_by_film_id_and_username():
     response = {
         "bookmark_id": bookmark.id,
         "film_id": bookmark.film_id,
-        "username": bookmark.username,
+        "user_id": bookmark.user_id,
     }
     return {"message": "success", "bookmark": response}, 200
 
 @app.route("/query_bookmarks", methods=['POST'])
-def bookmarks_by_username():
+def bookmarks_by_user_id():
     if request.is_json:
         data = request.get_json()
-        username = data['username']
+        user_id = data['user_id']
 
-        print(username)
+        print(user_id)
 
-        bookmarks = Bookmarks.query.filter_by(username=username)
+        bookmarks = Bookmarks.query.filter_by(user_id=user_id)
         results = [
             {
                 "film_id": bookmark.film_id,
-                "username": bookmark.username,
+                "user_id": bookmark.user_id,
                 "date_added": bookmark.date_added
             } for bookmark in bookmarks]
 
         return {"count": len(results), "bookmarks": results}
-
-@app.route('/signup', methods=['POST'])
-def signup():
-    username = request.json.get('username')
-    if not username:
-        return jsonify({'error': 'Missing username parameter'}), 400
-
-    response = authsignal_client.track(
-        user_id=username,
-        action="signUp",
-        payload={
-            "user_id": username,
-            "redirectUrl": os.getenv('HOST_URL') + "/callback" # Change the address for dev/prod
-        }
-    )
-    return jsonify(response), 200
-
-@app.route('/login', methods=['POST'])
-def login():
-    username = request.json.get('username')
-    if not username:
-        return jsonify({'error': 'Missing username parameter'}), 400
-
-    response = authsignal_client.track(
-        user_id=username,
-        action="signIn",
-        payload={
-            "user_id": username,
-            "redirectUrl": os.getenv('HOST_URL') + "/callback" # Change the address for dev/prod
-        }
-    )
-    return jsonify(response), 200
-
-@app.route('/callback', methods=['GET'])
-def callback():
-    token = request.args.get('token')
-    challenge_response = authsignal_client.validate_challenge(token)
-
-    print(challenge_response)
-
-    if challenge_response["state"] == 'CHALLENGE_SUCCEEDED':
-        encoded_token = jwt.encode(
-            payload={"username": challenge_response["user_id"]},
-            key=api_key,
-            algorithm="HS256"
-        )
-        response = redirect('/')
-        response.set_cookie(
-            key='auth-session',
-            value=encoded_token,
-            secure=False,
-            path='/'
-        )
-        return response
-
-    return redirect("/")
-
-@app.route("/user", methods=['GET'])
-def user():
-    token = request.cookies.get('auth-session')
-    decoded_token = jwt.decode(token, api_key, algorithms=["HS256"])
-    username = decoded_token.get('username')
-    response = authsignal_client.get_user(user_id=username)
-    return jsonify({"username": username, "email": response["email"]}), 200
 
 @app.route('/init_search', methods=['GET'])
 def get_init_movies():

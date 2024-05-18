@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {withAuthInfo} from '@propelauth/react';
 import FadeIn from './FadeIn';
 import MovieCard from './MovieCard';
 import '../assets/styles/MyList.scss';
@@ -7,7 +8,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import Favorite from '@mui/icons-material/Favorite';
 import Grid from '@mui/material/Grid';
 
-const MyList = () => {
+function MyList({ isLoggedIn, user }: any) {
     const [userData, setUserData] = useState<any>(null);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -20,6 +21,14 @@ const MyList = () => {
 
     const [movieDetail, setMovieDetail] = useState<any>(null);
     const [clicked, setClicked] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            setUserData(user);
+        } else {
+            navigate('/');
+        }
+    }, [isLoggedIn, user]);
 
     const handleClickedChange = () => {
 		setClicked(false)
@@ -40,47 +49,6 @@ const MyList = () => {
 	};
 
     useEffect(() => {
-        const checkCookies = async () => {
-        const authSessionCookie = document.cookie.match("auth-session=([^;]+)");
-        // console.log(authSessionCookie)
-
-        if (!authSessionCookie) {
-            navigate("/");
-            return false;
-        }
-
-        return true;
-        };
-
-        const fetchData = async () => {
-        const cookiesValid = await checkCookies();
-        if (!cookiesValid) return;
-
-        try {
-            const response = await fetch("/user", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include"
-            });
-
-            if (!response.ok) {
-            throw new Error("Failed to fetch user data");
-            }
-
-            const data = await response.json();
-            // console.log(data)
-            setUserData([data.username, data.email]);
-        } catch (error) {
-            navigate("/");
-        }
-        };
-
-        fetchData();
-    }, [navigate]);
-
-    useEffect(() => {
         const fetchData = async () => {
             if (!userData) return;
 
@@ -91,7 +59,7 @@ const MyList = () => {
                     "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        "username": userData[0]
+                        "user_id": userData['userId']
                     })
                 });
 
@@ -149,7 +117,7 @@ const MyList = () => {
                     "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        "username": userData[0]
+                        "user_id": userData['userId']
                     })
                 });
 
@@ -259,4 +227,4 @@ const MyList = () => {
   );
 };
 
-export default MyList;
+export default withAuthInfo(MyList);

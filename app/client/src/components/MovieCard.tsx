@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import FadeIn from './FadeIn';
+import {withAuthInfo} from '@propelauth/react';
 import { styled } from '@mui/material/styles';
 import '../assets/styles/MovieCard.scss';
 import apple from '../assets/images/apple.png';
@@ -27,8 +28,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 
-function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
-
+function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user }: any) {
+    
     const {movieDetail, isFilterLoading, clicked} = parentToChild;
     const [similarMoviesData, setSimilarMoviesData] = useState<any>(null);
     const [newsData, setNewsData] = useState<any>(null);
@@ -117,44 +118,10 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     }, [movieDetail]);
 
     useEffect(() => {
-        const checkCookies = async () => {
-          const authSessionCookie = document.cookie.match("auth-session=([^;]+)");
-          // console.log(authSessionCookie)
-    
-          if (!authSessionCookie) {
-            return false;
-          }
-    
-          return true;
-        };
-    
-        const fetchData = async () => {
-            const cookiesValid = await checkCookies();
-            if (!cookiesValid) return;
-        
-            try {
-                const response = await fetch("/user", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include"
-                },);
-        
-                if (!response.ok) {
-                throw new Error("Failed to fetch user data");
-                }
-        
-                const data = await response.json();
-                // console.log(data);
-                setUserData([data.username, data.email]);
-            } catch (error) {
-                console.log('User is not logged in.');
-            }
-        };
-    
-        fetchData();
-    }, []);
+        if (isLoggedIn) {
+            setUserData(user);
+        }
+    }, [isLoggedIn, user]);
 
     const appendMovie = async (film_id: number) => {
         try {
@@ -165,7 +132,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                 },
                 body: JSON.stringify({
                     "film_id": film_id,
-                    "username": userData[0]
+                    "user_id": userData['userId']
                 })
             });
     
@@ -214,7 +181,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                 },
                 body: JSON.stringify({
                     "film_id": film_id,
-                    "username": userData[0]
+                    "user_id": userData['userId']
                 })
             });
     
@@ -278,7 +245,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                     },
                     body: JSON.stringify({
                         "film_id": movieDetail.id,
-                        "username": userData[0]
+                        "user_id": userData['userId']
                     })
                 });
 
@@ -321,7 +288,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
                     },
                     body: JSON.stringify({
                         "film_id": movieDetail.id,
-                        "username": userData[0]
+                        "user_id": userData['userId']
                     })
                 });
 
@@ -680,4 +647,4 @@ function MovieCard({ parentToChild, movieChange, clickedChange }: any) {
     );
 };
 
-export default MovieCard;
+export default withAuthInfo(MovieCard);
