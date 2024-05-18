@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {withAuthInfo} from '@propelauth/react';
+import { withAuthInfo } from '@propelauth/react';
 import FadeIn from './FadeIn';
 import MovieCard from './MovieCard';
 import '../assets/styles/MyList.scss';

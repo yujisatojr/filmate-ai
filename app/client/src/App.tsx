@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import {
   Home,
-  Register,
-  Login,
-  Profile,
-  MyList
+  MyList,
+  Explore
 } from "./components";
 import Logo from './assets/images/logo.png';
 import './App.scss';
@@ -103,15 +101,17 @@ function App({isLoggedIn}: any)  {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
-                <Typography textAlign="center">About</Typography>
-              </MenuItem>
               {isLoggedIn && (
                 <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
                   <Typography textAlign="center">My List</Typography>
                 </MenuItem>
               )}
-              <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/">
+              {isLoggedIn && (
+                <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/explore">
+                  <Typography textAlign="center">Explore</Typography>
+                </MenuItem>
+              )}
+              <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
                 <Typography textAlign="center">Help</Typography>
               </MenuItem>
             </Menu>
@@ -135,12 +135,6 @@ function App({isLoggedIn}: any)  {
             <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Button
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: 'white', display: 'block' }}
-            >
-              About
-            </Button>
             {isLoggedIn && (
               <Button
                 className='nav_button_link'
@@ -149,6 +143,16 @@ function App({isLoggedIn}: any)  {
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 My List
+              </Button>
+            )}
+            {isLoggedIn && (
+              <Button
+                className='nav_button_link'
+                component={NavLink} to="/explore"
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Explore
               </Button>
             )}
             <Button
@@ -233,10 +237,8 @@ function App({isLoggedIn}: any)  {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/mylist" element={<MyList />} />
+        <Route path="/explore" element={<Explore />} />
       </Routes>
 
     <footer>

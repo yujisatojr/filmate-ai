@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-      <AuthProvider authUrl={`${process.env.REACT_APP_PROPELAUTH_AUTH_URL}`}>
+      <AuthProvider authUrl={process.env.REACT_APP_PROPELAUTH_AUTH_URL!}>
         <App />
       </AuthProvider>
     </React.StrictMode>

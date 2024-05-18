@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, redirect, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from propelauth_flask import init_auth, current_user
 import datetime
 import jwt
 import logging
@@ -13,6 +14,8 @@ load_dotenv(find_dotenv())
 
 app = Flask(__name__, static_folder='../client/build', static_url_path='')
 CORS(app, supports_credentials=True)
+
+auth = init_auth(os.getenv("PROPELAUTH_AUTH_URL"), os.getenv("PROPELAUTH_API_KEY"))
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRESQL_DATABASE_URL')
 db = SQLAlchemy(app)

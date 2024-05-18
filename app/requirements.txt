@@ -55,6 +55,7 @@ orjson==3.10.1
 packaging==23.2
 pillow==10.3.0
 portalocker==2.8.2
+propelauth-flask==2.1.14
 protobuf==4.25.3
 psycopg2-binary==2.9.9
 pydantic==2.7.0
