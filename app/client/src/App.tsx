@@ -13,7 +13,7 @@ import {withAuthInfo, useLogoutFunction, useRedirectFunctions} from '@propelauth
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -23,9 +23,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import RedditIcon from '@mui/icons-material/Reddit';
-import YouTubeIcon from '@mui/icons-material/YouTube';
-import XIcon from '@mui/icons-material/X';
+// import RedditIcon from '@mui/icons-material/Reddit';
+// import YouTubeIcon from '@mui/icons-material/YouTube';
+// import XIcon from '@mui/icons-material/X';
 
 function App({isLoggedIn}: any)  {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -101,7 +101,7 @@ function App({isLoggedIn}: any)  {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {isLoggedIn && (
+              {/* {isLoggedIn && (
                 <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
                   <Typography textAlign="center">My List</Typography>
                 </MenuItem>
@@ -110,10 +110,10 @@ function App({isLoggedIn}: any)  {
                 <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/explore">
                   <Typography textAlign="center">Explore</Typography>
                 </MenuItem>
-              )}
-              <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
+              )} */}
+              {/* <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
                 <Typography textAlign="center">Help</Typography>
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
           </Box>
           <Typography
@@ -135,7 +135,7 @@ function App({isLoggedIn}: any)  {
             <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {isLoggedIn && (
+            {/* {isLoggedIn && (
               <Button
                 className='nav_button_link'
                 component={NavLink} to="/mylist"
@@ -154,13 +154,13 @@ function App({isLoggedIn}: any)  {
               >
                 Explore
               </Button>
-            )}
-            <Button
+            )} */}
+            {/* <Button
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Help
-            </Button>
+            </Button> */}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -196,7 +196,7 @@ function App({isLoggedIn}: any)  {
                   logoutFn(true);
                   handleCloseUserMenu();
                   }} component={NavLink} to="/">
-                  <Typography textAlign="center">Log Out</Typography>
+                  <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
               </Menu>
           ) : (
@@ -237,11 +237,11 @@ function App({isLoggedIn}: any)  {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/mylist" element={<MyList />} />
-        <Route path="/explore" element={<Explore />} />
+        {/* <Route path="/mylist" element={<MyList />} />
+        <Route path="/explore" element={<Explore />} /> */}
       </Routes>
 
-    <footer>
+    {/* <footer>
       <div className="social_links">
         <a href="/" target="_blank" rel="noreferrer"><RedditIcon/></a>
         <a href="/" target="_blank" rel="noreferrer"><YouTubeIcon/></a>
@@ -251,7 +251,7 @@ function App({isLoggedIn}: any)  {
       <div className="footer-copyright">
           <p>© 2024 Filmate AI</p>
       </div>
-    </footer>
+    </footer> */}
   </Router>
   );
 }

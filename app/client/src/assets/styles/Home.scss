@@ -6,6 +6,75 @@
     font-style: normal;
     min-height: 750px;
 }
+
+// .sidebar_filter {
+// 	border-right: 0.1px solid gray;
+// }
+
+.profile_container {
+	display: flex;
+	gap: 20px;
+	padding: 10px;
+	background-color: #303134 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 10px #00000026, 0 1px 1px #0000001a !important;
+	margin-top: 16px;
+	margin-bottom: 15px;
+
+	img {
+		border-radius: 50%;
+		width: 56px;
+		height: 56px;
+		box-shadow: 0 11px 15px -7px #0003, 0 24px 38px 3px #00000024, 0 9px 46px 8px #0000001f;
+	}
+
+	h1 {
+		font-size: 1.2em;
+		margin-block-start: 0px !important;
+    	margin-block-end: 10px !important;
+	}
+
+	span {
+		color: #b9bdcb !important;
+	}
+
+	.followers_numbers {
+		display: flex;
+		flex-direction: row;
+		gap: 15px;
+	}
+
+	.user_not_authorized {
+		color: #b9bdcb;
+
+		span {
+			color: #42a5f5 !important;
+			cursor: pointer;
+		}
+
+		span:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.menu_button {
+	button {
+		width: 100%;
+		text-align: left;
+		justify-content: flex-start;
+		background-color: transparent;
+		text-transform: capitalize;
+		border-radius: 10px;
+		// border-bottom: 1px solid white;
+		box-shadow: none;
+	}
+
+	button:hover {
+		background-color: #b9bdcb;
+		color: black;
+	}
+}
   
 .header {
     display: flex;
@@ -46,7 +115,6 @@
 }
   
 .search_form_wrapper {
-	margin-top: 15px;
 	margin-bottom: 15px;
 	display: flex;
 	flex-direction: column;
@@ -179,8 +247,6 @@ input {
 .accordion_container {
     background-color: #303134 !important;
 	border-radius: 10px !important;
-    // border-bottom-left-radius: 4px !important;
-    // border-bottom-right-radius: 4px !important;
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.1) !important;
     margin-bottom: 15px !important;
 

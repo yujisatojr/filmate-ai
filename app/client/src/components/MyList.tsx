@@ -20,7 +20,7 @@ function MyList({ isLoggedIn, user }: any) {
     const [savedData, setSavedData] = useState<any>(null);
 
     const [movieDetail, setMovieDetail] = useState<any>(null);
-    const [clicked, setClicked] = useState<boolean>(false);
+    const [clickedDetail, setClickedDetail] = useState<boolean>(false);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -31,17 +31,16 @@ function MyList({ isLoggedIn, user }: any) {
     }, [isLoggedIn, user]);
 
     const handleClickedChange = () => {
-		setClicked(false)
+		setClickedDetail(false)
 	};
 		
 	const handleClick = (movie: any) => {
 		setMovieDetail(movie);
-		setClicked(true);
+		setClickedDetail(true);
 	};
 
     const handleMovieChange = (data: any) => {
 		setMovieDetail(data);
-		// setClicked(true);
 		window.scrollTo({
 			top: 0,
 			behavior: 'smooth'
@@ -166,7 +165,7 @@ function MyList({ isLoggedIn, user }: any) {
 
   return (
     <div className="mylist_root">
-    {userData && !isLoading && !clicked && (
+    {userData && !isLoading && !clickedDetail && (
         <FadeIn transitionDuration={700}>
             <div className="mylist_header">
                 <h1>My Favorites</h1>
@@ -179,7 +178,7 @@ function MyList({ isLoggedIn, user }: any) {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <Grid container spacing={2}>
                     {favoritesData && favoritesData.map((movie: any, index: number) => (
-                        <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
+                        <Grid item xs={6} sm={6} md={3} lg={3} xl={3} key={index}>
                             <FadeIn transitionDuration={700} key={index}>
                                 <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
                                     <img className='image_fill' alt={movie.title} src={movie.img}/>
@@ -202,7 +201,7 @@ function MyList({ isLoggedIn, user }: any) {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <Grid container spacing={2}>
                     {savedData && savedData.map((movie: any, index: number) => (
-                        <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
+                        <Grid item xs={6} sm={6} md={3} lg={3} xl={3} key={index}>
                             <FadeIn transitionDuration={700} key={index}>
                                 <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
                                     <img className='image_fill' alt={movie.title} src={movie.img}/>
@@ -218,7 +217,7 @@ function MyList({ isLoggedIn, user }: any) {
 
         <React.StrictMode>
             <MovieCard
-            parentToChild={{ movieDetail, isLoading, clicked }}
+            parentToChild={{ movieDetail, isLoading, clickedDetail }}
             movieChange={handleMovieChange}
             clickedChange={handleClickedChange}
             />

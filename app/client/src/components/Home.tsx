@@ -3,8 +3,10 @@ import axios from 'axios';
 import FadeIn from './FadeIn';
 import { Oval, ThreeDots } from 'react-loader-spinner'
 import { TypeAnimation } from 'react-type-animation';
-import {withAuthInfo} from '@propelauth/react';
+import { withAuthInfo, useRedirectFunctions } from '@propelauth/react';
+import Explore from './Explore';
 import MovieCard from './MovieCard';
+import MyList from './MyList';
 import '../assets/styles/Home.scss';
 
 // Import MUI components
@@ -28,24 +30,33 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
 // Import icons
+import Avatar from '@mui/material/Avatar';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
+import ExploreIcon from '@mui/icons-material/Explore';
 import HelpIcon from '@mui/icons-material/Help';
+import HomeIcon from '@mui/icons-material/Home';
+import ListIcon from '@mui/icons-material/List';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SearchIcon from '@mui/icons-material/Search';
 
 function Home({ isLoggedIn, user }: any) {
+
+	const [userData, setUserData] = useState<any>(null);
+	const {redirectToSignupPage, redirectToLoginPage, redirectToAccountPage} = useRedirectFunctions()
+
 	const [initCall, setInitCall] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
-	const [clicked, setClicked] = useState<boolean>(false);
+	const [clickedDetail, setClickedDetail] = useState<boolean>(false);
+	const [clickedMyList, setClickedMyList] = useState<boolean>(false);
+	const [clickedExplore, setClickedExplore] = useState<boolean>(false);
 
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
 	const [selectedGenre, setSelectedGenre] = useState({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 	const [selectedPopularity, setSelectedPopularity] = useState<number[]>([1, 10]);
-	// const [selectedRating, setSelectedRating] = useState<number[]>([0, 10]);
 	const [selectedRuntime, setSelectedRuntime] = useState<number[]>([45, 240]);
 	const [selectedSentiment, setSelectedSentiment] = useState<number[]>([0, 10]);
 	const [selectedYear, setSelectedYear] = useState<number[]>([1915, 2024]);
@@ -60,7 +71,7 @@ function Home({ isLoggedIn, user }: any) {
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const response = await axios.post('/get_user', user);
+				const response = await axios.post('/user', user);
 				console.log(response);
 			} catch (error) {
 				console.log(error);
@@ -120,10 +131,6 @@ function Home({ isLoggedIn, user }: any) {
 		setSelectedPopularity(newValue as number[]);
 	};
 
-	// const handleRatingChange = (event: Event, newValue: number | number[]) => {
-	// 	setSelectedRating(newValue as number[]);
-	// };
-
 	const handleRuntimeChange = (event: Event, newValue: number | number[]) => {
 		setSelectedRuntime(newValue as number[]);
 	};
@@ -139,7 +146,6 @@ function Home({ isLoggedIn, user }: any) {
 	// Change state based on the values from child components
 	const handleMovieChange = (data: any) => {
 		setMovieDetail(data);
-		// setClicked(true);
 		window.scrollTo({
 			top: 0,
 			behavior: 'smooth'
@@ -147,28 +153,47 @@ function Home({ isLoggedIn, user }: any) {
 	};
 
 	const handleClickedChange = () => {
-		setClicked(false)
+		setClickedDetail(false)
 	};
 		
 	const handleClick = (movie: any) => {
 		setMovieDetail(movie);
-		setClicked(true);
+		setClickedDetail(true);
+	};
+
+	const handleMyListClick = () => {
+		setClickedMyList(true);
+		setClickedExplore(false);
+		setClickedDetail(false);
+	};
+
+	const handleExploreClick = () => {
+		setClickedExplore(true);
+		setClickedMyList(false);
+		setClickedDetail(false);
 	};
 
 	const handleSearchSubmit = () => {
-		setClicked(false);
+		setClickedExplore(false);
+		setClickedMyList(false);
+		setClickedDetail(false);
 		const newData: any = {
 			searchInput,
 			selectedCertificate,
 			selectedGenre,
 			selectedPopularity,
-			// selectedRating,
 			selectedRuntime,
 			selectedSentiment,
 			selectedYear
 		};
 		setFilterData(newData);
 	};
+
+	useEffect(() => {
+        if (isLoggedIn) {
+            setUserData(user);
+        }
+    }, [isLoggedIn, user]);
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -207,10 +232,9 @@ function Home({ isLoggedIn, user }: any) {
 			top: 0,
 			behavior: 'smooth'
 		});
-	}, [clicked]);
+	}, [clickedDetail]);
 
 	useEffect(() => {
-		// handleSearchSubmit();
 		setIsLoading(true);
 		const fetchData = async () => {
 			try {
@@ -230,14 +254,15 @@ function Home({ isLoggedIn, user }: any) {
 		setIsLoading(false);
 		setOpen(false);
 		setExpanded(false);
-		setClicked(false);
+		setClickedDetail(false);
+		setClickedMyList(false);
+		setClickedExplore(false);
 		setSearchInput('');
 		setMovieData(null);
 		setMovieDetail(null);
 		setSelectedCertificate({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 		setSelectedPopularity([1, 10]);
-		// setSelectedRating([0, 10]);
 		setSelectedRuntime([45, 240]);
 		setSelectedYear([1915, 2024]);
 		setInitCall(prev => prev + 1);
@@ -247,7 +272,132 @@ function Home({ isLoggedIn, user }: any) {
 	<div className='movie_app_root'>
 		<FadeIn transitionDuration={700}>
 			<Grid container spacing={2}>
-				<Grid item xs={12} sm={12} md={3.5} lg={3.5} xl={3.5} className='sidebar_filter'>
+				<Grid item xs={12} sm={12} md={2.5} lg={2.5} xl={2.5} className='sidebar_filter'>
+					<div className="profile_container">
+						{userData ? (
+							<>
+								<img className='image_circle' alt={userData.username} src={userData.pictureUrl}/>
+								<div>
+									<h1>{userData && userData.username}</h1>
+									<div className="followers_numbers">
+										<span>1 Following</span>
+										<span>3 Followers</span>
+									</div>
+								</div>
+							</>
+						) : (
+							<>
+								<IconButton sx={{ p: 0 }}>
+									<Avatar alt="John Doe" />
+								</IconButton>
+								<div className='user_not_authorized'><span onClick={() => {redirectToSignupPage();}}>Sign up</span> to gain full access to various features on the app.</div>
+							</>
+						)}
+					</div>
+
+					<Grid container spacing={2}>
+						<Grid className='menu_button' item xs={12} sm={12} md={12} lg={12} xl={12}>
+							<Button variant="contained" startIcon={<HomeIcon />} onClick={resetFilters}>
+								Home
+							</Button>
+						</Grid>
+						<Grid className='menu_button' item xs={12} sm={12} md={12} lg={12} xl={12}>
+							<Button variant="contained" startIcon={<ListIcon />} onClick={() => {isLoggedIn ? handleMyListClick() : redirectToLoginPage()}}>
+								MyList
+							</Button>
+						</Grid>
+						<Grid className='menu_button' item xs={12} sm={12} md={12} lg={12} xl={12}>
+							<Button variant="contained" startIcon={<ExploreIcon />} onClick={() => {isLoggedIn ? handleExploreClick() : redirectToLoginPage()}}>
+								Explore
+							</Button>
+						</Grid>
+					</Grid>
+				</Grid>
+				
+				<Grid className='right_container' item xs={12} sm={12} md={7} lg={7} xl={7}>
+					<Collapse in={open}>
+						<Alert
+						className='alert_container'
+						severity="info"
+						icon={<HelpIcon fontSize="inherit" />}
+						sx={{ mb: 2 }}
+						action={
+							<IconButton
+							aria-label="close"
+							color="inherit"
+							size="small"
+							onClick={() => {setOpen(false);}}>
+								<CloseIcon fontSize="inherit" />
+							</IconButton>
+						}>
+							<span className='instruction'>This movie search app uses GenAI to handle natural language queries beyond the traditional keyword search. The app also provides recommendations on movie titles and directors based on the input sentences. Try out the following three search patterns:</span>
+							<ol>
+								<li>Semantic search based on context and concepts: For example, using the word "Ocean" will yield hits related to summer, ships, and blue, etc.</li>
+								<li>Sentiment analysis based on emotion: For example, "happy movie" and "sad movie" will sort movies based on their content mood.</li>
+								<li>Filter search based on words or phrases: It supports flexible searches including movie titles, director names, content, and revenues.</li>
+							</ol>
+						</Alert>
+					</Collapse>
+
+					{isLoading && (
+					<FadeIn transitionDuration={500}>
+						<div className='loading'>
+							<ThreeDots
+							visible={true}
+							height="60"
+							width="60"
+							color="white"
+							radius="9"
+							ariaLabel="three-dots-loading"
+							wrapperStyle={{}}
+							wrapperClass=""
+							/>
+						</div>
+					</FadeIn>
+					)}
+
+					{!isLoading && !clickedDetail && !clickedMyList && !clickedExplore && (
+					<FadeIn transitionDuration={700}>
+						<Grid container spacing={2} className='result_container'>
+							<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+								<Grid container spacing={2}>
+								{movieData && movieData.map((movie: any, index: number) => (
+									<Grid item xs={6} sm={6} md={3} lg={3} xl={3} key={index}>
+										<FadeIn transitionDuration={700} key={index}>
+											<div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
+												<img className='image_fill' alt={movie.title} src={movie.img}/>
+											</div>
+										</FadeIn>
+									</Grid>
+								))}
+								</Grid>
+							</Grid>
+						</Grid>
+					</FadeIn>
+					)}
+
+					<React.StrictMode>
+						<MovieCard
+						parentToChild={{ movieDetail, isLoading, clickedDetail }}
+						movieChange={handleMovieChange}
+						clickedChange={handleClickedChange}
+						/>
+					</React.StrictMode>
+
+					{clickedMyList && !clickedExplore && (
+						<React.StrictMode>
+							<MyList/>
+						</React.StrictMode>
+					)}
+
+					{clickedExplore && !clickedMyList && (
+						<React.StrictMode>
+							<Explore/>
+						</React.StrictMode>
+					)}
+				</Grid>
+
+				<Grid className='right_container' item xs={12} sm={12} md={2.5} lg={2.5} xl={2.5}>
 					<div className='search_form_wrapper'>
 						<Paper
 						className='search_form'
@@ -261,7 +411,7 @@ function Home({ isLoggedIn, user }: any) {
 							<InputBase
 							className='input_form'
 							sx={{ ml: 1, flex: 1 }}
-							placeholder='Search with natural language query'
+							placeholder='Find movies'
 							inputProps={{ 'aria-label': 'search movies' }}
 							value={searchInput}
 							onChange={handleInputChange}
@@ -272,7 +422,7 @@ function Home({ isLoggedIn, user }: any) {
 						</Paper>
 					</div>
 
-					<Accordion className='accordion_container'>
+					<Accordion defaultExpanded className='accordion_container'>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -298,7 +448,7 @@ function Home({ isLoggedIn, user }: any) {
 								{recommendsData ? (
 								<><CheckCircleIcon/> Finished generating recommends!</>
 								) : (
-								<><CheckCircleIcon/> No user query found!</>
+								<><CheckCircleIcon/> No keywords found!</>
 								)}
 							</span>
 						)}
@@ -326,24 +476,11 @@ function Home({ isLoggedIn, user }: any) {
 							severity="info"
 							sx={{ mb: 2 }}
 							>
-								<span>Please enter your query to generate personalized movie recommendations 😎</span>
+								<span>Type keywords in the search bar to generate personalized movie recommendations 😎</span>
 							</Alert>
 						)}
 						</AccordionDetails>
 					</Accordion>
-
-					<Grid container spacing={2}>
-						<Grid className='button_container' item xs={6} sm={6} md={6} lg={6} xl={6}>
-							<Button variant="contained" startIcon={<RestartAltIcon />} onClick={resetFilters}>
-								RESET
-							</Button>
-						</Grid>
-						<Grid className='button_container apply_filter_btn' item xs={6} sm={6} md={6} lg={6} xl={6}>
-							<Button variant="contained" startIcon={<DoneOutlineIcon />} onClick={handleSearchSubmit}>
-								APPLY FILTERS
-							</Button>
-						</Grid>
-					</Grid>
 
 					<Accordion className='accordion_container' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
 						<AccordionSummary
@@ -449,42 +586,6 @@ function Home({ isLoggedIn, user }: any) {
 							</Box>
 						</AccordionDetails>
 					</Accordion>
-
-					{/* <Accordion className='accordion_container' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
-						<AccordionSummary
-						expandIcon={<ArrowDropDownIcon />}
-						aria-controls="panel2-content"
-						id="panel2-header"
-						>
-						Rating
-						</AccordionSummary>
-						<AccordionDetails>
-							<Slider
-								getAriaLabel={() => 'Rating range'}
-								value={selectedRating}
-								onChange={handleRatingChange}
-								valueLabelDisplay="auto"
-								shiftStep={1}
-								step={1}
-								min={0}
-								max={10}
-							/>
-							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-								<Typography
-								variant="body2"
-								sx={{ cursor: 'pointer' }}
-								>
-								0 star
-								</Typography>
-								<Typography
-								variant="body2"
-								sx={{ cursor: 'pointer' }}
-								>
-								10 stars
-								</Typography>
-							</Box>
-						</AccordionDetails>
-					</Accordion> */}
 
 					<Accordion className='accordion_container' expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
 						<AccordionSummary
@@ -594,77 +695,19 @@ function Home({ isLoggedIn, user }: any) {
 							</Box>
 						</AccordionDetails>
 					</Accordion>
-				</Grid>
-				
-				<Grid className='right_container' item xs={12} sm={12} md={8.5} lg={8.5} xl={8.5}>
-					<Collapse in={open}>
-						<Alert
-						className='alert_container'
-						severity="info"
-						icon={<HelpIcon fontSize="inherit" />}
-						sx={{ mb: 2 }}
-						action={
-							<IconButton
-							aria-label="close"
-							color="inherit"
-							size="small"
-							onClick={() => {setOpen(false);}}>
-								<CloseIcon fontSize="inherit" />
-							</IconButton>
-						}>
-							<span className='instruction'>This movie search app uses GenAI to handle natural language queries beyond the traditional keyword search. The app also provides recommendations on movie titles and directors based on the input sentences. Try out the following three search patterns:</span>
-							<ol>
-								<li>Semantic search based on context and concepts: For example, using the word "Ocean" will yield hits related to summer, ships, and blue, etc.</li>
-								<li>Sentiment analysis based on emotion: For example, "happy movie" and "sad movie" will sort movies based on their content mood.</li>
-								<li>Filter search based on words or phrases: It supports flexible searches including movie titles, director names, content, and revenues.</li>
-							</ol>
-						</Alert>
-					</Collapse>
 
-					{isLoading && (
-					<FadeIn transitionDuration={500}>
-						<div className='loading'>
-							<ThreeDots
-							visible={true}
-							height="60"
-							width="60"
-							color="white"
-							radius="9"
-							ariaLabel="three-dots-loading"
-							wrapperStyle={{}}
-							wrapperClass=""
-							/>
-						</div>
-					</FadeIn>
-					)}
-
-					{!isLoading && !clicked && (
-					<FadeIn transitionDuration={700}>
-						<Grid container spacing={2} className='result_container'>
-							<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-								<Grid container spacing={2}>
-								{movieData && movieData.map((movie: any, index: number) => (
-									<Grid item xs={6} sm={6} md={3} lg={3} xl={3} key={index}>
-										<FadeIn transitionDuration={700} key={index}>
-											<div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
-												<img className='image_fill' alt={movie.title} src={movie.img}/>
-											</div>
-										</FadeIn>
-									</Grid>
-								))}
-								</Grid>
-							</Grid>
+					<Grid container spacing={2}>
+						<Grid className='button_container' item xs={6} sm={6} md={6} lg={6} xl={6}>
+							<Button variant="contained" startIcon={<RestartAltIcon />} onClick={resetFilters}>
+								RESET
+							</Button>
 						</Grid>
-					</FadeIn>
-					)}
-
-					<React.StrictMode>
-						<MovieCard
-						parentToChild={{ movieDetail, isLoading, clicked }}
-						movieChange={handleMovieChange}
-						clickedChange={handleClickedChange}
-						/>
-					</React.StrictMode>
+						<Grid className='button_container apply_filter_btn' item xs={6} sm={6} md={6} lg={6} xl={6}>
+							<Button variant="contained" startIcon={<DoneOutlineIcon />} onClick={handleSearchSubmit}>
+								APPLY
+							</Button>
+						</Grid>
+					</Grid>
 				</Grid>
 			</Grid>
 		</FadeIn>

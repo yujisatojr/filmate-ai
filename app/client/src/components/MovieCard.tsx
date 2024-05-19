@@ -30,11 +30,9 @@ import Favorite from '@mui/icons-material/Favorite';
 
 function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user }: any) {
     
-    const {movieDetail, isFilterLoading, clicked} = parentToChild;
+    const {movieDetail, isFilterLoading, clickedDetail} = parentToChild;
     const [similarMoviesData, setSimilarMoviesData] = useState<any>(null);
     const [newsData, setNewsData] = useState<any>(null);
-    // const [trailerData, setTrailerData] = useState<any>(null);
-    // const [trailerError, setTrailerError] = useState<boolean>(false);
 
     const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(true);
     const [isNewsLoading, setIsNewsLoading] = useState<boolean>(true);
@@ -47,6 +45,13 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
 
     const [isNetworksLoading, setNetworksLoading] = useState<boolean>(true);
     const [networksData, setNetworksData] = useState<any>(null);
+
+    useEffect(() => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	}, [clickedDetail]);
 
     const Item = styled(Paper)(({ theme }) => ({
         padding: theme.spacing(1),
@@ -341,7 +346,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
 
     return (
         <>
-        {!isFilterLoading && clicked && (
+        {!isFilterLoading && clickedDetail && (
 		<FadeIn transitionDuration={700}>
 			<Grid container spacing={2} className='result_container'>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -350,7 +355,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                             <CloseIcon fontSize="inherit" onClick={() => clickedChange(false)}/>
                         </div>
                         <Grid container spacing={2}>
-                            <Grid item xs={4} sm={4} md={4} lg={4} xl={4}>
+                            <Grid item xs={3.5} sm={3.5} md={3.5} lg={3.5} xl={3.5}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
                                 <div className='checkbox_elements'>
                                     {userData && isMovieLiked && isMovieLiked.message === "success" && (
@@ -367,7 +372,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     )}
                                 </div>
                             </Grid>
-                            <Grid className='mobile_grid_area right_area' item xs={8} sm={8} md={4} lg={4} xl={4}>
+                            <Grid className='mobile_grid_area right_area' item xs={8} sm={8} md={3.5} lg={3.5} xl={3.5}>
                                 <div className='right_header'>
                                     <h1>{movieDetail && movieDetail.title}</h1>
                                 </div>
@@ -388,7 +393,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                 
                                 <p className='summary_section'>{movieDetail.summary}</p>
                             </Grid>
-                            <Grid className='right_area' item xs={12} sm={12} md={8} lg={8} xl={8}>
+                            <Grid className='right_area' item xs={12} sm={12} md={8.5} lg={8.5} xl={8.5}>
                                 <div className='desktop_area'>
                                     <div className='right_header'>
                                         <h1>{movieDetail && movieDetail.title}</h1>
@@ -492,23 +497,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* <ThemeProvider theme={darkTheme}>
-                                    <Box
-                                    sx={{
-                                        p: 2,
-                                        borderRadius: 2,
-                                        bgcolor: 'background.default',
-                                        display: 'grid',
-                                        gridTemplateColumns: { md: '1fr 1fr' },
-                                        gap: 2,
-                                    }}
-                                    >
-                                    <CardItem key={8} elevation={8}>
-                                    {`elevation=${8}`}
-                                    </CardItem>
-                                    </Box>
-                                </ThemeProvider> */}
+                                
                                 <div className='padding-bottom'>
                                     <h3>Who is this movie for?</h3>
                                     <p>{movieDetail && movieDetail.recommended_audience}</p>

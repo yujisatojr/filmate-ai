@@ -3,9 +3,8 @@ from flask import Flask, jsonify, request, redirect, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from propelauth_flask import init_auth, current_user
+# from propelauth_flask import init_auth, current_user
 import datetime
-import jwt
 import logging
 import os
 import requests
@@ -15,7 +14,7 @@ load_dotenv(find_dotenv())
 app = Flask(__name__, static_folder='../client/build', static_url_path='')
 CORS(app, supports_credentials=True)
 
-auth = init_auth(os.getenv("PROPELAUTH_AUTH_URL"), os.getenv("PROPELAUTH_API_KEY"))
+# auth = init_auth(os.getenv("PROPELAUTH_AUTH_URL"), os.getenv("PROPELAUTH_API_KEY"))
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRESQL_DATABASE_URL')
 db = SQLAlchemy(app)
@@ -30,10 +29,10 @@ def index():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    print(error)
+    # print(error)
     return redirect('/')
 
-@app.route("/get_user", methods=['POST'])
+@app.route("/user", methods=['POST'])
 def get_user():
     data = request.get_json()
     user_id = data.get('userId')
@@ -148,8 +147,6 @@ def favorites_by_user_id():
         data = request.get_json()
         user_id = data['user_id']
 
-        print(user_id)
-
         favorites = Favorites.query.filter_by(user_id=user_id)
         results = [
             {
@@ -230,8 +227,6 @@ def bookmarks_by_user_id():
     if request.is_json:
         data = request.get_json()
         user_id = data['user_id']
-
-        print(user_id)
 
         bookmarks = Bookmarks.query.filter_by(user_id=user_id)
         results = [

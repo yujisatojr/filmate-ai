@@ -1,0 +1,37 @@
+.explore_root {
+
+    .explore_middle_container {
+        padding: 10px 15px;
+
+        .feed_card {
+            background-color: #303134 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, .149), 0 1px 1px rgba(0, 0, 0, .102) !important;
+
+            p, span {
+                color: white;
+            }
+        }
+
+        button {
+            background-color: white;
+            color: black;
+        }
+        
+        button:hover {
+            background-color: #b9bdcb;
+            color: black;
+        }
+    }
+
+    h1 {
+        color: white;
+        font-size: 1.2em;
+        margin-block-start: 0px;
+        margin-block-end: 10px;
+    }
+
+    span {
+        color: #b9bdcb;
+    }
+}
