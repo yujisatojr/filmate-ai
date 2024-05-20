@@ -7,6 +7,7 @@ import { withAuthInfo, useRedirectFunctions } from '@propelauth/react';
 import Explore from './Explore';
 import MovieCard from './MovieCard';
 import MyList from './MyList';
+import Profile from './Profile';
 import '../assets/styles/Home.scss';
 
 // Import MUI components
@@ -18,7 +19,6 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import Collapse from '@mui/material/Collapse';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
@@ -32,10 +32,8 @@ import Typography from '@mui/material/Typography';
 // Import icons
 import Avatar from '@mui/material/Avatar';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CloseIcon from '@mui/icons-material/Close';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import ExploreIcon from '@mui/icons-material/Explore';
-import HelpIcon from '@mui/icons-material/Help';
 import HomeIcon from '@mui/icons-material/Home';
 import ListIcon from '@mui/icons-material/List';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -48,10 +46,17 @@ function Home({ isLoggedIn, user }: any) {
 
 	const [initCall, setInitCall] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [open, setOpen] = useState<boolean>(false);
 	const [clickedDetail, setClickedDetail] = useState<boolean>(false);
 	const [clickedMyList, setClickedMyList] = useState<boolean>(false);
 	const [clickedExplore, setClickedExplore] = useState<boolean>(false);
+	const [clickedProfile, setClickedProfile] = useState<boolean>(false);
+
+	const [selectedProfile, setSelectedProfile] = useState({
+		username: '',
+		email: '',
+		user_id: '',
+		picture_url: ''
+	});
 
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [selectedCertificate, setSelectedCertificate] = useState({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
@@ -150,6 +155,25 @@ function Home({ isLoggedIn, user }: any) {
 			top: 0,
 			behavior: 'smooth'
 		});
+
+		setClickedProfile(false);
+		setClickedExplore(false);
+		setClickedMyList(false);
+		setClickedDetail(true);
+	};
+
+	const handleSelectedProfilechange = (data: any) => {
+		setSelectedProfile({
+			username: data.username,
+			email: data.email,
+			user_id: data.user_id,
+			picture_url: data.picture_url,
+		});
+
+		setClickedProfile(true);
+		setClickedExplore(false);
+		setClickedMyList(false);
+		setClickedDetail(false);
 	};
 
 	const handleClickedChange = () => {
@@ -165,15 +189,34 @@ function Home({ isLoggedIn, user }: any) {
 		setClickedMyList(true);
 		setClickedExplore(false);
 		setClickedDetail(false);
+		setClickedProfile(false);
 	};
 
 	const handleExploreClick = () => {
 		setClickedExplore(true);
 		setClickedMyList(false);
 		setClickedDetail(false);
+		setClickedProfile(false);
+	};
+
+	const handleProfileClick = () => {
+		setSelectedProfile({
+			username: user.username,
+			email: user.email,
+			user_id: user.userId,
+			picture_url: user.pictureUrl,
+		})
+		// setSelectedProfile(user);
+		// setSelectedProfile(userData);
+
+		setClickedProfile(true);
+		setClickedExplore(false);
+		setClickedMyList(false);
+		setClickedDetail(false);
 	};
 
 	const handleSearchSubmit = () => {
+		setClickedProfile(false);
 		setClickedExplore(false);
 		setClickedMyList(false);
 		setClickedDetail(false);
@@ -252,11 +295,11 @@ function Home({ isLoggedIn, user }: any) {
 
 	const resetFilters = () => {
 		setIsLoading(false);
-		setOpen(false);
 		setExpanded(false);
 		setClickedDetail(false);
 		setClickedMyList(false);
 		setClickedExplore(false);
+		setClickedProfile(false);
 		setSearchInput('');
 		setMovieData(null);
 		setMovieDetail(null);
@@ -268,17 +311,20 @@ function Home({ isLoggedIn, user }: any) {
 		setInitCall(prev => prev + 1);
 	};
 
+	// console.log(user)
+	// console.log(selectedProfile);
+
   	return (
 	<div className='movie_app_root'>
 		<FadeIn transitionDuration={700}>
 			<Grid container spacing={2}>
-				<Grid item xs={12} sm={12} md={2.5} lg={2.5} xl={2.5} className='sidebar_filter'>
-					<div className="profile_container">
+				<div className='dashboard_left sidebar_filter'>
+					<div className="profile_container" onClick={() => {isLoggedIn ? handleProfileClick() : redirectToLoginPage()}}>
 						{userData ? (
 							<>
 								<img className='image_circle' alt={userData.username} src={userData.pictureUrl}/>
 								<div>
-									<h1>{userData && userData.username}</h1>
+									<h1>@{userData && userData.username}</h1>
 									<div className="followers_numbers">
 										<span>1 Following</span>
 										<span>3 Followers</span>
@@ -312,33 +358,9 @@ function Home({ isLoggedIn, user }: any) {
 							</Button>
 						</Grid>
 					</Grid>
-				</Grid>
+				</div>
 				
-				<Grid className='right_container' item xs={12} sm={12} md={7} lg={7} xl={7}>
-					<Collapse in={open}>
-						<Alert
-						className='alert_container'
-						severity="info"
-						icon={<HelpIcon fontSize="inherit" />}
-						sx={{ mb: 2 }}
-						action={
-							<IconButton
-							aria-label="close"
-							color="inherit"
-							size="small"
-							onClick={() => {setOpen(false);}}>
-								<CloseIcon fontSize="inherit" />
-							</IconButton>
-						}>
-							<span className='instruction'>This movie search app uses GenAI to handle natural language queries beyond the traditional keyword search. The app also provides recommendations on movie titles and directors based on the input sentences. Try out the following three search patterns:</span>
-							<ol>
-								<li>Semantic search based on context and concepts: For example, using the word "Ocean" will yield hits related to summer, ships, and blue, etc.</li>
-								<li>Sentiment analysis based on emotion: For example, "happy movie" and "sad movie" will sort movies based on their content mood.</li>
-								<li>Filter search based on words or phrases: It supports flexible searches including movie titles, director names, content, and revenues.</li>
-							</ol>
-						</Alert>
-					</Collapse>
-
+				<div className='dashboard_middle'>
 					{isLoading && (
 					<FadeIn transitionDuration={500}>
 						<div className='loading'>
@@ -356,7 +378,7 @@ function Home({ isLoggedIn, user }: any) {
 					</FadeIn>
 					)}
 
-					{!isLoading && !clickedDetail && !clickedMyList && !clickedExplore && (
+					{!isLoading && !clickedDetail && !clickedMyList && !clickedExplore && !clickedProfile && (
 					<FadeIn transitionDuration={700}>
 						<Grid container spacing={2} className='result_container'>
 							<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -384,20 +406,31 @@ function Home({ isLoggedIn, user }: any) {
 						/>
 					</React.StrictMode>
 
-					{clickedMyList && !clickedExplore && (
+					{clickedMyList && !clickedExplore && !clickedProfile && (
 						<React.StrictMode>
 							<MyList/>
 						</React.StrictMode>
 					)}
 
-					{clickedExplore && !clickedMyList && (
+					{clickedExplore && !clickedMyList && !clickedProfile && (
 						<React.StrictMode>
-							<Explore/>
+							<Explore
+							selectedProfileChange={handleSelectedProfilechange}
+							/>
 						</React.StrictMode>
 					)}
-				</Grid>
 
-				<Grid className='right_container' item xs={12} sm={12} md={2.5} lg={2.5} xl={2.5}>
+					{clickedProfile && !clickedMyList && !clickedExplore && (
+						<React.StrictMode>
+							<Profile 
+							parentToChild={{ selectedProfile }}
+							movieChange={handleMovieChange}
+							/>
+						</React.StrictMode>
+					)}
+				</div>
+
+				<div className='dashboard_right'>
 					<div className='search_form_wrapper'>
 						<Paper
 						className='search_form'
@@ -708,7 +741,7 @@ function Home({ isLoggedIn, user }: any) {
 							</Button>
 						</Grid>
 					</Grid>
-				</Grid>
+				</div>
 			</Grid>
 		</FadeIn>
 	</div>

@@ -1,0 +1,73 @@
+.profile_root {
+    color: white;
+    background-color: #303134 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, .149), 0 1px 1px rgba(0, 0, 0, .102) !important;
+
+    .profile_header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+        padding: 30px;
+
+        img {
+            height: 150px;
+            width: 150px;
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-block-start: 0px !important;
+            margin-block-end: 0px !important;
+        }
+
+        .followers_numbers {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            color: #b9bdcb !important;
+            padding-bottom: 20px;
+        }
+
+        .follow_btn {
+            padding: 5px 5px;
+            text-align: center;
+            width: 100px;
+            border-radius: 20px;
+            border: 1px solid white;
+            cursor: pointer;
+            transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        }
+
+        .follow_btn:hover {
+            background-color: #b9bdcb;
+            border: 1px solid #b9bdcb;
+            color: black;
+        }
+    }
+
+    .profile_mylist_container {
+        padding: 15px;
+        
+        .mylist_header {
+            display: flex;
+            align-items: flex-start;
+
+            h3 {
+                font-size: 1.17em !important;
+                margin-block-start: 0px !important;
+                margin-block-end: 10px !important;
+            }
+
+            p {
+                margin-block-start: 0px !important;
+            }
+
+            svg {
+                width: 0.8em !important;
+            }
+        }
+    }
+}

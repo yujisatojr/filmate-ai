@@ -21,7 +21,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_favorites_in_qdrant, get_bookmarks_in_qdrant
-from server.models import Users, Favorites, Bookmarks
+from server.models import Users, Followers, Favorites, Bookmarks
 
 @app.route("/")
 def index():
@@ -66,6 +66,102 @@ def get_user():
         return {"message": "User information is updated.", "user": response}, 200
     else:
         return {"message": "User already exists.", "user": response}, 200
+    
+@app.route('/search_users', methods=['GET'])
+def search_users():
+    keyword = request.args.get('keyword', default=None)
+
+    if keyword == '':
+        results = []
+        return {"message": "success", "count": len(results), "results": results}, 200
+
+    keyword_pattern = f"%{keyword}%"
+    users = Users.query.filter(Users.username.like(keyword_pattern)).all()
+    
+    if users is None:
+        return jsonify({'message': 'not found'}), 200
+    
+    results = [
+        {
+            "user_id": user.user_id,
+            "username": user.username,
+            "email": user.email,
+            "picture_url": user.picture_url
+        } for user in users]
+
+    return {"message": "success", "count": len(results), "results": results}, 200
+    
+@app.route('/follower', methods=['POST', 'DELETE'])
+def handle_follower():
+    data = request.get_json()
+    follower_id = data.get('follower_id') # following user (current user)
+    followee_id = data.get('followee_id') # user being followed (shows up on profile page)
+
+    if request.method == 'POST':
+        current_datetime = datetime.datetime.now()
+
+        new_follow = Followers(follower_id=follower_id, followee_id=followee_id, date_added=current_datetime)
+        db.session.add(new_follow)
+        db.session.commit()
+        return {"message": f"User {new_follow.follower_id} has successfully followed {new_follow.followee_id}."}
+    elif request.method == 'DELETE':
+        unfollow = Followers.query.filter_by(follower_id=follower_id, followee_id=followee_id).first()
+        db.session.delete(unfollow)
+        db.session.commit()
+        return {"message": f"User {unfollow.follower_id} has successfully unfollowed {unfollow.followee_id}."}
+    else:
+        return {"error": "The request payload is not in JSON format"}
+    
+@app.route('/get_follower')
+def get_follower():
+    follower_id = request.args.get('follower_id')
+    followee_id = request.args.get('followee_id')
+
+    follower = Followers.query.filter_by(follower_id=follower_id, followee_id=followee_id).first()
+    if follower is None:
+        return jsonify({'message': 'not found'}), 200
+    else:
+        return {"message": "exists"}, 200
+    
+@app.route('/get_followers', methods=['POST'])
+def handle_followers():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_id = data.get('user_id')
+        
+        followers = Followers.query.filter_by(followee_id=user_id)
+        followees = Followers.query.filter_by(follower_id=user_id)
+
+        results_followers = [
+        {
+            "user_id": follower.follower_id,
+        } for follower in followers]
+
+        results_followees = [
+        {
+            "user_id": followee.followee_id,
+        } for followee in followees]
+
+        return {"message": "success", "followers_count": len(results_followers), "followees_count": len(results_followees), "results_followers": results_followers, "results_followees": results_followees}, 200
+        
+        # if follower is None:
+        #     return jsonify({'message': 'not found'}), 200
+        
+        # response = {
+        #     "favorite_id": follower.id,
+        #     "film_id": follower.film_id,
+        #     "user_id": follower.user_id,
+        # }
+        # return {"message": "success", "follower": response}, 200
+
+        # results = [
+        #     {
+        #         "film_id": follower.film_id,
+        #         "user_id": follower.user_id,
+        #         "date_added": follower.date_added
+        #     } for follower in followers]
+
+        # return {"count": len(results), "favorites": results}
     
 # Favorites model routes
 @app.route('/favorites', methods=['POST', 'GET'])
