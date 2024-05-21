@@ -151,7 +151,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                                 <img className='image_circle' alt={result.username} src={result.picture_url}/>
                                 <h1>@{result.username}</h1>
                             </div>
-                            <span>Follow</span>
+                            <span>View</span>
                         </div>
                         ))}
                     </div>

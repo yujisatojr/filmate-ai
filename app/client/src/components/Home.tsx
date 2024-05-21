@@ -301,6 +301,7 @@ function Home({ isLoggedIn, user }: any) {
 		setClickedExplore(false);
 		setClickedProfile(false);
 		setSearchInput('');
+		setRecommendsData(null);
 		setMovieData(null);
 		setMovieDetail(null);
 		setSelectedCertificate({ G: true, PG: true, PG13: true, NC17: true, R: true, TVMA: true, Approved: true, NotRated: true });
@@ -326,8 +327,7 @@ function Home({ isLoggedIn, user }: any) {
 								<div>
 									<h1>@{userData && userData.username}</h1>
 									<div className="followers_numbers">
-										<span>1 Following</span>
-										<span>3 Followers</span>
+										<span>Click to view your profile</span>
 									</div>
 								</div>
 							</>

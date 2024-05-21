@@ -33,7 +33,7 @@ def page_not_found(error):
     return redirect('/')
 
 @app.route("/user", methods=['POST'])
-def get_user():
+def user():
     data = request.get_json()
     user_id = data.get('userId')
     
@@ -66,6 +66,33 @@ def get_user():
         return {"message": "User information is updated.", "user": response}, 200
     else:
         return {"message": "User already exists.", "user": response}, 200
+    
+@app.route("/get_users", methods=['POST'])
+def get_users():
+    data = request.get_json()
+    user_ids = data.get('user_ids')
+    
+    if not user_ids:
+        return {"message": "No user_ids provided."}, 400
+
+    users_info = []
+
+    print(user_ids)
+    
+    for user_id in user_ids:
+        user = Users.query.filter_by(user_id=user_id).first()
+        if user:
+            user_info = {
+                "user_id": user.user_id,
+                "username": user.username,
+                "email": user.email,
+                "picture_url": user.picture_url
+            }
+            users_info.append(user_info)
+        else:
+            users_info.append({"user_id": user_id, "error": "User not found"})
+
+    return {"message": "Successfully retrieved user information.", "users": users_info}, 200
     
 @app.route('/search_users', methods=['GET'])
 def search_users():

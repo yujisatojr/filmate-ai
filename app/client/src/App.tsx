@@ -27,7 +27,7 @@ import Typography from '@mui/material/Typography';
 // import YouTubeIcon from '@mui/icons-material/YouTube';
 // import XIcon from '@mui/icons-material/X';
 
-function App({isLoggedIn}: any)  {
+function App({isLoggedIn, user}: any)  {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -165,9 +165,15 @@ function App({isLoggedIn}: any)  {
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="John Doe" />
-              </IconButton>
+              {(isLoggedIn && user) ? (
+                <IconButton className='navbar-avatar' onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <img className='image_circle' alt={user.username} src={user.pictureUrl}/>
+                </IconButton>
+              ) : (
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="John Doe" />
+                </IconButton>
+              )}
             </Tooltip>
             {isLoggedIn? (
               <Menu

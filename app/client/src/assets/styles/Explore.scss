@@ -43,6 +43,10 @@
     min-height: 300px !important;
     padding: 10px !important;
     border: none !important;
+
+    .search_form {
+        box-shadow: none !important;
+    }
 }
 
 .user_results_container {

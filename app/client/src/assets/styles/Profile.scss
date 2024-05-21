@@ -32,6 +32,7 @@
         }
 
         .follow_btn {
+            color: white !important;
             padding: 5px 5px;
             text-align: center;
             width: 100px;
@@ -44,12 +45,16 @@
         .follow_btn:hover {
             background-color: #b9bdcb;
             border: 1px solid #b9bdcb;
-            color: black;
+            color: black !important;
         }
     }
 
     .profile_mylist_container {
         padding: 15px;
+
+        p, span {
+            color: #b9bdcb;
+        }
         
         .mylist_header {
             display: flex;
@@ -69,5 +74,38 @@
                 width: 0.8em !important;
             }
         }
+    }
+}
+
+.follows_container {
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+
+    p, span {
+        color: #b9bdcb;
+    }
+
+    .follows_element {
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    img {
+        border-radius: 50%;
+    }
+
+    .circle_zoom {
+        // border-radius: 5px;
+        transition: transform .2s !important;
+        // margin: 0 auto;
+    }
+    
+    .circle_zoom:hover {
+        transform: scale(1.05);
+        cursor: pointer;
     }
 }

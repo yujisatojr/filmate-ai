@@ -15,6 +15,10 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
 
     const [isUserFollowed, setIsUserFollowed] = useState<boolean>(false);
     const [isStatusChanged, setIsStatusChanged] = useState<boolean>(false);
+    const [followersData, setFollowersData] = useState<any>(null);
+
+    const [followersInfoData, setFollowersInfoData] = useState<any>(null);
+    const [followeesInfoData, setFolloweesInfoData] = useState<any>(null);
 
     const [favoriteIds, setFavoriteIds] = useState<any>([]);
     const [favoritesData, setFavoritesData] = useState<any>(null);
@@ -97,6 +101,108 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
             console.log(error);
         }
     }
+
+    useEffect(() => {
+        const getFollowers = async () => {
+            try {
+                const response = await fetch("/get_followers", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "user_id": selectedProfile.user_id
+                    })
+                });
+        
+                if (response.ok) {
+                    // setIsStatusChanged(prevStatus => !prevStatus);
+                    const data = await response.json();
+                    setFollowersData(data);
+                } else {
+                    throw new Error("Failed to get followers and followees.");
+                }
+            
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getFollowers();
+    }, [selectedProfile, isStatusChanged])
+
+    useEffect(() => {
+        const getFollowersData = async () => {
+            const followers_ids = followersData.results_followers.map((user: any) => user.user_id);
+            try {
+                const response = await fetch("/get_users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "user_ids": followers_ids
+                    })
+                });
+        
+                if (response.ok) {
+                    // setIsStatusChanged(prevStatus => !prevStatus);
+                    const data = await response.json();
+                    setFollowersInfoData(data);
+                } else {
+                    throw new Error("Failed to get followers info.");
+                }
+            
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        const getFolloweesData = async () => {
+            const followees_ids = followersData.results_followees.map((user: any) => user.user_id);
+            // console.log(followees_ids)
+            try {
+                const response = await fetch("/get_users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "user_ids": followees_ids
+                    })
+                });
+        
+                if (response.ok) {
+                    // setIsStatusChanged(prevStatus => !prevStatus);
+                    const data = await response.json();
+                    setFolloweesInfoData(data);
+                } else {
+                    throw new Error("Failed to get followees info.");
+                }
+            
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        if (followersData) {
+            if (followersData.followers_count > 0) {
+                getFollowersData();
+            } else {
+                setFollowersInfoData({});
+            }
+    
+            if (followersData.followees_count > 0) {
+                getFolloweesData();
+            } else {
+                setFolloweesInfoData({});
+            }
+        }
+    }, [followersData])
+
+    // console.log(followersData);
+    console.log(followersInfoData);
+    console.log(followeesInfoData);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -228,6 +334,8 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
 
     // console.log(userData);
 
+    // console.log(followersData);
+
   return (
     <div className="profile_root">
         {isLoggedIn && selectedProfile && (
@@ -237,8 +345,8 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                 <div>
                     <h1>{selectedProfile.username}</h1>
                     <div className="followers_numbers">
-                        <span>1 Following</span>
-                        <span>3 Followers</span>
+                        <span>{followersData && followersData.followees_count} Following</span>
+                        <span>{followersData && followersData.followers_count} Followers</span>
                     </div>
                     {!isUserFollowed && (
                         <div className="follow_btn" onClick={() => {followUser(user.userId, selectedProfile.user_id);}}>
@@ -254,10 +362,7 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
             </div>
 
             <div className="profile_mylist_container">
-                <div className="mylist_header">
-                    <h3>Favorites</h3>
-                    <Favorite/>
-                </div>
+                <h3>Favorites</h3>
                 {favoritesData && favoritesData.length === 0 && (
                     <p>This user doesn't have a favorite list.</p>
                 )}
@@ -277,10 +382,7 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                     </Grid>
                 </Grid>
 
-                <div className="mylist_header">
-                    <h3>Saved</h3>
-                    <BookmarkIcon/>
-                </div>
+                <h3>Saved</h3>
                 {savedData && savedData.length === 0 && (
                     <p>This user doesn't have a saved list.</p>
                 )}
@@ -299,6 +401,33 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                         </Grid>
                     </Grid>
                 </Grid>
+
+                <h3>Followers</h3>
+                <div className="follows_container">
+                {followersData && followersData.followers_count !== 0 && followersInfoData && Object.keys(followersInfoData).length > 0 ? (
+                    followersInfoData.users.map((user: any, index: number) => (
+                    <div className="follows_element">
+                        <img key={index} className="image_circle circle_zoom" alt={user.username} src={user.picture_url} />
+                        <span>{user.username}</span>
+                    </div>
+                    ))
+                ) : (
+                    <p>No followers.</p>
+                )}
+                </div>
+                <h3>Following</h3>
+                <div className="follows_container">
+                {followersData && followersData.followees !== 0 && followeesInfoData && Object.keys(followeesInfoData).length > 0 ? (
+                    followeesInfoData.users.map((user: any, index: number) => (
+                    <div className="follows_element">
+                        <img key={index} className="image_circle circle_zoom" alt={user.username} src={user.picture_url} />
+                        <span>{user.username}</span>
+                    </div>
+                    ))
+                ) : (
+                    <p>No following.</p>
+                )}
+                </div>
             </div>
         </FadeIn>
         )}
