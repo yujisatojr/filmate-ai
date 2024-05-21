@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from "react";
+import FadeIn from './FadeIn';
+import { styled } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import { withAuthInfo } from '@propelauth/react';
+import '../assets/styles/Explore.scss';
+
+import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
-import FadeIn from './FadeIn';
-import Collapse from '@mui/material/Collapse';
-import CloseIcon from '@mui/icons-material/Close';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
 import Fab from '@mui/material/Fab';
 import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
+import InputBase from '@mui/material/InputBase';
 import Modal from '@mui/material/Modal';
-import '../assets/styles/Explore.scss';
+import Paper from '@mui/material/Paper';
+import SearchIcon from '@mui/icons-material/Search';
 
 function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
     
     const navigate = useNavigate();
-    const [userData, setUserData] = useState<any>(null);
 
-    const [isSearchLoading, setIsSearchLoading] = useState<boolean>(true);
+    const [userData, setUserData] = useState<any>(null);
     const [userResultData, setUserResultData] = useState<any>(null);
 
-    // const [open, setOpen] = useState<boolean>(false);
     const [modalOpen, setModalOpen] = React.useState(false);
     const handleOpen = () => setModalOpen(true);
     const handleClose = () => setModalOpen(false);
@@ -57,27 +54,20 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
 	};
 
     useEffect(() => {
-		setIsSearchLoading(true);
 		const fetchData = async () => {
 			try {
 				const response = await fetch(`/search_users?keyword=${keyword}`);
                 if (response.ok) {
                     const data = await response.json();
                     setUserResultData(data);
-				    setIsSearchLoading(false);
                 } else {
                     console.error('Error searching users.');
-                    setIsSearchLoading(false);
                 }
 			} catch (error) {
 				console.log(error);
-				setIsSearchLoading(false);
 			}
 		};
 
-        // if (keyword !== '') {
-        //     fetchData();
-        // }
         fetchData();
 
 		return () => {
@@ -92,10 +82,6 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
             navigate('/');
         }
     }, [navigate, isLoggedIn, user]);
-
-    // userResultData && console.log(userResultData);
-    // userResultData && console.log(userResultData.results);
-    // userResultData && console.log(userResultData.results.length);
 
   return (
     <div className="explore_root">

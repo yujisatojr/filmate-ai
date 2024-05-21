@@ -42,7 +42,7 @@ import SearchIcon from '@mui/icons-material/Search';
 function Home({ isLoggedIn, user }: any) {
 
 	const [userData, setUserData] = useState<any>(null);
-	const {redirectToSignupPage, redirectToLoginPage, redirectToAccountPage} = useRedirectFunctions()
+	const {redirectToSignupPage, redirectToLoginPage} = useRedirectFunctions()
 
 	const [initCall, setInitCall] = useState<number>(1);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -76,8 +76,7 @@ function Home({ isLoggedIn, user }: any) {
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const response = await axios.post('/user', user);
-				console.log(response);
+				await axios.post('/user', user);
 			} catch (error) {
 				console.log(error);
 			}
@@ -85,7 +84,6 @@ function Home({ isLoggedIn, user }: any) {
 
         if (isLoggedIn) {
 			fetchUser();
-            // console.log('User is logged in.');
         };
     }, [isLoggedIn, user]);
 
@@ -206,8 +204,6 @@ function Home({ isLoggedIn, user }: any) {
 			user_id: user.userId,
 			picture_url: user.pictureUrl,
 		})
-		// setSelectedProfile(user);
-		// setSelectedProfile(userData);
 
 		setClickedProfile(true);
 		setClickedExplore(false);
@@ -311,9 +307,6 @@ function Home({ isLoggedIn, user }: any) {
 		setSelectedYear([1915, 2024]);
 		setInitCall(prev => prev + 1);
 	};
-
-	// console.log(user)
-	// console.log(selectedProfile);
 
   	return (
 	<div className='movie_app_root'>
@@ -423,7 +416,7 @@ function Home({ isLoggedIn, user }: any) {
 					{clickedProfile && !clickedMyList && !clickedExplore && (
 						<React.StrictMode>
 							<Profile 
-							parentToChild={{ selectedProfile }}
+							parentToChild={{ selectedProfile: selectedProfile, user: user, isLoggedIn: isLoggedIn }}
 							movieChange={handleMovieChange}
 							/>
 						</React.StrictMode>

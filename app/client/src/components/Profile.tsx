@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
 import { withAuthInfo } from '@propelauth/react';
 import FadeIn from './FadeIn';
-// import { styled } from '@mui/material/styles';
-// import Paper from '@mui/material/Paper';
-import '../assets/styles/Profile.scss';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import Favorite from '@mui/icons-material/Favorite';
 import Grid from '@mui/material/Grid';
+import MovieCard from './MovieCard';
+import '../assets/styles/Profile.scss';
 
-function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
+function Profile({ parentToChild }: any) {
 
-    const {selectedProfile} = parentToChild;
+    const {selectedProfile, user, isLoggedIn} = parentToChild;
 
     const [isUserFollowed, setIsUserFollowed] = useState<boolean>(false);
     const [isStatusChanged, setIsStatusChanged] = useState<boolean>(false);
@@ -22,9 +18,49 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
 
     const [favoriteIds, setFavoriteIds] = useState<any>([]);
     const [favoritesData, setFavoritesData] = useState<any>(null);
-
     const [savedIds, setSavedIds] = useState<any>([]);
     const [savedData, setSavedData] = useState<any>(null);
+
+    const [movieDetail, setMovieDetail] = useState<any>(null);
+    const [clickedDetail, setClickedDetail] = useState<boolean>(false);
+    const [clickedProfile, setClickedProfile] = useState<boolean>(false);
+
+    const [selectedProfileElement, setSelectedProfileElement] = useState({
+		username: '',
+		email: '',
+		user_id: '',
+		picture_url: ''
+	});
+
+    const handleClickedChange = () => {
+		setClickedDetail(false)
+	};
+		
+	const handleClick = (movie: any) => {
+		setMovieDetail(movie);
+		setClickedDetail(true);
+        setClickedProfile(false);
+	};
+
+    const handleMovieChange = (data: any) => {
+		setMovieDetail(data);
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	};
+
+    const handleProfileClick = (userElement: any) => {
+		setSelectedProfileElement({
+			username: userElement.username,
+			email: userElement.email,
+			user_id: userElement.user_id,
+			picture_url: userElement.picture_url,
+		})
+
+		setClickedProfile(true);
+		setClickedDetail(false);
+	};
 
     useEffect(() => {
         const getFollower = async () => {
@@ -67,7 +103,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
     
             if (response.ok) {
                 setIsStatusChanged(prevStatus => !prevStatus);
-                console.log('Successfully followed a user.')
             } else {
                 throw new Error("Failed to follow a user.");
             }
@@ -92,7 +127,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
     
             if (response.ok) {
                 setIsStatusChanged(prevStatus => !prevStatus);
-                console.log('Successfully unfollowed a user.')
             } else {
                 throw new Error("Failed to unfollow a user.");
             }
@@ -160,7 +194,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
 
         const getFolloweesData = async () => {
             const followees_ids = followersData.results_followees.map((user: any) => user.user_id);
-            // console.log(followees_ids)
             try {
                 const response = await fetch("/get_users", {
                     method: "POST",
@@ -200,10 +233,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
         }
     }, [followersData])
 
-    // console.log(followersData);
-    console.log(followersInfoData);
-    console.log(followeesInfoData);
-
     useEffect(() => {
         const fetchData = async () => {
             if (!selectedProfile) return;
@@ -220,7 +249,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
 
                 const filmIds: any[] = [];
                 data.favorites.forEach(function(favorite: any) {
@@ -250,7 +278,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
                 setFavoritesData(data);
             } catch (error) {
                 console.log(error);
@@ -276,7 +303,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
 
                 const filmIds: any[] = [];
                 data.bookmarks.forEach(function(bookmark: any) {
@@ -306,7 +332,6 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
                 setSavedData(data);
             } catch (error) {
                 console.log(error);
@@ -315,124 +340,127 @@ function Profile({ parentToChild, movieChange, isLoggedIn, user }: any) {
 
         fetchData();
     }, [savedIds]);
-    
-    // const navigate = useNavigate();
-    // const [userData, setUserData] = useState<any>(null);
-
-    // // const Item = styled(Paper)(({ theme }) => ({
-    // //     padding: theme.spacing(1),
-    // //     textAlign: 'left',
-    // // }));
-
-    // useEffect(() => {
-    //     if (isLoggedIn) {
-    //         setUserData(user);
-    //     } else {
-    //         navigate('/');
-    //     }
-    // }, [navigate, isLoggedIn, user]);
-
-    // console.log(userData);
-
-    // console.log(followersData);
 
   return (
-    <div className="profile_root">
-        {isLoggedIn && selectedProfile && (
-        <FadeIn transitionDuration={700}>
-            <div className="profile_header">
-                <img className='image_circle' alt={selectedProfile.username} src={selectedProfile.picture_url}/>
-                <div>
-                    <h1>{selectedProfile.username}</h1>
-                    <div className="followers_numbers">
-                        <span>{followersData && followersData.followees_count} Following</span>
-                        <span>{followersData && followersData.followers_count} Followers</span>
-                    </div>
-                    {!isUserFollowed && (
-                        <div className="follow_btn" onClick={() => {followUser(user.userId, selectedProfile.user_id);}}>
-                            <span>Follow</span>
+    <>
+        {!clickedDetail && !clickedProfile && (
+        <div className="profile_root">
+            {isLoggedIn && selectedProfile && (
+            <FadeIn transitionDuration={700}>
+                <div className="profile_header">
+                    <img className='image_circle' alt={selectedProfile.username} src={selectedProfile.picture_url}/>
+                    <div>
+                        <h1>{selectedProfile.username}</h1>
+                        <div className="followers_numbers">
+                            <span>{followersData && followersData.followees_count} Following</span>
+                            <span>{followersData && followersData.followers_count} Followers</span>
                         </div>
+                        {!isUserFollowed && (
+                            <div className="follow_btn" onClick={() => {followUser(user.userId, selectedProfile.user_id);}}>
+                                <span>Follow</span>
+                            </div>
+                        )}
+                        {isUserFollowed && (
+                            <div className="follow_btn" onClick={() => {unfollowUser(user.userId, selectedProfile.user_id);}}>
+                                <span>Unfollow</span>
+                            </div>
+                        )}                    
+                    </div>
+                </div>
+
+                <div className="profile_mylist_container">
+                    <h3>Favorites</h3>
+                    {favoritesData && favoritesData.length === 0 && (
+                        <p>This user doesn't have a favorite list.</p>
                     )}
-                    {isUserFollowed && (
-                        <div className="follow_btn" onClick={() => {unfollowUser(user.userId, selectedProfile.user_id);}}>
-                            <span>Unfollow</span>
+                    <Grid container spacing={2} className='result_container'>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Grid container spacing={2}>
+                            {favoritesData && favoritesData.map((movie: any, index: number) => (
+                                <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
+                                    <FadeIn transitionDuration={700} key={index}>
+                                        <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
+                                            <img className='image_fill' alt={movie.title} src={movie.img}/>
+                                        </div>
+                                    </FadeIn>
+                                </Grid>
+                            ))}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <h3>Saved</h3>
+                    {savedData && savedData.length === 0 && (
+                        <p>This user doesn't have a saved list.</p>
+                    )}
+                    <Grid container spacing={2} className='result_container'>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <Grid container spacing={2}>
+                            {savedData && savedData.map((movie: any, index: number) => (
+                                <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
+                                    <FadeIn transitionDuration={700} key={index}>
+                                        <div key={index} className='movie_img zoom' onClick={() => handleClick(movie)}>
+                                            <img className='image_fill' alt={movie.title} src={movie.img}/>
+                                        </div>
+                                    </FadeIn>
+                                </Grid>
+                            ))}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <h3>Followers</h3>
+                    <div className="follows_container">
+                    {followersData && followersData.followers_count !== 0 && followersInfoData && Object.keys(followersInfoData).length > 0 ? (
+                        followersInfoData.users.map((user: any, index: number) => (
+                        <div className="follows_element">
+                            <img key={index} className="image_circle circle_zoom" alt={user.username} src={user.picture_url} onClick={() => {handleProfileClick(user)}}/>
+                            <span>{user.username}</span>
                         </div>
-                    )}                    
-                </div>
-            </div>
-
-            <div className="profile_mylist_container">
-                <h3>Favorites</h3>
-                {favoritesData && favoritesData.length === 0 && (
-                    <p>This user doesn't have a favorite list.</p>
-                )}
-                <Grid container spacing={2} className='result_container'>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Grid container spacing={2}>
-                        {favoritesData && favoritesData.map((movie: any, index: number) => (
-                            <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
-                                <FadeIn transitionDuration={700} key={index}>
-                                    <div key={index} className='movie_img zoom' onClick={() => movieChange(movie)}>
-                                        <img className='image_fill' alt={movie.title} src={movie.img}/>
-                                    </div>
-                                </FadeIn>
-                            </Grid>
-                        ))}
-                        </Grid>
-                    </Grid>
-                </Grid>
-
-                <h3>Saved</h3>
-                {savedData && savedData.length === 0 && (
-                    <p>This user doesn't have a saved list.</p>
-                )}
-                <Grid container spacing={2} className='result_container'>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Grid container spacing={2}>
-                        {savedData && savedData.map((movie: any, index: number) => (
-                            <Grid item xs={6} sm={6} md={2} lg={2} xl={2} key={index}>
-                                <FadeIn transitionDuration={700} key={index}>
-                                    <div key={index} className='movie_img zoom' onClick={() => movieChange(movie)}>
-                                        <img className='image_fill' alt={movie.title} src={movie.img}/>
-                                    </div>
-                                </FadeIn>
-                            </Grid>
-                        ))}
-                        </Grid>
-                    </Grid>
-                </Grid>
-
-                <h3>Followers</h3>
-                <div className="follows_container">
-                {followersData && followersData.followers_count !== 0 && followersInfoData && Object.keys(followersInfoData).length > 0 ? (
-                    followersInfoData.users.map((user: any, index: number) => (
-                    <div className="follows_element">
-                        <img key={index} className="image_circle circle_zoom" alt={user.username} src={user.picture_url} />
-                        <span>{user.username}</span>
+                        ))
+                    ) : (
+                        <p>No followers found.</p>
+                    )}
                     </div>
-                    ))
-                ) : (
-                    <p>No followers.</p>
-                )}
-                </div>
-                <h3>Following</h3>
-                <div className="follows_container">
-                {followersData && followersData.followees !== 0 && followeesInfoData && Object.keys(followeesInfoData).length > 0 ? (
-                    followeesInfoData.users.map((user: any, index: number) => (
-                    <div className="follows_element">
-                        <img key={index} className="image_circle circle_zoom" alt={user.username} src={user.picture_url} />
-                        <span>{user.username}</span>
+                    <h3>Following</h3>
+                    <div className="follows_container">
+                    {followersData && followersData.followees !== 0 && followeesInfoData && Object.keys(followeesInfoData).length > 0 ? (
+                        followeesInfoData.users.map((user: any, index: number) => (
+                        <div className="follows_element">
+                            <img key={index} className="image_circle circle_zoom" alt={user.username} src={user.picture_url} onClick={() => {handleProfileClick(user)}}/>
+                            <span>{user.username}</span>
+                        </div>
+                        ))
+                    ) : (
+                        <p>Not following anybody yet.</p>
+                    )}
                     </div>
-                    ))
-                ) : (
-                    <p>No following.</p>
-                )}
                 </div>
-            </div>
-        </FadeIn>
+            </FadeIn>
+            )}
+        </div>
         )}
-    </div>
+
+        {!clickedProfile && (
+            <React.StrictMode>
+                <MovieCard
+                parentToChild={{ movieDetail, clickedDetail }}
+                movieChange={handleMovieChange}
+                clickedChange={handleClickedChange}
+                />
+            </React.StrictMode>
+        )}
+
+        {clickedProfile && !clickedDetail && (
+            <React.StrictMode>
+                <Profile 
+                parentToChild={{ selectedProfile: selectedProfileElement, user: user, isLoggedIn: isLoggedIn }}
+                movieChange={handleMovieChange}
+                />
+            </React.StrictMode>
+        )}
+    </>
   );
 };
 
-export default withAuthInfo(Profile);
+export default Profile;

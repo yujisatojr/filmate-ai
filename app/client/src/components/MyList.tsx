@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { withAuthInfo } from '@propelauth/react';
-import FadeIn from './FadeIn';
-import MovieCard from './MovieCard';
 import '../assets/styles/MyList.scss';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import FadeIn from './FadeIn';
 import Favorite from '@mui/icons-material/Favorite';
 import Grid from '@mui/material/Grid';
+import MovieCard from './MovieCard';
 
 function MyList({ isLoggedIn, user }: any) {
-    const [userData, setUserData] = useState<any>(null);
     const navigate = useNavigate();
+
+    const [userData, setUserData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const [favoriteIds, setFavoriteIds] = useState<any>([]);
     const [favoritesData, setFavoritesData] = useState<any>(null);
-
     const [savedIds, setSavedIds] = useState<any>([]);
     const [savedData, setSavedData] = useState<any>(null);
 
@@ -63,7 +63,6 @@ function MyList({ isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
 
                 const filmIds: any[] = [];
                 data.favorites.forEach(function(favorite: any) {
@@ -94,7 +93,6 @@ function MyList({ isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
                 setFavoritesData(data);
                 setIsLoading(false);
             } catch (error) {
@@ -121,8 +119,6 @@ function MyList({ isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
-
                 const filmIds: any[] = [];
                 data.bookmarks.forEach(function(bookmark: any) {
                     filmIds.push(bookmark.film_id);
@@ -152,7 +148,6 @@ function MyList({ isLoggedIn, user }: any) {
                 });
 
                 const data = await response.json();
-                // console.log(data)
                 setSavedData(data);
                 setIsLoading(false);
             } catch (error) {

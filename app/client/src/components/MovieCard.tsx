@@ -3,6 +3,8 @@ import FadeIn from './FadeIn';
 import {withAuthInfo} from '@propelauth/react';
 import { styled } from '@mui/material/styles';
 import '../assets/styles/MovieCard.scss';
+
+// Import network logos
 import apple from '../assets/images/apple.png';
 import disney from '../assets/images/disney.png';
 import hulu from '../assets/images/hulu.png';
@@ -142,7 +144,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
             });
     
             if (response.ok) {
-                console.log(film_id + ' is added to the database.')
                 setMovieChanged(film_id);
             } else {
                 throw new Error("Failed to post film data");
@@ -166,7 +167,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
             });
     
             if (response.ok) {
-                console.log(favorite_id + ' is deleted from the database.')
                 setMovieChanged(favorite_id);
             } else {
                 throw new Error("Failed to delete film data");
@@ -191,7 +191,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
             });
     
             if (response.ok) {
-                console.log(film_id + ' is saved to the database.')
                 setMovieSaved(film_id);
             } else {
                 throw new Error("Failed to post film data");
@@ -215,7 +214,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
             });
     
             if (response.ok) {
-                console.log(bookmark_id + ' is unsaved from the database.')
                 setMovieSaved(bookmark_id);
             } else {
                 throw new Error("Failed to delete film data");
@@ -255,7 +253,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                 });
 
                 const data = await response.json();
-                // console.log(data)
                 setIsMovieLiked(data);
             } catch (error) {
                 console.log(error);
@@ -298,7 +295,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                 });
 
                 const data = await response.json();
-                // console.log(data)
                 setIsMovieSaved(data);
             } catch (error) {
                 console.log(error);

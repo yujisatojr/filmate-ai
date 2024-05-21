@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import {
-  Home,
-  MyList,
-  Explore
+  Home
 } from "./components";
 import Logo from './assets/images/logo.png';
 import './App.scss';

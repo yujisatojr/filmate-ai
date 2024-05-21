@@ -76,8 +76,6 @@ def get_users():
         return {"message": "No user_ids provided."}, 400
 
     users_info = []
-
-    print(user_ids)
     
     for user_id in user_ids:
         user = Users.query.filter_by(user_id=user_id).first()
