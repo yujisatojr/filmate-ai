@@ -448,7 +448,7 @@ function Home({ isLoggedIn, user }: any) {
 						</Paper>
 					</div>
 
-					<Accordion defaultExpanded className='accordion_container'>
+					<Accordion className='accordion_container'>
 						<AccordionSummary
 						expandIcon={<ArrowDropDownIcon />}
 						aria-controls="panel2-content"
@@ -474,7 +474,7 @@ function Home({ isLoggedIn, user }: any) {
 								{recommendsData ? (
 								<><CheckCircleIcon/> Finished generating recommends!</>
 								) : (
-								<><CheckCircleIcon/> No keywords found!</>
+								<><CheckCircleIcon/> View AI recommendations</>
 								)}
 							</span>
 						)}

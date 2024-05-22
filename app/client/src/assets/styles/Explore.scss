@@ -4,18 +4,69 @@
         padding: 10px 15px;
 
         .feed_card {
-            background-color: #303134 !important;
+            background-color: #1c1c1c !important;
             border-radius: 10px !important;
             box-shadow: 0 1px 10px rgba(0, 0, 0, .149), 0 1px 1px rgba(0, 0, 0, .102) !important;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid gray;
 
-            p, span {
-                color: white;
+            .feed_card_header {
+                display: flex;
+                flex-direction: row;
+                gap: 15px;
+                align-items: flex-start;
+                margin-bottom: 15px;
+
+                img {
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                }
+
+                span {
+                    color: #b9bdcb;
+                }
+
+                a {
+                    color: #42a5f5;
+                    text-decoration: none;
+                }
+
+                .feed_header_right {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+
+                    .date_posted {
+                        font-size: 0.8em;
+
+                        svg {
+                            vertical-align: text-top;
+                            font-size: 1rem;
+                        }
+                    }
+                }
+            }
+
+            .feed_card_body {
+                p {
+                    color: #b9bdcb;
+                    margin-block-start: 10px !important;
+                }
+
+                .feed_card_rating {
+                    font-size: 1rem !important;
+                }
             }
         }
 
         button {
             background-color: white;
             color: black;
+            z-index: 0;
         }
         
         button:hover {
@@ -30,10 +81,10 @@
         margin-block-start: 0px;
         margin-block-end: 10px;
     }
+}
 
-    span {
-        color: #b9bdcb;
-    }
+.no_feed_message {
+    color: #b9bdcb;
 }
 
 .search_user_modal {

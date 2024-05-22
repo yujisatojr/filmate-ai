@@ -67,6 +67,27 @@ def user():
     else:
         return {"message": "User already exists.", "user": response}, 200
     
+@app.route("/get_user", methods=['POST'])
+def get_user():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    
+    if not user_id:
+        return {"message": "No user_id provided."}, 400
+
+    user = Users.query.filter_by(user_id=user_id).first()
+
+    if user:
+        user_info = {
+            "user_id": user.user_id,
+            "username": user.username,
+            "email": user.email,
+            "picture_url": user.picture_url
+        }
+        return {"message": "Successfully retrieved user information.", "user": user_info}, 200
+    else:
+        return {"user_id": user_id, "error": "User not found"}, 404
+    
 @app.route("/get_users", methods=['POST'])
 def get_users():
     data = request.get_json()
@@ -91,6 +112,36 @@ def get_users():
             users_info.append({"user_id": user_id, "error": "User not found"})
 
     return {"message": "Successfully retrieved user information.", "users": users_info}, 200
+
+@app.route("/get_users_and_films", methods=['POST'])
+def get_users_and_films():
+    data = request.get_json()
+    user_ids = data.get('user_ids')
+    film_ids = data.get('film_ids')
+    
+    if not user_ids:
+        return {"message": "No user_ids provided."}, 400
+    if not film_ids:
+        return {"message": "No film_ids provided."}, 400
+
+    users_info = []
+    
+    for user_id in user_ids:
+        user = Users.query.filter_by(user_id=user_id).first()
+        if user:
+            user_info = {
+                "user_id": user.user_id,
+                "username": user.username,
+                "email": user.email,
+                "picture_url": user.picture_url
+            }
+            users_info.append(user_info)
+        else:
+            users_info.append({"user_id": user_id, "error": "User not found"})
+    
+    films_info = get_favorites_in_qdrant(film_ids)
+
+    return {"message": "Successfully retrieved user information.", "users": users_info, "films": jsonify(films_info)}, 200
     
 @app.route('/search_users', methods=['GET'])
 def search_users():
@@ -175,7 +226,7 @@ def handle_followers():
             "results_followees": results_followees
         }, 200
     
-@app.route('/review', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/review', methods=['POST', 'PUT', 'DELETE'])
 def handle_review():
     if request.method == 'POST':
         if request.is_json:
@@ -230,21 +281,106 @@ def get_review():
 @app.route('/get_reviews', methods=['POST'])
 def get_reviews():
     data = request.get_json()
-    user_ids = data.get('user_ids')
-    
-    if not user_ids:
-        return {"message": "No user_ids provided."}, 400
-    
-    for user_id in user_ids:
-        reviews = Reviews.query.filter_by(user_id=user_id)
-        results = [
-            {
-                "film_id": review.film_id,
-                "user_id": review.user_id,
-                "date_added": review.date_added
-            } for review in reviews]
+    if request.is_json:
+        mode = data.get('mode')
+        if mode == 'all':
+            reviews = Reviews.query.order_by(Reviews.date_added).all()
 
-        return {"count": len(results), "reviews": results}
+            results = [
+                {
+                    "film_id": review.film_id,
+                    "user_id": review.user_id,
+                    "rating": review.rating,
+                    "comment": review.comment,
+                    "date_added": review.date_added
+                } for review in reviews]
+            
+            user_ids = []
+            film_ids = []
+
+            for item in results:
+                user_ids.append(item['user_id'])
+                film_ids.append(item['film_id'])
+
+            users_info = []
+            for user_id in user_ids:
+                user = Users.query.filter_by(user_id=user_id).first()
+                if user:
+                    user_info = {
+                        "user_id": user.user_id,
+                        "username": user.username,
+                        "email": user.email,
+                        "picture_url": user.picture_url
+                    }
+                    users_info.append(user_info)
+                else:
+                    users_info.append({"user_id": user_id, "error": "User not found"})
+            
+            films_info = get_favorites_in_qdrant(film_ids)
+
+            combined_list = []
+
+            users_dict = {user['user_id']: user for user in users_info}
+            films_dict = {film['id']: film for film in films_info}
+
+            for result in results:
+                film_id = result['film_id']
+                user_id = result['user_id']
+
+                if film_id in films_dict and user_id in users_dict:
+                    combined_object = {
+                        "film": films_dict[film_id],
+                        "review": result,
+                        "user": users_dict[user_id]
+                    }
+                    combined_list.append(combined_object)
+                else:
+                    print(f"Film with id {film_id} or user with id {user_id} not found.")
+
+            combined_list.sort(key=lambda x: x['review']['date_added'], reverse=True)
+            
+            return {"count": len(combined_list), "results": combined_list}, 200
+        
+        elif mode == 'followers':
+            user_ids = data.get('user_ids')
+        
+            if not user_ids:
+                return {"message": "List of following IDs not provided."}, 400
+            
+            for user_id in user_ids:
+                # reviews = Reviews.query.filter_by(user_id=user_id)
+                reviews = Reviews.query.filter_by(user_id=user_id).order_by(Reviews.date_added).all()
+                results = [
+                    {
+                        "film_id": review.film_id,
+                        "user_id": review.user_id,
+                        "rating": review.rating,
+                        "comment": review.comment,
+                        "date_added": review.date_added
+                    } for review in reviews]
+
+                return {"count": len(results), "reviews": results}
+        
+        # elif mode == 'follower':
+        #     user_ids = data.get('user_ids')
+        
+        #     if not user_ids:
+        #         return {"message": "List of following IDs not provided."}, 400
+            
+        #     for user_id in user_ids:
+        #         reviews = Reviews.query.filter_by(user_id=user_id)
+        #         results = [
+        #             {
+        #                 "film_id": review.film_id,
+        #                 "user_id": review.user_id,
+        #                 "rating": review.rating,
+        #                 "comment": review.comment,
+        #                 "date_added": review.date_added
+        #             } for review in reviews]
+
+        #         return {"count": len(results), "reviews": results}
+    else:
+        return {"error": "The request payload is not in JSON format"}
     
 # Favorites model routes
 @app.route('/favorites', methods=['POST', 'GET'])

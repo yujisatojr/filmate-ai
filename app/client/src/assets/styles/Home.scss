@@ -43,6 +43,10 @@
 		display: flex;
 		flex-direction: row;
 		gap: 15px;
+
+		span {
+			font-size: 0.875rem;
+		}
 	}
 
 	.user_not_authorized {

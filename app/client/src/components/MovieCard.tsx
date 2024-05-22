@@ -193,7 +193,9 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
             }
         }
 
-        getReviewStatus();
+        if (movieDetail && movieDetail.id) {
+            getReviewStatus();
+        }
     }, [movieDetail, isReviewChanged])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -590,12 +592,6 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     <p className='summary_section'>{movieDetail.summary}</p>
                                 </div>
 
-                                {/* <div className='rating_section sub_section'>
-                                    <h3>Rating</h3>
-                                    <Rating name="rating_star" value={movieDetail.rating} precision={0.1} max={10} readOnly />
-                                    <p>{movieDetail.rating}/10 ({movieDetail.votes} votes)</p>
-                                </div> */}
-
                                 <div className='card_content'>
                                     <h3>Sentiment Score</h3>
                                     <div className='flex_section'>
@@ -848,7 +844,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                         <h1>Edit Review</h1>
                         <IconButton className='review_delete_icon' sx={{ p: 0 }} onClick={() => {deleteCheckIn(); handleEditClose();}}>
                             <DeleteIcon/>
-                            <span>Delete</span>
+                            <span className='delete_btn'>Delete</span>
                         </IconButton>
                     </div>
                     <Rating

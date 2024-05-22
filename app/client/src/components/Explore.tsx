@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { withAuthInfo } from '@propelauth/react';
 import '../assets/styles/Explore.scss';
 
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
@@ -12,7 +13,29 @@ import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
+import Rating from '@mui/material/Rating';
 import SearchIcon from '@mui/icons-material/Search';
+
+function formatDateString(dateString: string) {
+    const date = new Date(dateString);
+    let hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const timeString = `${hours}:${strMinutes} ${ampm}`;
+
+    const day = date.getUTCDate();
+    const monthIndex = date.getUTCMonth();
+    const year = date.getUTCFullYear();
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const dateStringFormatted = `${monthNames[monthIndex]} ${day < 10 ? '0' + day : day}, ${year}`;
+
+    return `${timeString} - ${dateStringFormatted}`;
+}
 
 function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
     
@@ -20,6 +43,8 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
 
     const [userData, setUserData] = useState<any>(null);
     const [userResultData, setUserResultData] = useState<any>(null);
+
+    const [reviewsData, setReviewsData] = useState<any>(null);
 
     const [modalOpen, setModalOpen] = React.useState(false);
     
@@ -53,6 +78,33 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
     const handleSearchSubmit = () => {
 		setKeyword(searchInput);
 	};
+
+    useEffect(() => {
+        const getReviews = async () => {
+            try {
+                const response = await fetch("/get_reviews", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "mode": 'all',
+                        "user_ids": [],
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setReviewsData(data);
+                } else {
+                    throw new Error("Failed to fetch reviews.");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getReviews();
+    }, [])
 
     useEffect(() => {
 		const fetchData = async () => {
@@ -93,9 +145,32 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                     <AddIcon/>
                 </Fab>
                 <h3>Activity</h3>
-                <Item className='feed_card'>
-                    <p>Contents come here</p>
-                </Item>
+                {reviewsData && reviewsData.count > 0 ? (
+                    reviewsData.results.map((item: any, index: number) => (
+                        <Item className='feed_card' key={index}>
+                            <div className="feed_card_header">
+                                <img className='image_circle' alt={item.user.username} src={item.user.picture_url}/>
+                                <div className="feed_header_right">
+                                    {item.review.comment === '' ? (
+                                        <span>@{item.user.username} has watched <a href='/'>{item.film.title}</a></span>
+                                    ) : (item.review.comment !== '' && item.review.rating === 0) ? (
+                                        <span>@{item.user.username} has commented on <a href='/'>{item.film.title}</a></span>
+                                    ) : (
+                                        <span>@{item.user.username} has rated <a href='/'>{item.film.title}</a></span>
+                                    )}
+                                    <span className="date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
+                                </div>
+                            </div>
+                            <div className="feed_card_body">
+                                <Rating className="feed_card_rating" name="rating_star" value={item.review.rating} precision={1} max={5} readOnly />
+                                <p>{item.review.comment}</p>
+                            </div>
+                        </Item>
+                    ))
+                ) : (
+                    <p className="no_feed_message">You are all caught up!</p>
+                )}
+                
             </div>
         </FadeIn>
         )}
