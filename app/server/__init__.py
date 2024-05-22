@@ -21,7 +21,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from server.functions import get_default_list, search_movies_in_qdrant, search_similar_in_qdrant, get_recommendations, get_movie_facts, get_favorites_in_qdrant, get_bookmarks_in_qdrant
-from server.models import Users, Followers, Favorites, Bookmarks
+from server.models import Users, Followers, Reviews, Favorites, Bookmarks
 
 @app.route("/")
 def index():
@@ -167,26 +167,84 @@ def handle_followers():
             "user_id": followee.followee_id,
         } for followee in followees]
 
-        return {"message": "success", "followers_count": len(results_followers), "followees_count": len(results_followees), "results_followers": results_followers, "results_followees": results_followees}, 200
-        
-        # if follower is None:
-        #     return jsonify({'message': 'not found'}), 200
-        
-        # response = {
-        #     "favorite_id": follower.id,
-        #     "film_id": follower.film_id,
-        #     "user_id": follower.user_id,
-        # }
-        # return {"message": "success", "follower": response}, 200
+        return {
+            "message": "success", 
+            "followers_count": len(results_followers), 
+            "followees_count": len(results_followees), 
+            "results_followers": results_followers, 
+            "results_followees": results_followees
+        }, 200
+    
+@app.route('/review', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def handle_review():
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
 
-        # results = [
-        #     {
-        #         "film_id": follower.film_id,
-        #         "user_id": follower.user_id,
-        #         "date_added": follower.date_added
-        #     } for follower in followers]
+            current_datetime = datetime.datetime.now()
 
-        # return {"count": len(results), "favorites": results}
+            new_review = Reviews(film_id=data['film_id'], user_id=data['user_id'], rating=data['rating'], comment=data['comment'], date_added=current_datetime)
+            db.session.add(new_review)
+            db.session.commit()
+            return {"message": f"review {new_review.film_id} has been created successfully."}
+        else:
+            return {"error": "The request payload is not in JSON format"}
+    
+    elif request.method == 'PUT':
+        data = request.get_json()
+        review = Reviews.query.filter_by(film_id=data['film_id'], user_id=data['user_id']).first()
+
+        review.rating = data['rating']
+        review.comment = data['comment']
+        db.session.add(review)
+        db.session.commit()
+        return {"message": f"Review {review.id} successfully updated"}
+
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        review = Reviews.query.filter_by(film_id=data['film_id'], user_id=data['user_id']).first()
+
+        db.session.delete(review)
+        db.session.commit()
+        return {"message": f"Review {review.id} successfully deleted."}
+        
+@app.route('/get_review', methods=['POST'])
+def get_review():
+    data = request.get_json()
+    film_id = data.get('film_id')
+    user_id = data.get('user_id')
+
+    review = Reviews.query.filter_by(film_id=film_id, user_id=user_id).first()
+    if review is None:
+        return jsonify({'message': 'not found'}), 200
+    else:
+        response = {
+            "film_id": review.user_id,
+            "user_id": review.user_id,
+            "rating": review.rating,
+            "comment": review.comment
+        }
+
+        return {"message": "exists", "review": response}, 200
+    
+@app.route('/get_reviews', methods=['POST'])
+def get_reviews():
+    data = request.get_json()
+    user_ids = data.get('user_ids')
+    
+    if not user_ids:
+        return {"message": "No user_ids provided."}, 400
+    
+    for user_id in user_ids:
+        reviews = Reviews.query.filter_by(user_id=user_id)
+        results = [
+            {
+                "film_id": review.film_id,
+                "user_id": review.user_id,
+                "date_added": review.date_added
+            } for review in reviews]
+
+        return {"count": len(results), "reviews": results}
     
 # Favorites model routes
 @app.route('/favorites', methods=['POST', 'GET'])

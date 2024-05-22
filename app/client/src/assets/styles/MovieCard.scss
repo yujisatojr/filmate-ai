@@ -175,8 +175,16 @@ h1, h2, h3 {
 	color: white !important;
 }
 
+.watched_btn {
+	width: 100%;
+    margin-top: 10px !important;
+    border-radius: 10px;
+	background: linear-gradient(0deg, #823ffb 28%, #fc5946);
+    font-family: Lato, sans-serif !important;
+}
+
 .checkbox_elements {
-	padding-top: 15px;
+	padding-top: 10px;
 	
 	svg {
 		color: white;
@@ -254,6 +262,55 @@ fieldset {
 
 .mobile_close_btn {
 	display: none;
+}
+
+.checkin_movie_modal {
+	background-color: #303134 !important;
+    border: none !important;
+    border-radius: 10px;
+	min-height: 300px !important;
+    padding: 25px !important;
+	min-width: 400px;
+
+	.checkin_forms {
+		display: flex;
+		flex-direction: column;
+		gap: 25px;
+
+		h1 {
+			margin-block-start: 0px !important;
+			margin-block-end: 0px !important;
+		}
+
+		.MuiTextField-root label, textarea {
+			color: #b9bdcb;
+			font-family: "Lato", sans-serif;
+		}
+
+		fieldset {
+			border-color: #b9bdcb;
+		}
+	}
+}
+
+.edit_review_header {
+	display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+	.review_delete_icon {
+		display: flex;
+		flex-direction: column;
+
+		svg {
+			color: #b9bdcb;
+		}
+
+		span {
+			font-size: 14px;
+			color: #b9bdcb;
+		}
+	}
 }
 
 @media screen and (max-width: 900px) {

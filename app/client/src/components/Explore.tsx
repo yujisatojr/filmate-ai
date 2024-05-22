@@ -22,6 +22,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
     const [userResultData, setUserResultData] = useState<any>(null);
 
     const [modalOpen, setModalOpen] = React.useState(false);
+    
     const handleOpen = () => setModalOpen(true);
     const handleClose = () => setModalOpen(false);
 
@@ -43,7 +44,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,
-      };
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchInput(e.target.value);

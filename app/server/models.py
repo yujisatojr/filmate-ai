@@ -39,6 +39,26 @@ class Followers(db.Model):
 
     def __repr__(self):
         return f"<Follower {self.follower_id}>"
+    
+class Reviews(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    film_id = db.Column(db.Integer())
+    user_id = db.Column(db.String())
+    rating = db.Column(db.Integer())
+    comment = db.Column(db.String())
+    date_added = db.Column(db.DateTime())
+
+    def __init__(self, film_id, user_id, rating, comment, date_added):
+        self.film_id = film_id
+        self.user_id = user_id
+        self.rating = rating
+        self.comment = comment
+        self.date_added = date_added
+
+    def __repr__(self):
+        return f"<Review {self.id}>"
 
 class Favorites(db.Model):
     __tablename__ = 'favorites'

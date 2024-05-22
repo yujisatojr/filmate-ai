@@ -15,11 +15,19 @@ import paramount from '../assets/images/paramount.png';
 import prime from '../assets/images/prime.png';
 
 // Import MUI components
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
+import Rating from '@mui/material/Rating';
 import Skeleton from '@mui/material/Skeleton';
+import TextField from '@mui/material/TextField';
 import { RadialGauge, RadialGaugeArc, StackedRadialGaugeSeries, StackedRadialGaugeValueLabel, StackedRadialGaugeDescriptionLabel } from 'reaviz';
 
 // Import icons
@@ -27,6 +35,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 
@@ -47,6 +56,163 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
 
     const [isNetworksLoading, setNetworksLoading] = useState<boolean>(true);
     const [networksData, setNetworksData] = useState<any>(null);
+
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [editModalOpen, setEditModalOpen] = React.useState(false);
+    const [rating, setRating] = React.useState<number | null>(0);
+    const [commentInput, setCommentInput] = useState<string>('');
+
+    const [existingRating, setExistingRating] = React.useState<number | null>(0);
+    const [existingComment, setExistingComment] = useState<string>('');
+
+    const [isReviewChanged, setIsReviewChanged] = useState<boolean>(false);
+    const [isReviewExists, setIsReviewExists] = useState<boolean>(false);
+    const [reviewData, setReviewData] = useState<any>(null);
+
+    const handleOpen = () => setModalOpen(true);
+    const handleClose = () => setModalOpen(false);
+
+    const handleEditOpen = () => setEditModalOpen(true);
+    const handleEditClose = () => setEditModalOpen(false);
+
+    const style = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+
+    const submitCheckIn = async () => {
+        try {
+            const response = await fetch("/review", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "film_id": movieDetail.id,
+                    "user_id": user['userId'],
+                    "rating": rating,
+                    "comment": commentInput
+                })
+            });
+            if (response.ok) {
+                setIsReviewChanged(prev => !prev);
+                setRating(0);
+                setCommentInput('');
+            } else {
+                throw new Error("Failed to post a review");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const updateCheckIn = async () => {
+        try {
+            const response = await fetch("/review", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "film_id": movieDetail.id,
+                    "user_id": user['userId'],
+                    "rating": existingRating,
+                    "comment": existingComment
+                })
+            });
+            if (response.ok) {
+                setIsReviewChanged(prev => !prev);
+                setExistingRating(0);
+                setExistingComment('');
+            } else {
+                throw new Error("Failed to post a review");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const deleteCheckIn = async () => {
+        try {
+            const response = await fetch("/review", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "film_id": movieDetail.id,
+                    "user_id": user['userId'],
+                })
+            });
+            if (response.ok) {
+                setIsReviewChanged(prev => !prev);
+                setExistingRating(0);
+                setExistingComment('');
+            } else {
+                throw new Error("Failed to post a review");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setIsReviewExists(false);
+        const getReviewStatus = async () => {
+            try {
+                const response = await fetch("/get_review", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "film_id": movieDetail.id,
+                        "user_id": user['userId'],
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.message === 'exists') {
+                        setIsReviewExists(true);
+                        setReviewData(data.review);
+                    } else if (data.message === 'exists') {
+                        setIsReviewExists(false);
+                    }
+                } else {
+                    throw new Error("Failed to fetch review status");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getReviewStatus();
+    }, [movieDetail, isReviewChanged])
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setCommentInput(e.target.value);
+	};
+
+    const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setExistingComment(e.target.value);
+	};
+
+    const checkInToMovie = () => {
+        handleOpen();
+    }
+
+    const editCheckIn = async() => {
+        setExistingRating(reviewData.rating)
+        setExistingComment(reviewData.comment)
+        handleEditOpen();
+    }
 
     useEffect(() => {
 		window.scrollTo({
@@ -353,6 +519,15 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                         <Grid container spacing={2}>
                             <Grid item xs={3.5} sm={3.5} md={3.5} lg={3.5} xl={3.5}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
+                                {isReviewExists ? (
+                                    <Button className='watched_btn' variant="contained" startIcon={<EditIcon />} onClick={() => {editCheckIn()}}>
+                                        EDIT REVIEW
+                                    </Button>
+                                ) : (
+                                    <Button className='watched_btn' variant="contained" startIcon={<FileDownloadDoneIcon />} onClick={() => {checkInToMovie()}}>
+                                        CHECK IN
+                                    </Button>
+                                )}
                                 <div className='checkbox_elements'>
                                     {userData && isMovieLiked && isMovieLiked.message === "success" && (
                                         <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite className='heart_icon'/>} checked onClick={() => removeMovie(isMovieLiked.favorite.favorite_id)}/>
@@ -628,6 +803,75 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
 			</Grid>
 		</FadeIn>
         )}
+
+        <Modal
+            open={modalOpen}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box className='checkin_movie_modal' sx={style}>
+                <div className='checkin_forms'>
+                    <h1>Check In</h1>
+                    <Rating
+                        name="simple-controlled"
+                        value={rating}
+                        onChange={(event, newValue) => {
+                        setRating(newValue);
+                        }}
+                    />
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Leave a review (optional)"
+                        multiline
+                        rows={7}
+                        defaultValue="Write your comment here"
+                        value={commentInput}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <Button className='watched_btn' variant="contained" onClick={() => {submitCheckIn(); handleClose();}}>
+                    SUBMIT
+                </Button>
+            </Box>
+        </Modal>
+
+        <Modal
+            open={editModalOpen}
+            onClose={handleEditClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box className='checkin_movie_modal' sx={style}>
+                <div className='checkin_forms'>
+                    <div className='edit_review_header'>
+                        <h1>Edit Review</h1>
+                        <IconButton className='review_delete_icon' sx={{ p: 0 }} onClick={() => {deleteCheckIn(); handleEditClose();}}>
+                            <DeleteIcon/>
+                            <span>Delete</span>
+                        </IconButton>
+                    </div>
+                    <Rating
+                        name="simple-controlled"
+                        value={existingRating}
+                        onChange={(event, newValue) => {
+                        setExistingRating(newValue);
+                        }}
+                    />
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Leave a review (optional)"
+                        multiline
+                        rows={7}
+                        value={existingComment}
+                        onChange={handleEditInputChange}
+                    />
+                </div>
+                <Button className='watched_btn' variant="contained" onClick={() => {updateCheckIn(); handleEditClose();}}>
+                    Update
+                </Button>
+            </Box>
+        </Modal>
         </>
     );
 };
