@@ -521,11 +521,12 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                         <Grid container spacing={2}>
                             <Grid item xs={3.5} sm={3.5} md={3.5} lg={3.5} xl={3.5}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
-                                {isReviewExists ? (
+                                {(isLoggedIn && isReviewExists) && (
                                     <Button className='watched_btn' variant="contained" startIcon={<EditIcon />} onClick={() => {editCheckIn()}}>
                                         EDIT REVIEW
                                     </Button>
-                                ) : (
+                                )}
+                                {(isLoggedIn && !isReviewExists) && (
                                     <Button className='watched_btn' variant="contained" startIcon={<FileDownloadDoneIcon />} onClick={() => {checkInToMovie()}}>
                                         CHECK IN
                                     </Button>

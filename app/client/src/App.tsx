@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
-import {
-  Home
-} from "./components";
+import Home, { HomeHandles } from "./components/Home";
 import Logo from './assets/images/logo.png';
 import './App.scss';
 import {withAuthInfo, useLogoutFunction, useRedirectFunctions} from '@propelauth/react';
@@ -45,6 +43,26 @@ function App({isLoggedIn, user}: any)  {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const homeRef = useRef<HomeHandles>(null);
+
+  const handleMyListClick = () => {
+    if (homeRef.current) {
+      homeRef.current.handleMyListClick();
+    }
+  };
+
+  const handleResetFiltersClick = () => {
+    if (homeRef.current) {
+      homeRef.current.resetFilters();
+    }
+  };
+
+  const handleExploreClick = () => {
+    if (homeRef.current) {
+      homeRef.current.handleExploreClick();
+    }
   };
 
   return (
@@ -99,19 +117,15 @@ function App({isLoggedIn, user}: any)  {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {/* {isLoggedIn && (
-                <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/mylist">
-                  <Typography textAlign="center">My List</Typography>
-                </MenuItem>
-              )}
-              {isLoggedIn && (
-                <MenuItem onClick={handleCloseNavMenu} component={NavLink} to="/explore">
-                  <Typography textAlign="center">Explore</Typography>
-                </MenuItem>
-              )} */}
-              {/* <MenuItem onClick={handleCloseUserMenu} component={NavLink} to="/">
-                <Typography textAlign="center">Help</Typography>
-              </MenuItem> */}
+              <MenuItem onClick={() => {handleCloseNavMenu(); handleResetFiltersClick();}}>
+                <Typography textAlign="center">Home</Typography>
+              </MenuItem>
+              <MenuItem onClick={() => {handleCloseNavMenu(); isLoggedIn ? handleMyListClick() : redirectToLoginPage();}}>
+                <Typography textAlign="center">My List</Typography>
+              </MenuItem>
+              <MenuItem onClick={() => {handleCloseNavMenu(); isLoggedIn ? handleExploreClick() : redirectToLoginPage();}}>
+                <Typography textAlign="center">Explore</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <Typography
@@ -133,31 +147,19 @@ function App({isLoggedIn, user}: any)  {
             <img className='logo_img' src={Logo} alt='logo'/>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {/* {isLoggedIn && (
-              <Button
-                className='nav_button_link'
-                component={NavLink} to="/mylist"
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                My List
-              </Button>
-            )}
-            {isLoggedIn && (
-              <Button
-                className='nav_button_link'
-                component={NavLink} to="/explore"
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                Explore
-              </Button>
-            )} */}
             {/* <Button
+              className='nav_button_link'
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
-              Help
+              My List
+            </Button>
+            <Button
+              className='nav_button_link'
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Explore
             </Button> */}
           </Box>
 
@@ -240,7 +242,7 @@ function App({isLoggedIn, user}: any)  {
     </AppBar>
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home ref={homeRef} isLoggedIn={isLoggedIn} user={user} />} />
         {/* <Route path="/mylist" element={<MyList />} />
         <Route path="/explore" element={<Explore />} /> */}
       </Routes>

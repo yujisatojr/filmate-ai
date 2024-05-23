@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios';
 import FadeIn from './FadeIn';
 import { Oval, ThreeDots } from 'react-loader-spinner'
@@ -39,7 +39,18 @@ import ListIcon from '@mui/icons-material/List';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SearchIcon from '@mui/icons-material/Search';
 
-function Home({ isLoggedIn, user }: any) {
+type HomeProps = {
+    isLoggedIn: boolean;
+    user: any;
+};
+
+export type HomeHandles = {
+    handleMyListClick: () => void;
+    resetFilters: () => void;
+    handleExploreClick: () => void;
+};
+
+const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref) => {
 
 	const [userData, setUserData] = useState<any>(null);
 	const {redirectToSignupPage, redirectToLoginPage} = useRedirectFunctions()
@@ -307,6 +318,12 @@ function Home({ isLoggedIn, user }: any) {
 		setSelectedYear([1915, 2024]);
 		setInitCall(prev => prev + 1);
 	};
+
+	useImperativeHandle(ref, () => ({
+        handleMyListClick,
+        resetFilters,
+        handleExploreClick
+    }));
 
   	return (
 	<div className='movie_app_root'>
@@ -739,6 +756,6 @@ function Home({ isLoggedIn, user }: any) {
 		</FadeIn>
 	</div>
   );
-};
+});
   
-export default withAuthInfo(Home);
+export default Home;
