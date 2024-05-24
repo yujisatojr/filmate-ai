@@ -64,7 +64,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        width: 350,
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,
@@ -141,9 +141,12 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         {userData && (
         <FadeIn transitionDuration={700}>
             <div className="explore_middle_container">
-                <Fab color="primary" aria-label="add" onClick={() => handleOpen()}>
-                    <AddIcon/>
-                </Fab>
+                <div className="add_friend_btn">
+                    <Fab color="primary" aria-label="add" onClick={() => handleOpen()}>
+                        <AddIcon/>
+                    </Fab>
+                    <span>Add Friend</span>
+                </div>
                 <h3>Activity</h3>
                 {reviewsData && reviewsData.count > 0 ? (
                     reviewsData.results.map((item: any, index: number) => (
@@ -164,6 +167,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                             <div className="feed_card_body">
                                 <Rating className="feed_card_rating" name="rating_star" value={item.review.rating} precision={1} max={5} readOnly />
                                 <p>{item.review.comment}</p>
+                                <span className="mobile_date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
                             </div>
                         </Item>
                     ))

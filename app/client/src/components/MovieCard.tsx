@@ -522,12 +522,12 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                             <Grid item xs={3.5} sm={3.5} md={3.5} lg={3.5} xl={3.5}>
                                 <img className='image_fill' alt={movieDetail.title} src={movieDetail.img}/>
                                 {(isLoggedIn && isReviewExists) && (
-                                    <Button className='watched_btn' variant="contained" startIcon={<EditIcon />} onClick={() => {editCheckIn()}}>
+                                    <Button className='watched_btn checkin_detail_btn' variant="contained" startIcon={<EditIcon />} onClick={() => {editCheckIn()}}>
                                         EDIT REVIEW
                                     </Button>
                                 )}
                                 {(isLoggedIn && !isReviewExists) && (
-                                    <Button className='watched_btn' variant="contained" startIcon={<FileDownloadDoneIcon />} onClick={() => {checkInToMovie()}}>
+                                    <Button className='watched_btn checkin_detail_btn' variant="contained" startIcon={<FileDownloadDoneIcon />} onClick={() => {checkInToMovie()}}>
                                         CHECK IN
                                     </Button>
                                 )}
@@ -546,7 +546,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     )}
                                 </div>
                             </Grid>
-                            <Grid className='mobile_grid_area right_area' item xs={8} sm={8} md={3.5} lg={3.5} xl={3.5}>
+                            <Grid className='mobile_grid_area right_area' item xs={8} sm={8} md={8} lg={8} xl={3.5}>
                                 <div className='right_header'>
                                     <h1>{movieDetail && movieDetail.title}</h1>
                                 </div>
@@ -566,8 +566,19 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                 </div>
                                 
                                 <p className='summary_section'>{movieDetail.summary}</p>
+
+                                {(isLoggedIn && isReviewExists) && (
+                                    <Button className='watched_btn mobile_checkin_detail_btn' variant="contained" startIcon={<EditIcon />} onClick={() => {editCheckIn()}}>
+                                        EDIT REVIEW
+                                    </Button>
+                                )}
+                                {(isLoggedIn && !isReviewExists) && (
+                                    <Button className='watched_btn mobile_checkin_detail_btn' variant="contained" startIcon={<FileDownloadDoneIcon />} onClick={() => {checkInToMovie()}}>
+                                        CHECK IN
+                                    </Button>
+                                )}
                             </Grid>
-                            <Grid className='right_area' item xs={12} sm={12} md={8.5} lg={8.5} xl={8.5}>
+                            <Grid className='right_area' item xs={12} sm={12} md={12} lg={8.5} xl={8.5}>
                                 <div className='desktop_area'>
                                     <div className='right_header'>
                                         <h1>{movieDetail && movieDetail.title}</h1>
@@ -778,7 +789,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     <h3>You may also like:</h3>
                                     <Grid container spacing={2}>
                                         {similarMoviesData && similarMoviesData.map((movie: any, index: number) => (
-                                        <Grid item xs={6} sm={6} md={2.4} lg={2.4} xl={2.4} key={index}>
+                                        <Grid item xs={6} sm={2.4} md={2.4} lg={2.4} xl={2.4} key={index}>
                                             <div key={index} className='movie_img zoom' onClick={() => movieChange(movie)}>
                                                 <img
                                                 className='image_fill'

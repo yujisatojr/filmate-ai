@@ -139,19 +139,20 @@
     padding-right: 10px;
 	height: 100%;
     overflow-x: auto;
+	display: block;
 }
   
 .search_form_wrapper {
 	margin-bottom: 15px;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
 	width: '100%';
 	position: 'relative';
 
 	form div {
 		color: #B9BDCB !important;
-		height: 56px !important;
+		height: 48px !important;
 	}
 
 	svg {
@@ -296,7 +297,7 @@ input {
 		color: #B9BDCB;
 	
 		svg {
-			fill: green;
+			fill: #ff9a26;
 		}
     }
 }
@@ -317,17 +318,56 @@ input {
 	font-size: 0.875rem !important;
 }
 
-@media screen and (max-width: 1300px) {
-	.movie_app_root {
-		margin-left: 5%;
-		margin-right: 5%;
+.mobile_filters_drawer {
+	padding: 15px;
+	background-color: #1c1c1c;
+
+	.mobile_filters {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
 	}
 }
 
-@media screen and (max-width: 900px) {
+.mui-drawer_mobile .MuiDrawer-paper {
+	background-color: #1c1c1c;
+}
+
+.mobile_search_wrapper {
+	display: none;
+	width: 100%;
+}
+
+@media screen and (max-width: 1200px) {
+	.movie_app_root {
+		margin-left: 15px;
+		margin-right: 15px;
+	}
+
+	.mobile_grid_container {
+		margin: 0 !important;
+    	width: 100% !important;
+	}
+
+	.mobile_search_wrapper {
+		display: block;
+		width: 100%;
+	}
+
     .sidebar_filter {
         padding-top: 0px !important;
+		display: none;
     }
+
+	.dashboard_middle {
+		margin-left: initial;
+		max-width: 100%;
+	}
+
+	.dashboard_right {
+		display: none;
+	}
 
 	.accordion_label {
 		font-size: 0.875rem;
@@ -335,6 +375,27 @@ input {
 
 	.search_form_wrapper {
 		margin-bottom: 10px;
+		width: 100%;
+		position: relative;
+
+		.search_form {
+			margin-right: 10px !important;
+		}
+	}
+
+	.mobile_filter_btn {
+		height: 48px;
+		background-color: #303134 !important;
+		border-radius: 10px !important;
+		box-shadow: 0 1px 10px #00000026, 0 1px 1px #0000001a !important;
+
+		span {
+			margin: 0 !important;
+		}
+
+		svg {
+			font-size: 25px !important;
+		}
 	}
 
 	.button_container {

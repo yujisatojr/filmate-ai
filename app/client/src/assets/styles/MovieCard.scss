@@ -274,7 +274,7 @@ fieldset {
     border-radius: 10px;
 	min-height: 300px !important;
     padding: 25px !important;
-	min-width: 400px;
+	min-width: 550px;
 
 	.checkin_forms {
 		display: flex;
@@ -317,7 +317,11 @@ fieldset {
 	}
 }
 
-@media screen and (max-width: 900px) {
+.mobile_checkin_detail_btn {
+	display: none !important;
+}
+
+@media screen and (max-width: 1200px) {
 	.mobile_grid_area {
 		display: block;
 	}
@@ -329,18 +333,22 @@ fieldset {
 	.movie_detail_card {
 		padding-top: 0px !important;
 
-		span, p, a {
-			font-size: 0.8rem;
-		}
+		// span, p, a {
+		// 	font-size: 0.8rem;
+		// }
+	}
+
+	.movie_detail_card .right_area {
+		padding-left: 16px !important;
 	}
 
 	.header_close_button {
 		display: none;
 	}
 
-	.right_header h1 {
-		font-size: 1.5rem;
-	}
+	// .right_header h1 {
+	// 	font-size: 1.5rem;
+	// }
 
 	.mobile_close_btn {
 		display: block;
@@ -375,14 +383,14 @@ fieldset {
 		min-width: 120px;
 	}
 
-	.gauge_chart_center {
-		font-size: 2.5rem !important;
-	}
+	// .gauge_chart_center {
+	// 	font-size: 2.5rem !important;
+	// }
 
-	.gauge_chart_desc {
-		font-size: 18px !important;
-		transform: translate(20px, 30px) !important;
-	}
+	// .gauge_chart_desc {
+	// 	font-size: 18px !important;
+	// 	transform: translate(20px, 30px) !important;
+	// }
 
 	.card_content {
 		text-align: center;
@@ -399,5 +407,54 @@ fieldset {
 
 	.checkbox_elements {
 		padding-top: 0px;
+	}
+}
+
+@media screen and (max-width: 750px) {
+	.movie_detail_card {
+		span, p, a {
+			font-size: 0.8rem;
+		}
+	}
+
+	.right_header h1 {
+		font-size: 1.5rem;
+	}
+
+	.mobile_close_btn {
+		svg {
+            font-size: 2rem;
+        }
+	}
+
+	.gauge_chart_center {
+		font-size: 2.5rem !important;
+	}
+
+	.gauge_chart_desc {
+		font-size: 18px !important;
+		transform: translate(20px, 30px) !important;
+	}
+
+	.checkbox_elements {
+		display: flex;
+
+		span {
+			padding: 5px;
+		}
+	}
+
+	.checkin_movie_modal {
+		min-width: 350px;
+	}
+}
+
+@media screen and (max-width: 750px) {
+	.checkin_detail_btn {
+		display: none !important;
+	}
+
+	.mobile_checkin_detail_btn {
+		display: inline-flex !important;
 	}
 }

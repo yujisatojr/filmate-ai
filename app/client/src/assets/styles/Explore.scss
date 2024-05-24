@@ -143,3 +143,39 @@
     text-align: center;
     color: white;
 }
+
+.add_friend_btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    span {
+        max-width: 56px;
+        text-align: center;
+        color: #b9bdcb;
+        font-size: 0.8em;
+        padding-top: 5px;
+    }
+}
+
+.mobile_date_posted {
+    display: none;
+}
+
+@media screen and (max-width: 700px) {
+    .date_posted {
+        display: none;
+    }
+
+    .mobile_date_posted {
+        display: block;
+        font-size: 0.8em;
+        color: #b9bdcb;
+
+        svg {
+            vertical-align: text-top;
+            font-size: 1rem;
+            color: #b9bdcb;
+        }
+    }
+}

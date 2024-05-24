@@ -3,7 +3,7 @@ import axios from 'axios';
 import FadeIn from './FadeIn';
 import { Oval, ThreeDots } from 'react-loader-spinner'
 import { TypeAnimation } from 'react-type-animation';
-import { withAuthInfo, useRedirectFunctions } from '@propelauth/react';
+import { useRedirectFunctions } from '@propelauth/react';
 import Explore from './Explore';
 import MovieCard from './MovieCard';
 import MyList from './MyList';
@@ -19,6 +19,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Drawer from '@mui/material/Drawer';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
@@ -30,10 +31,12 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
 // Import icons
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Avatar from '@mui/material/Avatar';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import ExploreIcon from '@mui/icons-material/Explore';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import HomeIcon from '@mui/icons-material/Home';
 import ListIcon from '@mui/icons-material/List';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -325,10 +328,341 @@ const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref)
         handleExploreClick
     }));
 
+	const [state, setState] = useState<boolean>(false);
+
+	const toggleDrawer = (open: boolean) => {
+      setState(open);
+    };
+
+  	const list = () => (
+		<Box
+		sx={{ width: 300 }}
+		className="mobile_filters_drawer"
+		role="presentation"
+		>
+		<div>
+			<h3 className='mobile_filters'><FilterListIcon/> Filters</h3>
+
+			<Grid container spacing={2}>
+				<Grid className='button_container' item xs={6} sm={6} md={6} lg={6} xl={6}>
+					<Button variant="contained" startIcon={<RestartAltIcon />} onClick={() => {resetFilters(); toggleDrawer(false);}}>
+						RESET
+					</Button>
+				</Grid>
+				<Grid className='button_container apply_filter_btn' item xs={6} sm={6} md={6} lg={6} xl={6}>
+					<Button variant="contained" startIcon={<DoneOutlineIcon />} onClick={() => {handleSearchSubmit(); toggleDrawer(false);}}>
+						APPLY
+					</Button>
+				</Grid>
+			</Grid>
+
+			<Accordion className='accordion_container' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+				<AccordionSummary
+				expandIcon={<ArrowDropDownIcon />}
+				aria-controls="panel2-content"
+				id="panel2-header"
+				>
+				Content Rating
+				</AccordionSummary>
+				<AccordionDetails>
+					<FormControl component="fieldset" sx={{ m: 3 }} variant="standard">
+						<FormGroup className='select_form_group'>
+							<FormControlLabel
+							control={
+								<Checkbox
+								checked={Object.values(selectedCertificate).every(val => val)}
+								onChange={handleCertParentChange}
+								/>
+							}
+							label="Select All"
+							/>
+							{Object.entries(selectedCertificate).map(([key, value]) => (
+							<FormControlLabel
+								key={key}
+								control={
+								<Checkbox checked={value} onChange={handleCertChange} name={key} />
+								}
+								label={key === 'PG13' ? 'PG-13' : key === 'NC17' ? 'NC-17' : key === 'TVMA' ? 'TV-MA' : key === 'NotRated' ? 'Not Rated' : key}
+							/>
+							))}
+						</FormGroup>
+					</FormControl>
+				</AccordionDetails>
+			</Accordion>
+
+			<Accordion className='accordion_container' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+				<AccordionSummary
+				expandIcon={<ArrowDropDownIcon />}
+				aria-controls="panel2-content"
+				id="panel2-header"
+				>
+				Genre
+				</AccordionSummary>
+				<AccordionDetails>
+					<FormControl component="fieldset" sx={{ m: 3 }} variant="standard">
+						<FormGroup className='select_form_group'>
+							<FormControlLabel
+							control={
+								<Checkbox
+								checked={Object.values(selectedGenre).every(val => val)}
+								onChange={handleGenreParentChange}
+								/>
+							}
+							label="Select All"
+							/>
+							{Object.entries(selectedGenre).map(([key, value]) => (
+							<FormControlLabel
+								key={key}
+								control={
+								<Checkbox checked={value} onChange={handleGenreChange} name={key} />
+								}
+								label={key === 'SciFi' ? 'Sci-Fi' : key}
+							/>
+							))}
+						</FormGroup>
+					</FormControl>
+				</AccordionDetails>
+			</Accordion>
+
+			<Accordion className='accordion_container' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+				<AccordionSummary
+				expandIcon={<ArrowDropDownIcon />}
+				aria-controls="panel2-content"
+				id="panel2-header"
+				>
+				Popularity
+				</AccordionSummary>
+				<AccordionDetails>
+					<Slider
+						getAriaLabel={() => 'Popularity range'}
+						value={selectedPopularity}
+						onChange={handlePopularityChange}
+						valueLabelDisplay="auto"
+						shiftStep={1}
+						step={1}
+						marks
+						min={1}
+						max={10}
+					/>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						Minor
+						</Typography>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						Popular
+						</Typography>
+					</Box>
+				</AccordionDetails>
+			</Accordion>
+
+			<Accordion className='accordion_container' expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+				<AccordionSummary
+				expandIcon={<ArrowDropDownIcon />}
+				aria-controls="panel2-content"
+				id="panel2-header"
+				>
+				Runtime
+				</AccordionSummary>
+				<AccordionDetails>
+					<Slider
+						getAriaLabel={() => 'Runtime range'}
+						value={selectedRuntime}
+						onChange={handleRuntimeChange}
+						valueLabelDisplay="auto"
+						shiftStep={10}
+						step={10}
+						min={45}
+						max={240}
+					/>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						45 minutes
+						</Typography>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						240 minutes
+						</Typography>
+					</Box>
+				</AccordionDetails>
+			</Accordion>
+
+			<Accordion className='accordion_container' expanded={expanded === 'panel6'} onChange={handleChange('panel6')}>
+				<AccordionSummary
+				expandIcon={<ArrowDropDownIcon />}
+				aria-controls="panel2-content"
+				id="panel2-header"
+				>
+				Sentiment
+				</AccordionSummary>
+				<AccordionDetails>
+					<Slider
+						getAriaLabel={() => 'Sentiment range'}
+						value={selectedSentiment}
+						onChange={handleSentimentChange}
+						valueLabelDisplay="auto"
+						shiftStep={1}
+						step={1}
+						min={0}
+						max={10}
+					/>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						Sad Movie
+						</Typography>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						Happy Movie
+						</Typography>
+					</Box>
+				</AccordionDetails>
+			</Accordion>
+
+			<Accordion className='accordion_container' expanded={expanded === 'panel7'} onChange={handleChange('panel7')}>
+				<AccordionSummary
+				expandIcon={<ArrowDropDownIcon />}
+				aria-controls="panel2-content"
+				id="panel2-header"
+				>
+				Year
+				</AccordionSummary>
+				<AccordionDetails>
+					<Slider
+						getAriaLabel={() => 'Year range'}
+						value={selectedYear}
+						onChange={handleYearChange}
+						valueLabelDisplay="auto"
+						shiftStep={1}
+						step={1}
+						marks
+						min={1915}
+						max={2024}
+					/>
+					<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						1915
+						</Typography>
+						<Typography
+						variant="body2"
+						sx={{ cursor: 'pointer' }}
+						>
+						2024
+						</Typography>
+					</Box>
+				</AccordionDetails>
+			</Accordion>
+		</div>
+		</Box>
+  	);
+
   	return (
 	<div className='movie_app_root'>
 		<FadeIn transitionDuration={700}>
-			<Grid container spacing={2}>
+			<Grid container spacing={2} className='mobile_grid_container'>
+				<div className='mobile_search_wrapper'>
+					<div className='search_form_wrapper'>
+						<Paper
+						className='search_form'
+						component="form"
+						sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
+						onSubmit={(e) => {
+							e.preventDefault();
+							handleSearchSubmit();
+						}}
+						>
+							<InputBase
+							className='input_form'
+							sx={{ ml: 1, flex: 1 }}
+							placeholder='Find movies'
+							inputProps={{ 'aria-label': 'search movies' }}
+							value={searchInput}
+							onChange={handleInputChange}
+							/>
+							<IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
+								<SearchIcon />
+							</IconButton>
+						</Paper>
+						<Button className='mobile_filter_btn' variant="contained" startIcon={<FilterListIcon />} onClick={() => {toggleDrawer(true)}}></Button>				
+					</div>
+
+					<Accordion className='accordion_container'>
+						<AccordionSummary
+						expandIcon={<ArrowDropDownIcon />}
+						aria-controls="panel2-content"
+						id="panel2-header"
+						>
+						{isLoading ? (
+							<span className='accordion_label'>
+								<Oval
+								visible={true}
+								height="20"
+								width="20"
+								color="black"
+								secondaryColor="gray"
+								ariaLabel="oval-loading"
+								wrapperStyle={{}}
+								wrapperClass=""
+								strokeWidth={5}
+								/>
+								Generating recommends based on input...
+							</span>
+						) : (
+							<span className='accordion_label'>
+								{recommendsData ? (
+								<><AutoAwesomeIcon/> Finished generating recommends!</>
+								) : (
+								<><AutoAwesomeIcon/> View AI recommendations</>
+								)}
+							</span>
+						)}
+						</AccordionSummary>
+
+						<AccordionDetails className='accordion_details_container'>
+						{(!isLoading && recommendsData) ? (
+							<Alert
+							className='alert_container filter_list'
+							severity="info"
+							sx={{ mb: 2 }}
+							>
+								<TypeAnimation
+								sequence={[
+									`${recommendsData['insights'] !== '' ? recommendsData['insights'] : ''}`,
+								]}
+								speed={{ type: 'keyStrokeDelayInMs', value: 30 }}
+								style={{ fontSize: '1em', display: 'block'}}
+								cursor={false}
+								/>
+							</Alert>
+						) : (
+							<Alert
+							className='alert_container filter_list'
+							severity="info"
+							sx={{ mb: 2 }}
+							>
+								<span>Type keywords in the search bar to generate personalized movie recommendations 😎</span>
+							</Alert>
+						)}
+						</AccordionDetails>
+					</Accordion>
+				</div>
 				<div className='dashboard_left sidebar_filter'>
 					<div className="profile_container" onClick={() => {isLoggedIn ? handleProfileClick() : redirectToLoginPage()}}>
 						{userData ? (
@@ -365,6 +699,11 @@ const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref)
 						<Grid className='menu_button' item xs={12} sm={12} md={12} lg={12} xl={12}>
 							<Button variant="contained" startIcon={<ExploreIcon />} onClick={() => {isLoggedIn ? handleExploreClick() : redirectToLoginPage()}}>
 								Explore
+							</Button>
+						</Grid>
+						<Grid className='menu_button' item xs={12} sm={12} md={12} lg={12} xl={12}>
+							<Button variant="contained" startIcon={<HelpOutlineIcon />} >
+								Help
 							</Button>
 						</Grid>
 					</Grid>
@@ -489,9 +828,9 @@ const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref)
 						) : (
 							<span className='accordion_label'>
 								{recommendsData ? (
-								<><CheckCircleIcon/> Finished generating recommends!</>
+								<><AutoAwesomeIcon/> Finished generating recommends!</>
 								) : (
-								<><CheckCircleIcon/> View AI recommendations</>
+								<><AutoAwesomeIcon/> View AI recommendations</>
 								)}
 							</span>
 						)}
@@ -524,6 +863,19 @@ const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref)
 						)}
 						</AccordionDetails>
 					</Accordion>
+
+					<Grid container spacing={2}>
+						<Grid className='button_container' item xs={6} sm={6} md={6} lg={6} xl={6}>
+							<Button variant="contained" startIcon={<RestartAltIcon />} onClick={resetFilters}>
+								RESET
+							</Button>
+						</Grid>
+						<Grid className='button_container apply_filter_btn' item xs={6} sm={6} md={6} lg={6} xl={6}>
+							<Button variant="contained" startIcon={<DoneOutlineIcon />} onClick={handleSearchSubmit}>
+								APPLY
+							</Button>
+						</Grid>
+					</Grid>
 
 					<Accordion className='accordion_container' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
 						<AccordionSummary
@@ -738,22 +1090,19 @@ const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref)
 							</Box>
 						</AccordionDetails>
 					</Accordion>
-
-					<Grid container spacing={2}>
-						<Grid className='button_container' item xs={6} sm={6} md={6} lg={6} xl={6}>
-							<Button variant="contained" startIcon={<RestartAltIcon />} onClick={resetFilters}>
-								RESET
-							</Button>
-						</Grid>
-						<Grid className='button_container apply_filter_btn' item xs={6} sm={6} md={6} lg={6} xl={6}>
-							<Button variant="contained" startIcon={<DoneOutlineIcon />} onClick={handleSearchSubmit}>
-								APPLY
-							</Button>
-						</Grid>
-					</Grid>
 				</div>
 			</Grid>
 		</FadeIn>
+		<React.Fragment>
+			<Drawer
+				className='mui-drawer_mobile'
+				anchor='right'
+				open={state}
+				onClose={() => {toggleDrawer(false)}}
+			>
+				{list()}
+			</Drawer>
+		</React.Fragment>
 	</div>
   );
 });

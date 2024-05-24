@@ -188,13 +188,13 @@ def create_filter(json_query):
             match=models.MatchAny(any=genreArray),
         ))
     
-    # Apply popularity filter for empty search
+    # Apply popularity filter for empty search: 450000
     keyword = data['searchInput']
     if keyword == '' and popularity[0] == 1 and popularity[1] == 10:
         filter_conditions.append(models.FieldCondition(
             key="votes",
             range=models.Range(
-                gte=450000,
+                gte=50000,
             )
         ))
     else:

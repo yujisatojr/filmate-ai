@@ -126,6 +126,9 @@ function App({isLoggedIn, user}: any)  {
               <MenuItem onClick={() => {handleCloseNavMenu(); isLoggedIn ? handleExploreClick() : redirectToLoginPage();}}>
                 <Typography textAlign="center">Explore</Typography>
               </MenuItem>
+              <MenuItem>
+                <Typography textAlign="center">Help</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           <Typography
