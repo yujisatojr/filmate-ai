@@ -273,8 +273,9 @@ fieldset {
     border: none !important;
     border-radius: 10px;
 	min-height: 300px !important;
-    padding: 25px !important;
-	min-width: 550px;
+	min-width: 300px;
+	width: 450px;
+	padding: 25px;
 
 	.checkin_forms {
 		display: flex;
@@ -319,6 +320,7 @@ fieldset {
 
 .mobile_checkin_detail_btn {
 	display: none !important;
+	border-radius: 10px !important;
 }
 
 @media screen and (max-width: 1200px) {
@@ -332,10 +334,6 @@ fieldset {
 
 	.movie_detail_card {
 		padding-top: 0px !important;
-
-		// span, p, a {
-		// 	font-size: 0.8rem;
-		// }
 	}
 
 	.movie_detail_card .right_area {
@@ -345,10 +343,6 @@ fieldset {
 	.header_close_button {
 		display: none;
 	}
-
-	// .right_header h1 {
-	// 	font-size: 1.5rem;
-	// }
 
 	.mobile_close_btn {
 		display: block;
@@ -383,15 +377,6 @@ fieldset {
 		min-width: 120px;
 	}
 
-	// .gauge_chart_center {
-	// 	font-size: 2.5rem !important;
-	// }
-
-	// .gauge_chart_desc {
-	// 	font-size: 18px !important;
-	// 	transform: translate(20px, 30px) !important;
-	// }
-
 	.card_content {
 		text-align: center;
 	}
@@ -415,6 +400,11 @@ fieldset {
 		span, p, a {
 			font-size: 0.8rem;
 		}
+	}
+
+	.checkin_movie_modal {
+		width: 350px;
+		padding: 10px;
 	}
 
 	.right_header h1 {
@@ -444,12 +434,6 @@ fieldset {
 		}
 	}
 
-	.checkin_movie_modal {
-		min-width: 350px;
-	}
-}
-
-@media screen and (max-width: 750px) {
 	.checkin_detail_btn {
 		display: none !important;
 	}

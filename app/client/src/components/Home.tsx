@@ -318,6 +318,7 @@ const Home = forwardRef<HomeHandles, HomeProps>(({ isLoggedIn, user }: any, ref)
 		setSelectedGenre({ Action: true, Adventure: true, Animation: true, Biography: true, Comedy: true, Crime: true, Documentary: true, Drama: true, Family: true, Fantasy: true, History: true, Horror: true, Musical: true, Mystery: true, Romance: true, SciFi: true, Sports: true, Thriller: true, War: true, Western: true });
 		setSelectedPopularity([1, 10]);
 		setSelectedRuntime([45, 240]);
+		setSelectedSentiment([0, 10]);
 		setSelectedYear([1915, 2024]);
 		setInitCall(prev => prev + 1);
 	};

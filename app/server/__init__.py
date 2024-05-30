@@ -3,7 +3,6 @@ from flask import Flask, jsonify, request, redirect, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-# from propelauth_flask import init_auth, current_user
 import datetime
 import logging
 import os
@@ -13,8 +12,6 @@ load_dotenv(find_dotenv())
 
 app = Flask(__name__, static_folder='../client/build', static_url_path='')
 CORS(app, supports_credentials=True)
-
-# auth = init_auth(os.getenv("PROPELAUTH_AUTH_URL"), os.getenv("PROPELAUTH_API_KEY"))
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRESQL_DATABASE_URL')
 db = SQLAlchemy(app)
@@ -40,7 +37,6 @@ def user():
     user = Users.query.filter_by(user_id=user_id).first()
     
     if user is None:
-        # current_datetime = datetime.datetime.now()
         timestamp = data['createdAt']
         formatted_timestamp = datetime.datetime.fromtimestamp(timestamp)
 
@@ -348,7 +344,6 @@ def get_reviews():
                 return {"message": "List of following IDs not provided."}, 400
             
             for user_id in user_ids:
-                # reviews = Reviews.query.filter_by(user_id=user_id)
                 reviews = Reviews.query.filter_by(user_id=user_id).order_by(Reviews.date_added).all()
                 results = [
                     {

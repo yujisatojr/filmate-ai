@@ -80,11 +80,10 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,
-        p: 4,
+        p: 4
     };
 
     const submitCheckIn = async () => {
@@ -748,7 +747,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     <p>Director:
                                         {movieDetail && movieDetail.directors.map((director: any, index: number, directorsArray: any[]) => (
                                         <>
-                                            <a href='/' key={director}>{' ' + director}</a>
+                                            <span key={director}>{' ' + director}</span>
                                             {index === directorsArray.length - 1 ? '' : ' | '}
                                         </>
                                         ))}
@@ -756,7 +755,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     <p>Writer:
                                         {movieDetail && movieDetail.writers.map((writer: any, index: number, writersArray: any[]) => (
                                         <>
-                                            <a href='/' key={writer}>{' ' + writer}</a>
+                                            <span key={writer}>{' ' + writer}</span>
                                             {index === writersArray.length - 1 ? '' : ' | '}
                                         </>
                                         ))}
@@ -764,7 +763,7 @@ function MovieCard({ parentToChild, movieChange, clickedChange, isLoggedIn, user
                                     <p>Top Casts:
                                         {movieDetail && movieDetail.casts.map((cast: any, index: number, castsArray: any[]) => (
                                         <>
-                                            <a href='/' key={cast}>{' ' + cast}</a>
+                                            <span key={cast}>{' ' + cast}</span>
                                             {index === castsArray.length - 1 ? '' : ' | '}
                                         </>
                                         ))}

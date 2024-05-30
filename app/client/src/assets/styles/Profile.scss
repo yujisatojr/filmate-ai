@@ -99,13 +99,30 @@
     }
 
     .circle_zoom {
-        // border-radius: 5px;
         transition: transform .2s !important;
-        // margin: 0 auto;
     }
     
     .circle_zoom:hover {
         transform: scale(1.05);
         cursor: pointer;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .profile_root .profile_header {
+        padding: 30px 20px;
+    }
+
+    .profile_root .profile_header img {
+        height: 100px;
+        width: 100px;
+    }
+
+    .profile_root .profile_header h1 {
+        font-size: 2em;
+    }
+
+    .profile_root .profile_header .followers_numbers {
+        padding-top: 10px;
     }
 }

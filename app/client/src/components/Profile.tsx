@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { withAuthInfo } from '@propelauth/react';
 import FadeIn from './FadeIn';
 import Grid from '@mui/material/Grid';
 import MovieCard from './MovieCard';
