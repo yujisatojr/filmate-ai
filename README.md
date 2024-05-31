@@ -1,8 +1,6 @@
-Here's the corrected version of the README:
-
 # Filmate AI
 
-Movie finder + social platform app powered by GenAI.
+Movie finder + social platform app using OpenAI, Groq, and Qdrant.
 
 <!-- ![Screenshot](./assets/app_screenshot.png) -->
 
