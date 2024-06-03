@@ -1,26 +1,29 @@
-# Filmate AI
+# Filmate AI 🎬
 
-Movie finder + social platform app using OpenAI, Groq, and Qdrant.
+Movie finder + social platform app using OpenAI GPT-3.5 Turbo, Groq, and Qdrant.
 
-<!-- ![Screenshot](./assets/app_screenshot.png) -->
+![Screenshot1](./app/client/src/assets/images/screenshot_1.png)
+![Screenshot2](./app/client/src/assets/images/screenshot_2.png)
 
 ## Features
 
-<!-- ![Diagram](./assets/app_diagram.jpg) -->
+![Diagram](./app/client/src/assets/images/architecture.png)
 
 ### Text Vectorization & Sentiment Analysis
-- **Data Cleaning**: Uses Pandas for cleaning CSV data that contains 10,000+ movie records released from 1915 to 2024.
-- **Sentiment Analysis**: Assigns sentiment scores and appropriate justifications to all movies using OpenAI GPT-3.5 Turbo and Hugging Face Transformers text classification model.
-- **Text Vectorization**: Vectorizes movie metadata (e.g., titles, director and actor names, and synopsis) using the OpenAI embedding model.
+✅ **Data Cleaning**: Uses Pandas for cleaning CSV data that contains 10,000+ movie records released from 1915 to 2024.
+✅ **Sentiment Analysis**: Assigns sentiment scores and appropriate justifications to all movies using OpenAI GPT-3.5 Turbo and Hugging Face Transformers text classification model.
+✅ **Text Vectorization**: Vectorizes movie metadata (e.g., titles, director and actor names, and synopsis) using the OpenAI embedding model.
 
 ### Semantic Search
-- **Data Storage**: Stores vector embeddings and payload in Qdrant Cloud.
-- **Query Processing**: Vectorizes, filters, and generates insights from user queries using LangChain and OpenAI's GPT-3.5 Turbo model.
-- **Semantic Search**: Performs semantic searches based on vectorized user queries and filters.
+✅ **Data Storage**: Stores vector embeddings and payload in Qdrant Cloud.
+✅ **Query Processing**: Vectorizes, filters, and generates insights from user queries using Groq (Mixtral 8x7b model).
+✅ **Semantic Search**: Performs semantic searches based on vectorized user queries and filters.
 
 ### API & UI Development
-- **API Development**: Serves API endpoints using Flask (Python).
-- **UI Development**: Serves the frontend interface using React (TypeScript, JavaScript, SASS).
+✅ **API Development**: Serves API endpoints using Flask (Python).
+✅ **UI Development**: Serves the frontend interface using React (TypeScript, JavaScript, SASS).
+✅ **User Authentication**: Handle user authentication (login, sign up, reset password) securely with Propelauth.
+✅ **Data Management**: Stores user activity (movie reviews, followers, likes) and handles data migrations with SQLAlchemy and PostgreSQL.
 
 ## Setup
 
@@ -33,6 +36,7 @@ This application consists of a Flask backend and a React frontend. Follow these 
     OPENAI_API_KEY=your_openai_api_key
     QDRANT_API_KEY=your_qdrant_api_key
     QDRANT_URL=your_qdrant_url
+    GROQ_API_KEY=your_groq_api_key
     ```
 
 2. Ensure the `.env` file is kept secure and not shared, as it contains sensitive API keys.
