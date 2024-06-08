@@ -11,22 +11,22 @@ Movie finder + social platform app using OpenAI GPT-3.5 Turbo, Groq, and Qdrant.
 
 ### Text Vectorization & Sentiment Analysis
 
-✅ **Data Cleaning**: Uses Pandas for cleaning CSV data that contains 10,000+ movie records released from 1915 to 2024.  
-✅ **Sentiment Analysis**: Assigns sentiment scores and appropriate justifications to all movies using OpenAI GPT-3.5 Turbo and Hugging Face Transformers text classification model.  
-✅ **Text Vectorization**: Vectorizes movie metadata (e.g., titles, director and actor names, and synopsis) using the OpenAI embedding model.
+⚡ **Data Cleaning**: Uses Pandas for cleaning CSV data that contains 10,000+ movie records released from 1915 to 2024.  
+⚡ **Sentiment Analysis**: Assigns sentiment scores and appropriate justifications to all movies using OpenAI GPT-3.5 Turbo and Hugging Face Transformers text classification model.  
+⚡ **Text Vectorization**: Vectorizes movie metadata (e.g., titles, director and actor names, and synopsis) using the OpenAI embedding model.
 
 ### Semantic Search
 
-✅ **Data Storage**: Stores vector embeddings and payload in Qdrant Cloud.  
-✅ **Query Processing**: Vectorizes, filters, and generates insights from user queries using Groq (Mixtral 8x7b model).  
-✅ **Semantic Search**: Performs semantic searches based on vectorized user queries and filters.
+⚡ **Data Storage**: Stores vector embeddings and payload in Qdrant Cloud.  
+⚡ **Query Processing**: Vectorizes, filters, and generates insights from user queries using Groq (Mixtral 8x7b model).  
+⚡ **Semantic Search**: Performs semantic searches based on vectorized user queries and filters.
 
 ### API & UI Development
 
-✅ **API Development**: Serves API endpoints using Flask (Python).  
-✅ **UI Development**: Serves the frontend interface using React (TypeScript, JavaScript, SASS).  
-✅ **User Authentication**: Handle user authentication (login, sign up, reset password) securely with Propelauth.  
-✅ **Data Management**: Stores user activity (movie reviews, followers, likes) and handles data migrations with SQLAlchemy and PostgreSQL.
+⚡ **API Development**: Serves API endpoints using Flask (Python).  
+⚡ **UI Development**: Serves the frontend interface using React (TypeScript, JavaScript, SASS).  
+⚡ **User Authentication**: Handle user authentication (login, sign up, reset password) securely with Propelauth.  
+⚡ **Data Management**: Stores user activity (movie reviews, followers, likes) and handles data migrations with SQLAlchemy and PostgreSQL.
 
 
 ## Setup
