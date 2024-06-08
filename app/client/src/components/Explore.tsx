@@ -44,6 +44,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
     const [userData, setUserData] = useState<any>(null);
     const [userResultData, setUserResultData] = useState<any>(null);
 
+    const [usersData, setUsersData] = useState<any>(null);
     const [reviewsData, setReviewsData] = useState<any>(null);
 
     const [modalOpen, setModalOpen] = React.useState(false);
@@ -94,6 +95,16 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    // console.log(data);
+                    const user_array: any[] = [];
+                    data.results.forEach((result: any) => {
+                        const userExists = user_array.some(user => user.user_id === result.user.user_id);
+                        if (!userExists) {
+                            user_array.push(result.user);
+                        }
+                    });
+                    setUsersData(user_array);
+
                     setReviewsData(data);
                 } else {
                     throw new Error("Failed to fetch reviews.");
@@ -141,11 +152,23 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         {userData && (
         <FadeIn transitionDuration={700}>
             <div className="explore_middle_container">
-                <div className="add_friend_btn">
-                    <Fab color="primary" aria-label="add" onClick={() => handleOpen()}>
-                        <AddIcon/>
-                    </Fab>
-                    <span>Add Friend</span>
+                <div className="explore_header">
+                    <div className="add_friend_btn">
+                        <Fab color="primary" aria-label="add" onClick={() => handleOpen()}>
+                            <AddIcon/>
+                        </Fab>
+                        <span>Add Friend</span>
+                    </div>
+                    {usersData && (
+                        usersData.map((item: any, index: number) => (
+                            <div className="add_friend_btn">
+                                <div className="image_container">
+                                    <img key={index} src={item.picture_url} alt={`User ${index}`} />
+                                </div>
+                                <span>@{item.username}</span>
+                            </div>
+                        ))
+                    )}
                 </div>
                 <h3>Activity</h3>
                 {reviewsData && reviewsData.count > 0 ? (

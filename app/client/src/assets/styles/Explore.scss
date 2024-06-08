@@ -144,6 +144,19 @@
     color: white;
 }
 
+.explore_header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px;
+
+    img {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+    }
+}
+
 .add_friend_btn {
     display: flex;
     flex-direction: column;
@@ -155,8 +168,36 @@
         color: #b9bdcb;
         font-size: 0.8em;
         padding-top: 5px;
+        overflow: hidden;
     }
 }
+
+.image_container {
+    position: relative;
+    display: inline-block;
+  
+    img {
+      display: block;
+    }
+  
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      cursor: pointer;
+      background-color: black; // Or use rgba for opacity, e.g., rgba(0, 0, 0, 0.5)
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+  
+    &:hover::after {
+      opacity: 0.5; // Adjust the opacity to your liking
+    }
+  }
 
 .mobile_date_posted {
     display: none;
