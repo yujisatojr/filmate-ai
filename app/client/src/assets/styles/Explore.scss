@@ -24,13 +24,14 @@
                     border-radius: 50%;
                 }
 
-                span {
+                div {
                     color: #b9bdcb;
                 }
 
-                a {
+                span {
                     color: #42a5f5;
                     text-decoration: none;
+                    cursor: pointer;
                 }
 
                 .feed_header_right {
@@ -42,6 +43,7 @@
 
                     .date_posted {
                         font-size: 0.8em;
+                        color: #b9bdcb;
 
                         svg {
                             vertical-align: text-top;

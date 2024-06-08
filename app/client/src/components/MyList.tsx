@@ -158,7 +158,7 @@ function MyList({ isLoggedIn, user }: any) {
         fetchData();
     }, [savedIds]);
 
-  return (
+    return (
     <div className="mylist_root">
     {userData && !isLoading && !clickedDetail && (
         <FadeIn transitionDuration={700}>

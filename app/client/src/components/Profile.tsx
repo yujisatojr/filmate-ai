@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import CloseIcon from '@mui/icons-material/Close';
 import FadeIn from './FadeIn';
 import Grid from '@mui/material/Grid';
 import MovieCard from './MovieCard';
@@ -340,12 +341,15 @@ function Profile({ parentToChild }: any) {
         fetchData();
     }, [savedIds]);
 
-  return (
+    return (
     <>
         {!clickedDetail && !clickedProfile && (
         <div className="profile_root">
             {isLoggedIn && selectedProfile && (
             <FadeIn transitionDuration={700}>
+                <div className='profile_close_btn'>
+                    <a href="/"><CloseIcon fontSize="inherit"/></a>
+                </div>
                 <div className="profile_header">
                     <img className='image_circle' alt={selectedProfile.username} src={selectedProfile.picture_url}/>
                     <div>

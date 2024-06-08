@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.749a3d77.css",
-    "main.js": "/static/js/main.b5b08954.js",
+    "main.css": "/static/css/main.3af4b740.css",
+    "main.js": "/static/js/main.02ea2019.js",
     "static/js/453.258b012d.chunk.js": "/static/js/453.258b012d.chunk.js",
     "static/media/disney.png": "/static/media/disney.48adcdda80cf2bb50226.png",
     "static/media/netflix.png": "/static/media/netflix.387209abe1ced54112b4.png",
@@ -12,12 +12,12 @@
     "static/media/prime.png": "/static/media/prime.7d4aeb05acf7e5796b3b.png",
     "static/media/logo.png": "/static/media/logo.1f249a47f7c7670af0d1.png",
     "index.html": "/index.html",
-    "main.749a3d77.css.map": "/static/css/main.749a3d77.css.map",
-    "main.b5b08954.js.map": "/static/js/main.b5b08954.js.map",
+    "main.3af4b740.css.map": "/static/css/main.3af4b740.css.map",
+    "main.02ea2019.js.map": "/static/js/main.02ea2019.js.map",
     "453.258b012d.chunk.js.map": "/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.749a3d77.css",
-    "static/js/main.b5b08954.js"
+    "static/css/main.3af4b740.css",
+    "static/js/main.02ea2019.js"
   ]
 }

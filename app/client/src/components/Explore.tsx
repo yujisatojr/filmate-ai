@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FadeIn from './FadeIn';
+import MovieCard from './MovieCard';
+import Profile from './Profile';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import { withAuthInfo } from '@propelauth/react';
@@ -46,6 +48,18 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
 
     const [usersData, setUsersData] = useState<any>(null);
     const [reviewsData, setReviewsData] = useState<any>(null);
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [movieDetail, setMovieDetail] = useState<any>(null);
+    const [clickedDetail, setClickedDetail] = useState<boolean>(false);
+
+    const [clickedProfile, setClickedProfile] = useState<boolean>(false);
+    const [selectedProfileElement, setSelectedProfileElement] = useState({
+		username: '',
+		email: '',
+		user_id: '',
+		picture_url: ''
+	});
 
     const [modalOpen, setModalOpen] = React.useState(false);
     
@@ -147,9 +161,38 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         }
     }, [navigate, isLoggedIn, user]);
 
-  return (
+    const handleClickedChange = () => {
+		setClickedDetail(false)
+	};
+		
+	const handleClick = (movie: any) => {
+		setMovieDetail(movie);
+		setClickedDetail(true);
+	};
+
+    const handleMovieChange = (data: any) => {
+		setMovieDetail(data);
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	};
+
+    const handleProfileClick = (userElement: any) => {
+		setSelectedProfileElement({
+			username: userElement.username,
+			email: userElement.email,
+			user_id: userElement.user_id,
+			picture_url: userElement.picture_url,
+		})
+
+		setClickedProfile(true);
+		setClickedDetail(false);
+	};
+
+    return (
     <div className="explore_root">
-        {userData && (
+        {userData && !clickedDetail && !clickedProfile && (
         <FadeIn transitionDuration={700}>
             <div className="explore_middle_container">
                 <div className="explore_header">
@@ -178,11 +221,11 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                                 <img className='image_circle' alt={item.user.username} src={item.user.picture_url}/>
                                 <div className="feed_header_right">
                                     {item.review.comment === '' ? (
-                                        <span>@{item.user.username} has watched <a href='/'>{item.film.title}</a></span>
+                                        <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has watched <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
                                     ) : (item.review.comment !== '' && item.review.rating === 0) ? (
-                                        <span>@{item.user.username} has commented on <a href='/'>{item.film.title}</a></span>
+                                        <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has commented on <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
                                     ) : (
-                                        <span>@{item.user.username} has rated <a href='/'>{item.film.title}</a></span>
+                                        <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has rated <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
                                     )}
                                     <span className="date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
                                 </div>
@@ -200,6 +243,25 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                 
             </div>
         </FadeIn>
+        )}
+
+        {!clickedProfile && (
+        <React.StrictMode>
+            <MovieCard
+            parentToChild={{ movieDetail, isLoading, clickedDetail }}
+            movieChange={handleMovieChange}
+            clickedChange={handleClickedChange}
+            />
+        </React.StrictMode>
+        )}
+
+        {clickedProfile && !clickedDetail && (
+        <React.StrictMode>
+            <Profile 
+            parentToChild={{ selectedProfile: selectedProfileElement, user: user, isLoggedIn: isLoggedIn }}
+            movieChange={handleMovieChange}
+            />
+        </React.StrictMode>
         )}
 
         <Modal

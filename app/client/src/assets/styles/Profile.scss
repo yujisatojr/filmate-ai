@@ -3,6 +3,18 @@
     background-color: #303134 !important;
     border-radius: 10px !important;
     box-shadow: 0 1px 10px rgba(0, 0, 0, .149), 0 1px 1px rgba(0, 0, 0, .102) !important;
+    
+    .profile_close_btn {
+        svg {
+            font-size: 2rem;
+            vertical-align: middle;
+            padding: 20px;
+            color: #B9BDCB;
+            cursor: pointer;
+            float: right;
+            filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
+        }
+    }
 
     .profile_header {
         display: flex;
