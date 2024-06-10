@@ -86,7 +86,17 @@
 }
 
 .no_feed_message {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
     color: #b9bdcb;
+
+    svg {
+        font-size: 3em;
+    }
 }
 
 .search_user_modal {
@@ -165,6 +175,7 @@
     justify-content: center;
 
     span {
+        cursor: pointer;
         max-width: 56px;
         text-align: center;
         color: #b9bdcb;

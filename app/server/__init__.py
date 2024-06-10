@@ -354,8 +354,53 @@ def get_reviews():
                         "date_added": review.date_added
                     } for review in reviews]
 
-                return {"count": len(results), "reviews": results}
-        
+                # return {"count": len(results), "reviews": results}
+
+            user_ids = []
+            film_ids = []
+
+            for item in results:
+                user_ids.append(item['user_id'])
+                film_ids.append(item['film_id'])
+
+            users_info = []
+            for user_id in user_ids:
+                user = Users.query.filter_by(user_id=user_id).first()
+                if user:
+                    user_info = {
+                        "user_id": user.user_id,
+                        "username": user.username,
+                        "email": user.email,
+                        "picture_url": user.picture_url
+                    }
+                    users_info.append(user_info)
+                else:
+                    users_info.append({"user_id": user_id, "error": "User not found"})
+            
+            films_info = get_favorites_in_qdrant(film_ids)
+
+            combined_list = []
+
+            users_dict = {user['user_id']: user for user in users_info}
+            films_dict = {film['id']: film for film in films_info}
+
+            for result in results:
+                film_id = result['film_id']
+                user_id = result['user_id']
+
+                if film_id in films_dict and user_id in users_dict:
+                    combined_object = {
+                        "film": films_dict[film_id],
+                        "review": result,
+                        "user": users_dict[user_id]
+                    }
+                    combined_list.append(combined_object)
+                else:
+                    print(f"Film with id {film_id} or user with id {user_id} not found.")
+
+            combined_list.sort(key=lambda x: x['review']['date_added'], reverse=True)
+            
+            return {"count": len(combined_list), "results": combined_list}, 200        
         # elif mode == 'follower':
         #     user_ids = data.get('user_ids')
         

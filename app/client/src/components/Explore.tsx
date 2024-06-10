@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import FadeIn from './FadeIn';
 import MovieCard from './MovieCard';
 import Profile from './Profile';
+import { ThreeDots } from 'react-loader-spinner'
 import { styled } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
 import { withAuthInfo } from '@propelauth/react';
@@ -16,7 +17,13 @@ import InputBase from '@mui/material/InputBase';
 import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
 import Rating from '@mui/material/Rating';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import SearchIcon from '@mui/icons-material/Search';
+
+interface FilterChoice {
+    mode: string;
+    user_ids: string[];
+}
 
 function formatDateString(dateString: string) {
     const date = new Date(dateString);
@@ -43,13 +50,17 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
     
     const navigate = useNavigate();
 
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [userData, setUserData] = useState<any>(null);
     const [userResultData, setUserResultData] = useState<any>(null);
+    const [filterChoice, setFilterChoice] = useState<FilterChoice>({
+        mode: 'all',
+        user_ids: [],
+    });
 
     const [usersData, setUsersData] = useState<any>(null);
     const [reviewsData, setReviewsData] = useState<any>(null);
 
-    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [movieDetail, setMovieDetail] = useState<any>(null);
     const [clickedDetail, setClickedDetail] = useState<boolean>(false);
 
@@ -94,7 +105,98 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
 		setKeyword(searchInput);
 	};
 
+    const handleClickedChange = () => {
+		setClickedDetail(false)
+	};
+		
+	const handleClick = (movie: any) => {
+		setMovieDetail(movie);
+		setClickedDetail(true);
+	};
+
+    const handleMovieChange = (data: any) => {
+		setMovieDetail(data);
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	};
+
+    const handleProfileClick = (userElement: any) => {
+		setSelectedProfileElement({
+			username: userElement.username,
+			email: userElement.email,
+			user_id: userElement.user_id,
+			picture_url: userElement.picture_url,
+		})
+
+		setClickedProfile(true);
+		setClickedDetail(false);
+	};
+
+    const handleFollowerClick = (userId: string) => {
+        setFilterChoice({
+          mode: 'followers',
+          user_ids: [userId],
+        });
+    };
+
+    // Get user's following user data
     useEffect(() => {
+        const fetchFollowing = async () => {
+            try {
+                const response = await fetch("/get_followers", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "user_id": user.userId,
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const followingIds: any[] = [];
+                    data.results_followees.forEach((followee: any) => {
+                        followingIds.push(followee.user_id);
+                    });
+                    getFollowingUsersDetail(followingIds);
+                } else {
+                    throw new Error("Failed to fetch following users.");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    
+        const getFollowingUsersDetail = async (followingIds: any[]) => {
+            try {
+                const response = await fetch("/get_users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "user_ids": followingIds,
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setUsersData(data.users);
+                } else {
+                    throw new Error("Failed to fetch reviews.");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    
+        fetchFollowing();
+    }, []);
+
+    // Get review data to be shown on the feed
+    useEffect(() => {
+        setIsLoading(true);
         const getReviews = async () => {
             try {
                 const response = await fetch("/get_reviews", {
@@ -102,24 +204,12 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({
-                        "mode": 'all',
-                        "user_ids": [],
-                    })
+                    body: JSON.stringify(filterChoice)
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    // console.log(data);
-                    const user_array: any[] = [];
-                    data.results.forEach((result: any) => {
-                        const userExists = user_array.some(user => user.user_id === result.user.user_id);
-                        if (!userExists) {
-                            user_array.push(result.user);
-                        }
-                    });
-                    setUsersData(user_array);
-
                     setReviewsData(data);
+                    setIsLoading(false);
                 } else {
                     throw new Error("Failed to fetch reviews.");
                 }
@@ -129,7 +219,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         }
 
         getReviews();
-    }, [])
+    }, [filterChoice])
 
     useEffect(() => {
 		const fetchData = async () => {
@@ -161,35 +251,6 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         }
     }, [navigate, isLoggedIn, user]);
 
-    const handleClickedChange = () => {
-		setClickedDetail(false)
-	};
-		
-	const handleClick = (movie: any) => {
-		setMovieDetail(movie);
-		setClickedDetail(true);
-	};
-
-    const handleMovieChange = (data: any) => {
-		setMovieDetail(data);
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
-	};
-
-    const handleProfileClick = (userElement: any) => {
-		setSelectedProfileElement({
-			username: userElement.username,
-			email: userElement.email,
-			user_id: userElement.user_id,
-			picture_url: userElement.picture_url,
-		})
-
-		setClickedProfile(true);
-		setClickedDetail(false);
-	};
-
     return (
     <div className="explore_root">
         {userData && !clickedDetail && !clickedProfile && (
@@ -205,42 +266,58 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                     {usersData && (
                         usersData.map((item: any, index: number) => (
                             <div className="add_friend_btn">
-                                <div className="image_container">
-                                    <img key={index} src={item.picture_url} alt={`User ${index}`} />
+                                <div className="image_container" onClick={() => {handleFollowerClick(item.user_id)}}>
+                                    <img key={index} src={item.picture_url} alt={`User ${index}`}/>
                                 </div>
-                                <span>@{item.username}</span>
+                                <span onClick={() => {handleFollowerClick(item.user_id)}}>@{item.username}</span>
                             </div>
                         ))
                     )}
                 </div>
                 <h3>Activity</h3>
-                {reviewsData && reviewsData.count > 0 ? (
-                    reviewsData.results.map((item: any, index: number) => (
-                        <Item className='feed_card' key={index}>
-                            <div className="feed_card_header">
-                                <img className='image_circle' alt={item.user.username} src={item.user.picture_url}/>
-                                <div className="feed_header_right">
-                                    {item.review.comment === '' ? (
-                                        <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has watched <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
-                                    ) : (item.review.comment !== '' && item.review.rating === 0) ? (
-                                        <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has commented on <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
-                                    ) : (
-                                        <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has rated <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
-                                    )}
-                                    <span className="date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
-                                </div>
-                            </div>
-                            <div className="feed_card_body">
-                                <Rating className="feed_card_rating" name="rating_star" value={item.review.rating} precision={1} max={5} readOnly />
-                                <p>{item.review.comment}</p>
-                                <span className="mobile_date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
-                            </div>
-                        </Item>
-                    ))
+                {isLoading ? (
+					<FadeIn transitionDuration={500}>
+						<div className='loading'>
+							<ThreeDots
+							visible={true}
+							height="60"
+							width="60"
+							color="white"
+							radius="9"
+							ariaLabel="three-dots-loading"
+							wrapperStyle={{}}
+							wrapperClass=""
+							/>
+						</div>
+					</FadeIn>
                 ) : (
-                    <p className="no_feed_message">You are all caught up!</p>
+                    reviewsData && reviewsData.count > 0 ? (
+                        reviewsData.results.map((item: any, index: number) => (
+                            <Item className='feed_card' key={index}>
+                                <div className="feed_card_header">
+                                    <img className='image_circle' alt={item.user.username} src={item.user.picture_url}/>
+                                    <div className="feed_header_right">
+                                        {item.review.comment === '' ? (
+                                            <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has watched <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
+                                        ) : (item.review.comment !== '' && item.review.rating === 0) ? (
+                                            <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has commented on <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
+                                        ) : (
+                                            <div><span onClick={() => {handleProfileClick(item.user)}}>@{item.user.username}</span> has rated <span onClick={() => handleClick(item.film)}>{item.film.title}</span></div>
+                                        )}
+                                        <span className="date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
+                                    </div>
+                                </div>
+                                <div className="feed_card_body">
+                                    <Rating className="feed_card_rating" name="rating_star" value={item.review.rating} precision={1} max={5} readOnly />
+                                    <p>{item.review.comment}</p>
+                                    <span className="mobile_date_posted"><AccessTimeIcon/> {formatDateString(item.review.date_added)}</span>
+                                </div>
+                            </Item>
+                        ))
+                    ) : (
+                        <p className="no_feed_message"><RocketLaunchIcon/>You are all caught up!</p>
+                    )
                 )}
-                
             </div>
         </FadeIn>
         )}
@@ -248,7 +325,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         {!clickedProfile && (
         <React.StrictMode>
             <MovieCard
-            parentToChild={{ movieDetail, isLoading, clickedDetail }}
+            parentToChild={{ movieDetail, clickedDetail }}
             movieChange={handleMovieChange}
             clickedChange={handleClickedChange}
             />
