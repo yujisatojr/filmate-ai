@@ -11,6 +11,8 @@ import '../assets/styles/Explore.scss';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
 import Fab from '@mui/material/Fab';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
@@ -57,6 +59,7 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
         mode: 'all',
         user_ids: [],
     });
+    const [isClicked, setIsClicked] = useState<number | null>(null);
 
     const [usersData, setUsersData] = useState<any>(null);
     const [reviewsData, setReviewsData] = useState<any>(null);
@@ -266,15 +269,30 @@ function Explore({ isLoggedIn, user, selectedProfileChange }: any) {
                     {usersData && (
                         usersData.map((item: any, index: number) => (
                             <div className="add_friend_btn">
-                                <div className="image_container" onClick={() => {handleFollowerClick(item.user_id)}}>
+                                <div className={`${isClicked === index ? 'profile_clicked' : 'image_container'}`} onClick={() => {handleFollowerClick(item.user_id); setIsClicked(index);}}>
                                     <img key={index} src={item.picture_url} alt={`User ${index}`}/>
                                 </div>
-                                <span onClick={() => {handleFollowerClick(item.user_id)}}>@{item.username}</span>
+                                <span onClick={() => {handleFollowerClick(item.user_id); setIsClicked(index);}}>@{item.username}</span>
                             </div>
                         ))
                     )}
                 </div>
-                <h3>Activity</h3>
+                <div className="activity_header">
+                    <h3>Activity Feed</h3>
+                    {filterChoice.mode !== 'all' && (
+                        <Button variant="outlined" startIcon={<CloseIcon />} className="reset_filter_button" 
+                            onClick={() => {
+                            setIsClicked(null);
+                            setFilterChoice({
+                                mode: 'all',
+                                user_ids: [],
+                                })
+                            }}
+                        >
+                            No Filter
+                        </Button>
+                    )}
+                </div>
                 {isLoading ? (
 					<FadeIn transitionDuration={500}>
 						<div className='loading'>
