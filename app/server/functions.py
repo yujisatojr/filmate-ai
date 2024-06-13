@@ -92,6 +92,7 @@ def get_default_list():
     results = []
     for i, vector in enumerate(query_results):
 
+        genres = [genre for genre in [vector.payload["genre_1"], vector.payload["genre_2"], vector.payload["genre_3"]] if genre != '']
         directors = [director for director in [vector.payload["director_1"], vector.payload["director_2"], vector.payload["director_3"]] if director != '']
         writers = [writer for writer in [vector.payload["writer_1"], vector.payload["writer_2"], vector.payload["writer_3"]] if writer != '']
         casts = [cast for cast in [vector.payload["cast_1"], vector.payload["cast_2"], vector.payload["cast_3"]] if cast != '']
@@ -113,7 +114,7 @@ def get_default_list():
             "directors": ast.literal_eval(str(directors)),
             "writers": ast.literal_eval(str(writers)),
             "casts": ast.literal_eval(str(casts)),
-            "genres": ast.literal_eval(str(vector.payload["genres"])),
+            "genres": ast.literal_eval(str(genres)),
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -284,6 +285,7 @@ def search_movies_in_qdrant(json_body):
     
     for i, vector in enumerate(query_results):
 
+        genres = [genre for genre in [vector.payload["genre_1"], vector.payload["genre_2"], vector.payload["genre_3"]] if genre != '']
         directors = [director for director in [vector.payload["director_1"], vector.payload["director_2"], vector.payload["director_3"]] if director != '']
         writers = [writer for writer in [vector.payload["writer_1"], vector.payload["writer_2"], vector.payload["writer_3"]] if writer != '']
         casts = [cast for cast in [vector.payload["cast_1"], vector.payload["cast_2"], vector.payload["cast_3"]] if cast != '']
@@ -305,7 +307,7 @@ def search_movies_in_qdrant(json_body):
             "directors": ast.literal_eval(str(directors)),
             "writers": ast.literal_eval(str(writers)),
             "casts": ast.literal_eval(str(casts)),
-            "genres": ast.literal_eval(str(vector.payload["genres"])),
+            "genres": ast.literal_eval(str(genres)),
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -322,6 +324,7 @@ def search_similar_in_qdrant(metadata):
     
     for i, vector in enumerate(query_results):
 
+        genres = [genre for genre in [vector.payload["genre_1"], vector.payload["genre_2"], vector.payload["genre_3"]] if genre != '']
         directors = [director for director in [vector.payload["director_1"], vector.payload["director_2"], vector.payload["director_3"]] if director != '']
         writers = [writer for writer in [vector.payload["writer_1"], vector.payload["writer_2"], vector.payload["writer_3"]] if writer != '']
         casts = [cast for cast in [vector.payload["cast_1"], vector.payload["cast_2"], vector.payload["cast_3"]] if cast != '']
@@ -343,7 +346,7 @@ def search_similar_in_qdrant(metadata):
             "directors": ast.literal_eval(str(directors)),
             "writers": ast.literal_eval(str(writers)),
             "casts": ast.literal_eval(str(casts)),
-            "genres": ast.literal_eval(str(vector.payload["genres"])),
+            "genres": ast.literal_eval(str(genres)),
             "metadata": vector.payload["metadata"],
             "img": vector.payload["img"]
         }
@@ -462,6 +465,7 @@ def get_favorites_in_qdrant(id_list):
     for record in query_results[0]:
         payload = record.payload
 
+        genres = [genre for genre in [payload["genre_1"], payload["genre_2"], payload["genre_3"]] if genre != '']
         directors = [director for director in [payload["director_1"], payload["director_2"], payload["director_3"]] if director != '']
         writers = [writer for writer in [payload["writer_1"], payload["writer_2"], payload["writer_3"]] if writer != '']
         casts = [cast for cast in [payload["cast_1"], payload["cast_2"], payload["cast_3"]] if cast != '']
@@ -482,7 +486,7 @@ def get_favorites_in_qdrant(id_list):
             "directors": ast.literal_eval(str(directors)),
             "writers": ast.literal_eval(str(writers)),
             "casts": ast.literal_eval(str(casts)),
-            "genres": ast.literal_eval(str(payload["genres"])),
+            "genres": ast.literal_eval(str(genres)),
             "metadata": payload["metadata"],
             "img": payload["img"]
         }
@@ -508,6 +512,7 @@ def get_bookmarks_in_qdrant(id_list):
     for record in query_results[0]:
         payload = record.payload
 
+        genres = [genre for genre in [payload["genre_1"], payload["genre_2"], payload["genre_3"]] if genre != '']
         directors = [director for director in [payload["director_1"], payload["director_2"], payload["director_3"]] if director != '']
         writers = [writer for writer in [payload["writer_1"], payload["writer_2"], payload["writer_3"]] if writer != '']
         casts = [cast for cast in [payload["cast_1"], payload["cast_2"], payload["cast_3"]] if cast != '']
@@ -528,7 +533,7 @@ def get_bookmarks_in_qdrant(id_list):
             "directors": ast.literal_eval(str(directors)),
             "writers": ast.literal_eval(str(writers)),
             "casts": ast.literal_eval(str(casts)),
-            "genres": ast.literal_eval(str(payload["genres"])),
+            "genres": ast.literal_eval(str(genres)),
             "metadata": payload["metadata"],
             "img": payload["img"]
         }
